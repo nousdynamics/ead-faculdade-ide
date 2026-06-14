@@ -63,7 +63,7 @@ strong { font-weight: var(--fw-bold); }
   padding: .85rem 2rem; border-radius: var(--radius-pill);
   font-weight: var(--fw-bold); font-size: 1rem; line-height: 1;
   transition: background-color .2s ease, color .2s ease, transform .15s ease;
-  cursor: pointer; text-align: center;
+  cursor: pointer; text-align: center; white-space: nowrap;
 }
 .btn--accent { background: var(--color-accent); color: var(--color-white); }
 .btn--accent:hover { background: var(--color-accent-dark); transform: translateY(-2px); }
