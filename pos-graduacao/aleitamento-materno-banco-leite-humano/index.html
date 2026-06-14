@@ -628,14 +628,38 @@
         <span class="course-investment__badge">Oferta de lançamento</span>
         <p class="course-investment__price">24x de <span class="course-investment__price-highlight">R$ 277,08</span></p>
         <p class="course-investment__fee">Taxa de Inscrição <span class="course-investment__fee-highlight">R$ 197,00</span></p>
-        
         <div class="course-investment__links">
-          <a href="#">Confira outras opções de parcelamento.</a>
-          <a href="https://ead.faculdadeide.edu.br/wp-content/uploads/2026/06/Tabela-de-Convenios-e-Descontos.pdf" target="_blank" rel="noopener">Confira descontos especiais.</a>
+          <button type="button" class="course-investment__link-btn" data-open-installments>Confira outras opções de parcelamento.</button>
+          <a href="https://ead.faculdadeide.edu.br/wp-content/uploads/2026/06/Tabela-de-Convenios-e-Descontos.pdf" download="descontos-especiais.pdf" target="_blank" rel="noopener">Confira descontos especiais.</a>
         </div>
       </div>
     </div>
   </section>
+  <dialog class="course-installments-modal" id="course-installments-modal" aria-labelledby="course-installments-modal-title">
+    <div class="course-installments-modal__panel">
+      <button type="button" class="course-installments-modal__close" aria-label="Fechar opções de parcelamento">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h2 id="course-installments-modal-title" class="course-installments-modal__title">Opções de parcelamento</h2>
+      <ul class="course-installments-modal__grid"><li class="course-installments-modal__option">
+        <p class="course-installments-modal__label">à vista</p>
+        <p class="course-installments-modal__price"><span class="course-installments-modal__value">R$ 4.900,00</span></p>
+        <span class="course-installments-modal__discount">(30% de desconto)</span>
+      </li><li class="course-installments-modal__option">
+        <p class="course-installments-modal__label">12 parcelas de</p>
+        <p class="course-installments-modal__price"><span class="course-installments-modal__value">R$ 466,66</span></p>
+        <span class="course-installments-modal__discount">(20% de desconto)</span>
+      </li><li class="course-installments-modal__option">
+        <p class="course-installments-modal__label">20 parcelas de</p>
+        <p class="course-installments-modal__price"><span class="course-installments-modal__value">R$ 315,00</span></p>
+        <span class="course-installments-modal__discount">(10% de desconto)</span>
+      </li><li class="course-installments-modal__option">
+        <p class="course-installments-modal__label">24 parcelas de</p>
+        <p class="course-installments-modal__price"><span class="course-installments-modal__value">R$ 277,08</span></p>
+        <span class="course-installments-modal__discount">(5% de desconto)</span>
+      </li></ul>
+    </div>
+  </dialog>
 
       <section class="course-faq" aria-labelledby="course-faq-title">
     <div class="course-faq__inner">

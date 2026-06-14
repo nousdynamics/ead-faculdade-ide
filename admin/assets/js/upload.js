@@ -1,7 +1,8 @@
 import { authHeaders } from "./auth.js";
 
 const MAX_BYTES = 2 * 1024 * 1024;
-const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+const PDF_MAX_BYTES = 10 * 1024 * 1024;
+const IMAGE_ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 
 export function mediaUrl(path) {
   if (!path) return "";
@@ -24,13 +25,29 @@ function readFileAsBase64(file) {
 
 export async function uploadImage(file, folder = "uploads") {
   if (!file) throw new Error("Nenhum arquivo selecionado");
-  if (!ALLOWED.has(file.type)) {
+  if (!IMAGE_ALLOWED.has(file.type)) {
     throw new Error("Formato não suportado. Use JPG, PNG, WebP ou GIF.");
   }
   if (file.size > MAX_BYTES) {
     throw new Error("Imagem muito grande. Máximo de 2 MB.");
   }
 
+  return uploadMedia(file, folder);
+}
+
+export async function uploadPdf(file, folder = "courses") {
+  if (!file) throw new Error("Nenhum arquivo selecionado");
+  if (file.type !== "application/pdf") {
+    throw new Error("Formato não suportado. Use PDF.");
+  }
+  if (file.size > PDF_MAX_BYTES) {
+    throw new Error("PDF muito grande. Máximo de 10 MB.");
+  }
+
+  return uploadMedia(file, folder);
+}
+
+async function uploadMedia(file, folder) {
   const data = await readFileAsBase64(file);
   const res = await fetch("/api/media/upload", {
     method: "POST",
@@ -94,6 +111,51 @@ export function bindImageUpload(root, { folder = "uploads", onChange } = {}) {
         : `<div class="image-upload__placeholder">${wrap.dataset.placeholder || "Sem imagem"}</div>`;
     } finally {
       URL.revokeObjectURL(objectUrl);
+      fileInput.value = "";
+    }
+  });
+}
+
+export function bindPdfUpload(root, { folder = "courses", onChange } = {}) {
+  const wrap = root?.closest?.("[data-pdf-upload]") || root;
+  if (!wrap) return;
+
+  const urlInput = wrap.querySelector('input[type="text"][name="inv_pdf_descontos"]');
+  const fileInput = wrap.querySelector(".pdf-upload__input");
+  const status = wrap.querySelector(".pdf-upload__status");
+  const preview = wrap.querySelector(".pdf-upload__preview");
+
+  if (!urlInput || !fileInput) return;
+
+  const uploadFolder = folder || wrap.dataset.folder || "courses";
+
+  fileInput.addEventListener("change", async () => {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+
+    if (status) {
+      status.textContent = "Enviando PDF…";
+      status.hidden = false;
+      status.classList.remove("image-upload__status--error");
+    }
+
+    try {
+      const path = await uploadPdf(file, uploadFolder);
+      urlInput.value = path;
+      if (preview) {
+        const label = file.name || "PDF enviado";
+        preview.innerHTML = `<a href="${mediaUrl(path)}" target="_blank" rel="noopener">${label}</a>`;
+      }
+      if (status) {
+        status.textContent = "PDF enviado com sucesso.";
+      }
+      onChange?.(path);
+    } catch (err) {
+      if (status) {
+        status.textContent = err.message;
+        status.classList.add("image-upload__status--error");
+      }
+    } finally {
       fileInput.value = "";
     }
   });

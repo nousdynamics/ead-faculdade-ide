@@ -9,7 +9,7 @@ import {
   getAccountProfile,
   updateAccountProfile,
 } from "../api/lib/account.js";
-import { saveUploadedImage } from "../api/lib/image-storage.js";
+import { saveUploadedMedia } from "../api/lib/image-storage.js";
 import { publishCoursePages } from "../api/lib/course-pages.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -234,7 +234,7 @@ const server = createServer(async (req, res) => {
 
     try {
       const body = await readBody(req);
-      const result = await saveUploadedImage({
+      const result = await saveUploadedMedia({
         filename: body.filename,
         data: body.data,
         contentType: body.contentType,

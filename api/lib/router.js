@@ -2,7 +2,7 @@ import { handleCors, jsonResponse, readJsonBody } from "./http.js";
 import { createToken, verifyCredentials, requireAuth } from "./auth.js";
 import { getAccountProfile, updateAccountProfile } from "./account.js";
 import { COLLECTIONS, readCollection, writeCollection, readAllCollections } from "./cms.js";
-import { saveUploadedImage } from "./image-storage.js";
+import { saveUploadedMedia } from "./image-storage.js";
 import { handleCoursePageRequest } from "./course-pages.js";
 
 export async function routeRequest(req, res, segments) {
@@ -93,7 +93,7 @@ async function handleMediaUpload(req, res) {
   if (!session) return;
 
   const body = await readJsonBody(req);
-  const result = await saveUploadedImage({
+  const result = await saveUploadedMedia({
     filename: body.filename,
     data: body.data,
     contentType: body.contentType,

@@ -56,12 +56,18 @@
     },
     "investimento": {
       "matricula_html": "",
-      "parcelas_html": "",
       "texto_botao": "Adquira",
       "link_botao": "https://inscricao.faculdadeide.edu.br/?idps=300&curso=665",
       "oferta_label": "Oferta de lançamento",
       "oferta_valor": "24x de R$ 277,08",
       "taxa_inscricao": "Taxa de Inscrição R$ 197,00",
+      "pdf_descontos": "https://ead.faculdadeide.edu.br/wp-content/uploads/2026/06/Tabela-de-Convenios-e-Descontos.pdf",
+      "opcoes_parcelamento": [
+        { "descricao": "à vista", "valor": "R$ 4.900,00", "desconto": "30% de desconto" },
+        { "descricao": "12 parcelas de", "valor": "R$ 466,66", "desconto": "20% de desconto" },
+        { "descricao": "20 parcelas de", "valor": "R$ 315,00", "desconto": "10% de desconto" },
+        { "descricao": "24 parcelas de", "valor": "R$ 277,08", "desconto": "5% de desconto" }
+      ],
       "beneficios": [
         "Formação em uma instituição referência na área da saúde.",
         "Plataforma digital moderna, intuitiva e interativa para potencializar seu aprendizado.",

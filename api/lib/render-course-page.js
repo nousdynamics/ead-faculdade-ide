@@ -192,12 +192,53 @@ function renderFaqSection(faq) {
   </section>`;
 }
 
+function renderInstallmentsModal(opcoes) {
+  if (!opcoes?.length) return "";
+
+  const items = opcoes
+    .map((op) => {
+      const descricao = escapeHtml(op.descricao || "");
+      const valor = String(op.valor || "").trim();
+      const valorHtml = valor
+        ? formatPriceWithHighlight(valor, { highlightClass: "course-installments-modal__value" })
+        : "";
+      const desconto = op.desconto
+        ? `<span class="course-installments-modal__discount">(${escapeHtml(op.desconto)})</span>`
+        : "";
+      if (!descricao && !valor) return "";
+      return `<li class="course-installments-modal__option">
+        ${descricao ? `<p class="course-installments-modal__label">${descricao}</p>` : ""}
+        ${valorHtml ? `<p class="course-installments-modal__price">${valorHtml}</p>` : ""}
+        ${desconto}
+      </li>`;
+    })
+    .filter(Boolean)
+    .join("");
+
+  if (!items) return "";
+
+  return `<dialog class="course-installments-modal" id="course-installments-modal" aria-labelledby="course-installments-modal-title">
+    <div class="course-installments-modal__panel">
+      <button type="button" class="course-installments-modal__close" aria-label="Fechar opções de parcelamento">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h2 id="course-installments-modal-title" class="course-installments-modal__title">Opções de parcelamento</h2>
+      <ul class="course-installments-modal__grid">${items}</ul>
+    </div>
+  </dialog>`;
+}
+
 function renderInvestmentSection(inv, inscricaoLink, base) {
   const beneficios = (inv.beneficios || []).filter(Boolean);
+  const opcoesParcelamento = (inv.opcoes_parcelamento || []).filter(
+    (op) => op?.descricao?.trim() || op?.valor?.trim(),
+  );
   if (!beneficios.length && !inv.oferta_valor) return "";
 
   const ctaHref = escapeHtml(inv.link_botao || inscricaoLink);
   const ctaText = escapeHtml(inv.texto_botao || "Adquira");
+  const pdfDescontos = String(inv.pdf_descontos || DISCOUNTS_PDF).trim();
+  const pdfHref = escapeHtml(assetUrl(pdfDescontos, base));
   const listHtml = beneficios
     .map((b) => `<li>${escapeHtml(b)}</li>`)
     .join("");
@@ -219,14 +260,18 @@ function renderInvestmentSection(inv, inscricaoLink, base) {
         <span class="course-investment__badge">${escapeHtml(inv.oferta_label || "Oferta de lançamento")}</span>
         ${inv.oferta_valor ? `<p class="course-investment__price">${formatPriceWithHighlight(inv.oferta_valor)}</p>` : ""}
         ${inv.taxa_inscricao ? `<p class="course-investment__fee">${formatPriceWithHighlight(inv.taxa_inscricao, { highlightClass: "course-investment__fee-highlight" })}</p>` : ""}
-        ${inv.parcelas_html ? `<div class="course-investment__extra">${inv.parcelas_html}</div>` : ""}
         <div class="course-investment__links">
-          <a href="#">Confira outras opções de parcelamento.</a>
-          <a href="${DISCOUNTS_PDF}" target="_blank" rel="noopener">Confira descontos especiais.</a>
+          ${
+            opcoesParcelamento.length
+              ? `<button type="button" class="course-investment__link-btn" data-open-installments>Confira outras opções de parcelamento.</button>`
+              : ""
+          }
+          ${pdfDescontos ? `<a href="${pdfHref}" download="descontos-especiais.pdf" target="_blank" rel="noopener">Confira descontos especiais.</a>` : ""}
         </div>
       </div>
     </div>
-  </section>`;
+  </section>
+  ${renderInstallmentsModal(opcoesParcelamento)}`;
 }
 
 function renderCoordCard(coord, base) {

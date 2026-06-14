@@ -1749,6 +1749,26 @@ tr:hover td {
   color: var(--admin-danger);
 }
 
+.pdf-upload__preview {
+  margin-bottom: 0.65rem;
+  font-size: 0.875rem;
+}
+
+.pdf-upload__preview a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.pdf-upload__empty {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.pdf-upload__btn {
+  display: inline-flex;
+  margin-top: 0.65rem;
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
   .login-layout {

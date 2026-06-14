@@ -38,3 +38,28 @@ document.querySelectorAll(".coord-mini-cv").forEach((details) => {
   sync();
   details.addEventListener("toggle", sync);
 });
+
+/** Popup — opções de parcelamento */
+const installmentsModal = document.getElementById("course-installments-modal");
+if (installmentsModal instanceof HTMLDialogElement) {
+  document.querySelectorAll("[data-open-installments]").forEach((trigger) => {
+    trigger.addEventListener("click", () => {
+      if (typeof installmentsModal.showModal === "function") {
+        installmentsModal.showModal();
+      }
+    });
+  });
+
+  installmentsModal.querySelector(".course-installments-modal__close")?.addEventListener("click", () => {
+    installmentsModal.close();
+  });
+
+  installmentsModal.addEventListener("click", (event) => {
+    if (event.target === installmentsModal) installmentsModal.close();
+  });
+
+  installmentsModal.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    installmentsModal.close();
+  });
+}

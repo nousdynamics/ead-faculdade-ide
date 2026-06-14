@@ -5,7 +5,7 @@ import {
 import { generateCourseSeo, scoreSeo, renderSeoPreview, escapeHtml, SEO_LIMITS } from "./seo.js";
 import { login, logout, verifySession, isAuthenticated, getUser, getEmail, fetchAccountProfile, updateAccount } from "./auth.js";
 import { icon, navIcon, statIcon } from "./icons.js";
-import { bindImageUpload, mediaUrl } from "./upload.js";
+import { bindImageUpload, bindPdfUpload, mediaUrl } from "./upload.js";
 import {
   previewTemplate,
   templateEscopoLabel,
@@ -489,6 +489,7 @@ function renderCourseForm(course) {
   const i = c.informacoes || {};
   const s = c.sobre || {};
   const inv = c.investimento || {};
+  const parcelas = inv.opcoes_parcelamento || [];
   const mods = c.modulos || [];
   const faqs = c.faq || [];
   const audience = c.publico_alvo || [];
@@ -613,7 +614,14 @@ function renderCourseForm(course) {
               <div class="form-group"><label>Texto do botão</label><input name="inv_texto_botao" value="${escapeHtml(inv.texto_botao || "Adquira")}"></div>
               <div class="form-group form-group--full"><label>Link do botão</label><input name="inv_link_botao" value="${escapeHtml(inv.link_botao || "")}"></div>
               <div class="form-group form-group--full"><label>Matrícula (HTML opcional)</label><textarea name="inv_matricula" rows="2">${escapeHtml(inv.matricula_html || "")}</textarea></div>
-              <div class="form-group form-group--full"><label>Parcelas (HTML opcional)</label><textarea name="inv_parcelas" rows="2">${escapeHtml(inv.parcelas_html || "")}</textarea></div>
+              <div class="form-divider"><span>Opções de parcelamento (popup)</span></div>
+              <p class="course-section__desc">Exibidas ao clicar em &quot;Confira outras opções de parcelamento&quot; na página do curso. Adicione quantas opções precisar.</p>
+              <div class="repeater" id="parcelas-repeater">
+                ${parcelas.length ? parcelas.map((p) => installmentItemHtml(p)).join("") : installmentItemHtml({ descricao: "à vista", valor: "", desconto: "" })}
+              </div>
+              <button type="button" class="btn btn--ghost btn--sm" id="add-parcela">${icon("plus", { size: 14 })} Adicionar opção</button>
+              <div class="form-divider"><span>PDF de descontos</span></div>
+              ${renderPdfUploadField({ value: inv.pdf_descontos || "" })}
               <div class="form-group form-group--full"><label>Benefícios (um por linha)</label><textarea name="inv_beneficios" rows="6" placeholder="Formação em instituição referência...">${escapeHtml((inv.beneficios || []).join("\n"))}</textarea></div>
             </div>
           `)}
@@ -679,9 +687,24 @@ function faqItemHtml(f) {
   </div>`;
 }
 
+function installmentItemHtml(p) {
+  return `<div class="repeater-item" data-parcela-item>
+    <div class="repeater-item__head"><span>Opção de parcelamento</span><button type="button" class="btn btn--ghost btn--sm btn--danger-outline" data-remove-parcela>${icon("trash", { size: 14 })} Remover</button></div>
+    <div class="form-grid">
+      <div class="form-group form-group--full"><label>Descrição</label><input name="parcela_descricao" value="${escapeHtml(p.descricao || "")}" placeholder="Ex: 12 parcelas de ou à vista"></div>
+      <div class="form-group"><label>Valor</label><input name="parcela_valor" value="${escapeHtml(p.valor || "")}" placeholder="Ex: R$ 466,66"></div>
+      <div class="form-group"><label>Desconto (opcional)</label><input name="parcela_desconto" value="${escapeHtml(p.desconto || "")}" placeholder="Ex: 20% de desconto"></div>
+    </div>
+  </div>`;
+}
+
 function bindCourseFormEvents(form) {
   $$("[data-image-upload]", form).forEach((wrap) => {
     bindImageUpload(wrap, { folder: wrap.dataset.folder || "courses" });
+  });
+
+  $$("[data-pdf-upload]", form).forEach((wrap) => {
+    bindPdfUpload(wrap, { folder: wrap.dataset.folder || "courses" });
   });
 
   $$("[data-course-jump]", form).forEach((btn, index) => {
@@ -703,6 +726,10 @@ function bindCourseFormEvents(form) {
     $("#faq-repeater", form)?.insertAdjacentHTML("beforeend", faqItemHtml({ pergunta: "", resposta: "" }));
   });
 
+  $("#add-parcela", form)?.addEventListener("click", () => {
+    $("#parcelas-repeater", form)?.insertAdjacentHTML("beforeend", installmentItemHtml({ descricao: "", valor: "", desconto: "" }));
+  });
+
   form.addEventListener("click", (e) => {
     if (e.target.closest("[data-remove-modulo]")) {
       e.target.closest("[data-modulo-item]")?.remove();
@@ -710,6 +737,10 @@ function bindCourseFormEvents(form) {
     }
     if (e.target.closest("[data-remove-faq]")) {
       e.target.closest("[data-faq-item]")?.remove();
+      return;
+    }
+    if (e.target.closest("[data-remove-parcela]")) {
+      e.target.closest("[data-parcela-item]")?.remove();
     }
   });
 
@@ -789,6 +820,27 @@ function emptyCourse() {
     faq: [],
     seo: {},
   };
+}
+
+function renderPdfUploadField({ value = "" }) {
+  const fileLabel = value ? value.split("/").pop() : "";
+  const preview = value
+    ? `<a href="${mediaUrl(value)}" target="_blank" rel="noopener">${escapeHtml(fileLabel)}</a>`
+    : `<span class="pdf-upload__empty">Nenhum PDF selecionado</span>`;
+
+  return `
+    <div class="form-group form-group--full pdf-upload" data-pdf-upload data-folder="courses">
+      <label>PDF — link &quot;Confira descontos especiais&quot;</label>
+      <p class="course-section__desc">Baixado ao clicar no link da seção de investimento. Envie um arquivo ou cole a URL de um PDF já hospedado.</p>
+      <div class="pdf-upload__preview">${preview}</div>
+      <input type="text" name="inv_pdf_descontos" value="${escapeHtml(value)}" placeholder="URL do PDF ou caminho após upload">
+      <label class="pdf-upload__btn btn btn--ghost btn--sm">
+        ${icon("file-text", { size: 14 })} Enviar PDF
+        <input type="file" accept="application/pdf,.pdf" class="pdf-upload__input" hidden>
+      </label>
+      <small>PDF até 10 MB.</small>
+      <p class="pdf-upload__status image-upload__status" hidden></p>
+    </div>`;
 }
 
 function renderImageUploadField({ name = "foto", value = "", label = "Foto", folder = "uploads", dimensions = "" }) {
@@ -1188,6 +1240,14 @@ function collectCourseForm(form) {
     if (pergunta) faq.push({ pergunta, resposta });
   });
 
+  const opcoes_parcelamento = [];
+  $$("[data-parcela-item]", form).forEach((el) => {
+    const descricao = el.querySelector('[name="parcela_descricao"]')?.value.trim() || "";
+    const valor = el.querySelector('[name="parcela_valor"]')?.value.trim() || "";
+    const desconto = el.querySelector('[name="parcela_desconto"]')?.value.trim() || "";
+    if (descricao || valor) opcoes_parcelamento.push({ descricao, valor, desconto });
+  });
+
   const publico_alvo = [0, 1, 2, 3].map((i) => ({
     imagem: form[`publico_imagem_${i}`]?.value.trim() || "",
     titulo: form[`publico_titulo_${i}`]?.value.trim() || "",
@@ -1245,7 +1305,8 @@ function collectCourseForm(form) {
       texto_botao: form.inv_texto_botao?.value.trim(),
       link_botao: form.inv_link_botao?.value.trim(),
       matricula_html: form.inv_matricula?.value.trim(),
-      parcelas_html: form.inv_parcelas?.value.trim(),
+      pdf_descontos: form.inv_pdf_descontos?.value.trim(),
+      opcoes_parcelamento,
       beneficios: (form.inv_beneficios?.value || "").split("\n").map((s) => s.trim()).filter(Boolean),
     },
     faq,
@@ -1295,6 +1356,12 @@ function bindEvents() {
 
     courseForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      const uploading = courseForm.querySelector(
+        ".image-upload__status:not([hidden]), .pdf-upload__status:not([hidden])",
+      );
+      if (uploading?.textContent?.includes("Enviando")) {
+        return toast("Aguarde o upload terminar.", "error");
+      }
       const submitBtn = courseForm.querySelector('[type="submit"]');
       try {
         await saveWithFeedback(async () => {

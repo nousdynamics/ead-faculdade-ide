@@ -90,7 +90,9 @@
   mask-size: contain;
 }
 
-.course-investment__cta {
+.course-investment__cta,
+.elementor-kit-5 a.course-investment__cta,
+.elementor-kit-5 .course-investment__cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -100,6 +102,7 @@
   padding: 0.85rem 1.5rem;
   border: 0;
   border-radius: 999px;
+  background-color: transparent;
   background-image: linear-gradient(45deg, #01e3f8, #13a6b4, #01e3f8, #13a6b4);
   background-size: 400% 200%;
   animation: course-investment-textura 3.4s cubic-bezier(0.2, 0.5, 0.9, 0.6) 2s infinite;
@@ -111,10 +114,14 @@
   letter-spacing: 0.04em;
   text-decoration: none;
   text-transform: uppercase;
-  transition: transform 250ms ease, box-shadow 250ms ease;
+  transition:
+    transform 250ms ease,
+    box-shadow 250ms ease,
+    background 1.6s cubic-bezier(0.55, 0.1, 0.47, 0.94);
 }
 
-.course-investment__cta:hover {
+.course-investment__cta:hover,
+.elementor-kit-5 a.course-investment__cta:hover {
   color: #fff;
   transform: translateY(-1px);
   box-shadow: inset 0 1px 4px #01e3f8, 0 8px 24px rgb(1 227 248 / 0.25);
@@ -132,15 +139,18 @@
   transition: transform 0.5s ease;
 }
 
-.course-investment__cta:hover .course-investment__cta-icon {
+.course-investment__cta:hover .course-investment__cta-icon,
+.hovers.course-investment__cta:hover .course-investment__cta-icon {
   transform: rotate(-45deg);
 }
 
 .course-investment__cta-text {
+  color: #fff;
   transition: margin 0.3s ease;
 }
 
-.course-investment__cta:hover .course-investment__cta-text {
+.course-investment__cta:hover .course-investment__cta-text,
+.hovers.course-investment__cta:hover .course-investment__cta-text {
   margin-inline: 0.5rem 0;
 }
 
@@ -230,7 +240,8 @@
   margin-top: 1.25rem;
 }
 
-.course-investment__links a {
+.course-investment__links a,
+.course-investment__link-btn {
   color: #fff;
   font-family: var(--font-heading);
   font-size: 0.875rem;
@@ -241,7 +252,16 @@
   transition: color 200ms ease, opacity 200ms ease;
 }
 
-.course-investment__links a:hover {
+.course-investment__link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.course-investment__links a:hover,
+.course-investment__link-btn:hover {
   color: var(--color-accent-bright);
 }
 
@@ -301,5 +321,148 @@
   .course-investment__cta-icon,
   .course-investment__cta-text {
     transition-duration: 0.01ms;
+  }
+}
+
+/* Popup — opções de parcelamento */
+.course-installments-modal {
+  width: min(100% - 2rem, 920px);
+  max-height: calc(100vh - 2rem);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  overflow: visible;
+}
+
+.course-installments-modal::backdrop {
+  background: rgb(16 20 41 / 0.78);
+  backdrop-filter: blur(4px);
+}
+
+.course-installments-modal__panel {
+  position: relative;
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 2.75rem 2rem 2rem;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: var(--radius-md);
+  background: radial-gradient(100% 256% at 100% 0%, #2b325c 0%, #101429 100%);
+  box-shadow: 0 28px 56px rgb(0 0 0 / 0.38);
+}
+
+.course-installments-modal__close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid rgb(255 255 255 / 0.22);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.06);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 200ms ease, border-color 200ms ease;
+}
+
+.course-installments-modal__close:hover {
+  background: rgb(255 255 255 / 0.12);
+  border-color: rgb(255 255 255 / 0.35);
+}
+
+.course-installments-modal__close:focus-visible {
+  outline: 2px solid var(--color-accent-bright);
+  outline-offset: 2px;
+}
+
+.course-installments-modal__title {
+  margin: 0 0 1.75rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: var(--fw-bold);
+  line-height: 1.2;
+  text-align: center;
+  color: #fff;
+  text-wrap: balance;
+}
+
+.elementor-kit-5 .course-installments-modal__title,
+.elementor-kit-5 .course-installments-modal h2.course-installments-modal__title {
+  color: #fff;
+}
+
+.course-installments-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: 0.875rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.course-installments-modal__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 7.5rem;
+  padding: 1.125rem 0.75rem;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: var(--radius-sm);
+  background: rgb(255 255 255 / 0.04);
+  text-align: center;
+}
+
+.course-installments-modal__label {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 0.8125rem;
+  font-weight: var(--fw-book);
+  line-height: 1.3;
+  color: rgb(255 255 255 / 0.9);
+}
+
+.course-installments-modal__price {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: var(--fw-bold);
+  line-height: 1.05;
+  color: #fff;
+}
+
+.course-installments-modal__value {
+  color: var(--color-accent-bright);
+}
+
+.course-installments-modal__discount {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: var(--fw-book);
+  font-style: italic;
+  line-height: 1.25;
+  color: rgb(255 255 255 / 0.72);
+}
+
+@media (max-width: 767px) {
+  .course-installments-modal__panel {
+    padding: 2.5rem 1.25rem 1.5rem;
+  }
+
+  .course-installments-modal__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 479px) {
+  .course-installments-modal__grid {
+    grid-template-columns: 1fr;
   }
 }
