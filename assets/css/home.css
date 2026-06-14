@@ -105,8 +105,9 @@
 }
 .excelencia__title {
   color: #fff;
-  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
-  font-weight: var(--fw-bold);
+  font-size: 36px;
+  font-weight: var(--fw-book);
+  line-height: 1.2;
   margin: 0;
 }
 
@@ -116,7 +117,8 @@
   min-height: 180px;
   display: flex;
   align-items: center;
-  padding: 2rem clamp(1.5rem, 4vw, 2rem);
+  padding-block: 32px;
+  padding-inline: clamp(1.5rem, 4vw, 2rem);
 }
 
 .benefits__cell--white {
@@ -171,7 +173,7 @@
 
 .benefits__title {
   color: var(--color-primary);
-  font-size: clamp(1.5rem, 2vw, 1.8em);
+  font-size: 1.8em;
   font-weight: var(--fw-book);
   line-height: 1.2;
   text-wrap: balance;

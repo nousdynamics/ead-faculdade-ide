@@ -26,26 +26,34 @@
   <!-- ================= HEADER ================= -->
   <header class="site-header" id="topo">
     <div class="container site-header__inner">
-      <div class="site-header__start">
+      <div class="site-header__brand">
         <a class="site-header__logo" href="/" aria-label="Faculdade IDE EAD — início">
           <img src="assets/img/LOGO-IDE-ONLINE-02.svg" width="229" height="88" alt="Faculdade IDE EAD">
         </a>
-        <nav class="site-nav__menu" aria-label="Menu principal">
-          <a href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Pós-Graduação</a>
-          <span class="site-nav__divider" aria-hidden="true"></span>
-          <a href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Graduação</a>
-          <span class="site-nav__divider" aria-hidden="true"></span>
-          <a href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Curta Duração</a>
-          <span class="site-nav__divider" aria-hidden="true"></span>
-          <a href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Todos os cursos</a>
-        </nav>
+        <span class="site-header__divider" aria-hidden="true"></span>
       </div>
-      <div class="site-nav__actions">
-        <a class="site-header__login" href="https://institutode131845.rm.cloudtotvs.com.br/FrameHTML/web/app/edu/PortalEducacional/login/" target="_blank" rel="noopener">Já sou Aluno(a)</a>
-        <a class="site-header__cta" href="#inscricao">inscreva-se</a>
-      </div>
+      <button class="site-header__menu-btn" id="menuOpen" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Abrir menu">
+        <img src="assets/img/CiHamburgerLg.svg" width="20" height="20" alt="">
+      </button>
     </div>
   </header>
+
+  <div class="site-menu" id="siteMenu" hidden>
+    <div class="site-menu__backdrop" id="menuBackdrop"></div>
+    <div class="site-menu__panel" role="dialog" aria-modal="true" aria-label="Menu principal">
+      <button class="site-menu__close" id="menuClose" type="button" aria-label="Fechar menu">&times;</button>
+      <nav class="site-menu__nav" aria-label="Navegação">
+        <a href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Pós-Graduação</a>
+        <a href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Graduação</a>
+        <a href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Curta Duração</a>
+        <a href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Todos os cursos</a>
+      </nav>
+      <div class="site-menu__actions">
+        <a class="site-menu__login" href="https://institutode131845.rm.cloudtotvs.com.br/FrameHTML/web/app/edu/PortalEducacional/login/" target="_blank" rel="noopener">Já sou Aluno(a)</a>
+        <a class="site-menu__cta" href="#inscricao">inscreva-se</a>
+      </div>
+    </div>
+  </div>
 
   <main>
     <!-- ================= HERO ================= -->
@@ -311,56 +319,67 @@
   <!-- ================= FOOTER ================= -->
   <footer class="site-footer">
     <div class="container site-footer__grid">
-      <div class="site-footer__col site-footer__brand">
+      <div class="site-footer__col">
         <img class="site-footer__logo" src="assets/img/LOGO-IDE-ONLINE-02.svg" alt="Faculdade IDE EAD">
-        <div class="emec">
-          <img class="emec__badge" src="assets/img/e-mec.webp" alt="Selo e-MEC">
+        <div class="site-footer__block">
+          <h3>Políticas</h3>
+          <ul>
+            <li><a href="https://ead.faculdadeide.edu.br/?page_id=773">Termos de uso</a></li>
+            <li><a href="https://ead.faculdadeide.edu.br/?page_id=3">Política de privacidade</a></li>
+          </ul>
+        </div>
+        <div class="site-footer__emec">
           <p>Consulte aqui o cadastro da Instituição no Sistema e-MEC</p>
-          <img class="emec__qr" src="assets/img/e-mec-qrcode.png" alt="QR Code e-MEC">
+          <img src="assets/img/e-mec-qrcode.png" alt="QR Code e-MEC">
+        </div>
+      </div>
+
+      <div class="site-footer__col site-footer__col--stack-sm">
+        <div class="site-footer__block">
+          <h3>Institucional</h3>
+          <ul>
+            <li><a href="https://www.faculdadeide.edu.br/quem-somos">Quem somos</a></li>
+            <li><a href="https://www.faculdadeide.edu.br/biblioteca">Biblioteca</a></li>
+          </ul>
+        </div>
+        <div class="site-footer__block site-footer__block--flush">
+          <ul>
+            <li><a href="https://www.faculdadeide.edu.br/fale-conosco">Fale conosco</a></li>
+          </ul>
         </div>
       </div>
 
       <div class="site-footer__col">
-        <h3>Políticas</h3>
-        <ul>
-          <li><a href="https://ead.faculdadeide.edu.br/?page_id=3">Termos de uso</a></li>
-          <li><a href="https://ead.faculdadeide.edu.br/?page_id=3">Política de privacidade</a></li>
-        </ul>
-      </div>
-
-      <div class="site-footer__col">
-        <h3>Institucional</h3>
-        <ul>
-          <li><a href="https://www.faculdadeide.edu.br/quem-somos">Quem somos</a></li>
-          <li><a href="https://www.faculdadeide.edu.br/biblioteca">Biblioteca</a></li>
-          <li><a href="https://www.faculdadeide.edu.br/fale-conosco">Fale conosco</a></li>
-        </ul>
-      </div>
-
-      <div class="site-footer__col">
-        <h3>Nossos escritórios</h3>
-        <p>Alferes José Pedro de Brito, 50<br>Farolândia — Aracaju/SE</p>
-        <h3 style="margin-top:1.5rem">Contatos</h3>
-        <p class="site-footer__phone"><a href="tel:08000813256">0800 081 3256*</a></p>
-        <p class="site-footer__note">* O 0800 só é válido para ligações de telefone fixo, fora de Recife e Região Metropolitana</p>
-        <p class="site-footer__phone"><a href="tel:08134650002">(81) 3465-0002</a></p>
-      </div>
-
-      <div class="site-footer__col">
-        <h3>Redes Sociais</h3>
-        <div class="social">
-          <a href="https://www.instagram.com/faculdadeide" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.42.4.68.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.8 3.8 0 0 1-.9 1.4c-.4.42-.8.68-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.8 3.8 0 0 1-1.4-.9 3.8 3.8 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.48-1 .9-1.4.4-.42.8-.68 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.1 0-3.5 0-4.7.07-.9.04-1.4.2-1.7.32-.43.17-.74.37-1.06.7-.32.31-.52.62-.69 1.05-.12.3-.28.8-.32 1.7C3.8 8.5 3.8 8.9 3.8 12s0 3.5.07 4.7c.04.9.2 1.4.32 1.7.17.43.37.74.7 1.06.31.32.62.52 1.05.69.3.12.8.28 1.7.32 1.2.06 1.6.07 4.7.07s3.5 0 4.7-.07c.9-.04 1.4-.2 1.7-.32.43-.17.74-.37 1.06-.7.32-.31.52-.62.69-1.05.12-.3.28-.8.32-1.7.06-1.2.07-1.6.07-4.7s0-3.5-.07-4.7c-.04-.9-.2-1.4-.32-1.7a2.8 2.8 0 0 0-.7-1.06 2.8 2.8 0 0 0-1.05-.69c-.3-.12-.8-.28-1.7-.32C15.5 4 15.1 4 12 4Zm0 3.1a4.9 4.9 0 1 1 0 9.8 4.9 4.9 0 0 1 0-9.8Zm0 1.8a3.1 3.1 0 1 0 0 6.2 3.1 3.1 0 0 0 0-6.2Zm5-3.2a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/></svg></a>
-          <a href="https://www.facebook.com/faculdadeide" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8.2h2.8l.42-3.2H13.5V7.5c0-.93.26-1.56 1.6-1.56h1.7V3.1c-.3-.04-1.3-.13-2.48-.13-2.46 0-4.14 1.5-4.14 4.25v2.37H7.4v3.2h2.28V21h3.82Z"/></svg></a>
-          <a href="https://twitter.com/faculdadeide" target="_blank" rel="noopener" aria-label="Twitter / X"><svg viewBox="0 0 24 24"><path d="M17.7 3h3.3l-7.2 8.2L22.5 21h-6.6l-5.2-6.8L4.8 21H1.5l7.7-8.8L1.5 3h6.8l4.7 6.2L17.7 3Zm-1.2 16h1.8L7.6 4.9H5.7L16.5 19Z"/></svg></a>
+        <div class="site-footer__block site-footer__block--tight">
+          <h3>Nossos escritórios</h3>
+          <p>Alferes José Pedro de Brito, 50<br>Farolândia<br>Aracaju/SE</p>
+        </div>
+        <div class="site-footer__block site-footer__block--tight">
+          <h3>Contatos</h3>
+          <p class="site-footer__phone"><a href="tel:08000813256">0800 081 3256*</a></p>
+          <p class="site-footer__note">* O 0800 só é válido para ligações de telefone fixo, fora de Recife e Região Metropolitana</p>
+          <p class="site-footer__phone"><a href="tel:08134650002">(81) 3465-0002</a></p>
+        </div>
+        <div class="site-footer__block">
+          <h3>Redes Social</h3>
+          <div class="social">
+            <a href="https://www.instagram.com/faculdadeide" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.42.4.68.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.8 3.8 0 0 1-.9 1.4c-.4.42-.8.68-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.8 3.8 0 0 1-1.4-.9 3.8 3.8 0 0 1-.9-1.4c-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.48-1 .9-1.4.4-.42.8-.68 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.1 0-3.5 0-4.7.07-.9.04-1.4.2-1.7.32-.43.17-.74.37-1.06.7-.32.31-.52.62-.69 1.05-.12.3-.28.8-.32 1.7C3.8 8.5 3.8 8.9 3.8 12s0 3.5.07 4.7c.04.9.2 1.4.32 1.7.17.43.37.74.7 1.06.31.32.62.52 1.05.69.3.12.8.28 1.7.32 1.2.06 1.6.07 4.7.07s3.5 0 4.7-.07c.9-.04 1.4-.2 1.7-.32.43-.17.74-.37 1.06-.7.32-.31.52-.62.69-1.05.12-.3.28-.8.32-1.7.06-1.2.07-1.6.07-4.7s0-3.5-.07-4.7c-.04-.9-.2-1.4-.32-1.7a2.8 2.8 0 0 0-.7-1.06 2.8 2.8 0 0 0-1.05-.69c-.3-.12-.8-.28-1.7-.32C15.5 4 15.1 4 12 4Zm0 3.1a4.9 4.9 0 1 1 0 9.8 4.9 4.9 0 0 1 0-9.8Zm0 1.8a3.1 3.1 0 1 0 0 6.2 3.1 3.1 0 0 0 0-6.2Zm5-3.2a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/></svg></a>
+            <a href="https://www.facebook.com/faculdadeide" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8.2h2.8l.42-3.2H13.5V7.5c0-.93.26-1.56 1.6-1.56h1.7V3.1c-.3-.04-1.3-.13-2.48-.13-2.46 0-4.14 1.5-4.14 4.25v2.37H7.4v3.2h2.28V21h3.82Z"/></svg></a>
+            <a href="https://twitter.com/faculdadeide" target="_blank" rel="noopener" aria-label="Twitter / X"><svg viewBox="0 0 24 24"><path d="M17.7 3h3.3l-7.2 8.2L22.5 21h-6.6l-5.2-6.8L4.8 21H1.5l7.7-8.8L1.5 3h6.8l4.7 6.2L17.7 3Zm-1.2 16h1.8L7.6 4.9H5.7L16.5 19Z"/></svg></a>
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="site-footer__rule" aria-hidden="true"></div>
 
     <div class="container site-footer__bottom">
-      <p>© Faculdade IDE | Mude O Seu Mundo! 2024 — Todos os direitos reservados · CNPJ: 08.469.669/0001-39 — Instituto de Desenvolvimento Educacional</p>
-      <a class="dev-by" href="https://wa.me/5571991065853?text=Eu%20quero%20um%20site%20para%20minha%20empresa" target="_blank" rel="noopener">Desenvolvido por: <img src="assets/img/Nous-Dynamics-Favicon-01.svg" alt="Nous Dynamics"></a>
+      <p>© Faculdade IDE | Mude O Seu Mundo! 2024 • Todos os direitos reservados<br>CNPJ: 08.469.669/0001-39 — Instituto de Desenvolvimento Educacional</p>
+      <a class="dev-by" href="https://wa.me/5571991065853?text=Eu%20quero%20um%20site%20para%20minha%20empresa!" target="_blank" rel="noopener">Desenvolvido por: <img src="assets/img/Nous-Dynamics-Favicon-01.svg" alt="Nous Dynamics"></a>
     </div>
   </footer>
+
+  <script src="assets/js/menu.js" defer></script>
 
   <script src="assets/js/course-filter.js" defer></script>
   <script src="assets/js/form-stub.js" defer></script>

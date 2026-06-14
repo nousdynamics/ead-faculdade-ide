@@ -1,30 +1,34 @@
-// menu.js — toggle do menu mobile (hamburguer)
+// menu.js — painel do menu (hambúrguer, conforme Menu.json)
 (function () {
-  var toggle = document.getElementById('navToggle');
-  var nav = document.getElementById('primaryNav');
-  if (!toggle || !nav) return;
+  var openBtn = document.getElementById('menuOpen');
+  var closeBtn = document.getElementById('menuClose');
+  var menu = document.getElementById('siteMenu');
+  var backdrop = document.getElementById('menuBackdrop');
+  if (!openBtn || !menu) return;
 
-  function close() {
-    nav.classList.remove('is-open');
-    toggle.classList.remove('is-active');
-    toggle.setAttribute('aria-expanded', 'false');
-    document.body.classList.remove('nav-open');
+  function setOpen(open) {
+    menu.hidden = !open;
+    openBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    document.body.classList.toggle('menu-open', open);
+    if (open) closeBtn && closeBtn.focus();
+    else openBtn.focus();
   }
 
-  toggle.addEventListener('click', function () {
-    var open = nav.classList.toggle('is-open');
-    toggle.classList.toggle('is-active', open);
-    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    document.body.classList.toggle('nav-open', open);
-  });
+  function close() { setOpen(false); }
 
-  // Fecha ao clicar num link do menu
-  nav.querySelectorAll('a').forEach(function (a) {
+  openBtn.addEventListener('click', function () { setOpen(true); });
+  closeBtn && closeBtn.addEventListener('click', close);
+  backdrop && backdrop.addEventListener('click', close);
+
+  menu.querySelectorAll('a').forEach(function (a) {
     a.addEventListener('click', close);
   });
 
-  // Fecha ao redimensionar para desktop
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !menu.hidden) close();
+  });
+
   window.addEventListener('resize', function () {
-    if (window.innerWidth > 1024) close();
+    if (window.innerWidth >= 1024 && !menu.hidden) close();
   });
 })();
