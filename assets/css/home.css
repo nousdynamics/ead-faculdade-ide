@@ -1,1 +1,98 @@
-/* home.css */
+/* ============================================================
+   Home — estilos específicos das seções
+   ============================================================ */
+
+/* ===================== HERO ===================== */
+.hero {
+  position: relative;
+  background-color: var(--color-accent);
+  background-image:
+    linear-gradient(95deg, rgba(19,166,180,.97) 0%, rgba(19,166,180,.88) 26%, rgba(19,166,180,.30) 48%, rgba(43,50,92,0) 68%),
+    url("../img/IMG-BACKGROUND-FACULDADE-IDE-EAD-V1-HERO.jpeg");
+  background-size: cover, cover;
+  background-position: center, center right;
+  background-repeat: no-repeat, no-repeat;
+  color: #fff;
+}
+.hero__inner {
+  max-width: 520px;
+  padding-block: 4.5rem;
+}
+.hero__title {
+  color: #fff;
+  font-size: clamp(1.7rem, 2.6vw, 2.5rem);
+  font-weight: var(--fw-black);
+  line-height: 1.2;
+  margin-bottom: 2rem;
+}
+.hero .lead-form { max-width: 430px; }
+.hero .btn--primary { align-self: flex-start; margin-top: .35rem; }
+
+/* ===================== EXCELÊNCIA (faixa) ===================== */
+.excelencia {
+  background: var(--color-accent);
+  color: #fff;
+  padding-block: 1.4rem;
+}
+.excelencia__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.excelencia__title {
+  color: #fff;
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  font-weight: var(--fw-bold);
+  margin: 0;
+}
+
+/* ===================== BENEFÍCIOS (grid 2x2) ===================== */
+.benefits {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.benefits__cell {
+  padding: 3.5rem clamp(1.5rem, 5vw, 4.5rem);
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+  color: #fff;
+}
+.benefits__cell--teal { background: var(--color-accent); }
+.benefits__cell--navy { background: var(--color-primary); }
+.benefits__title {
+  color: #fff;
+  font-size: clamp(1.6rem, 2.4vw, 2.3rem);
+  font-weight: var(--fw-black);
+  line-height: 1.15;
+  margin: 0;
+}
+.benefits__icon {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .15);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.benefits__icon img { width: 34px; height: 34px; filter: brightness(0) invert(1); }
+.benefits__text {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  max-width: 44ch;
+  margin: 0;
+}
+
+@media (max-width: 767px) {
+  .hero {
+    background-image: url("../img/IMG-BACKGROUND-FACULDADE-IDE-EAD-V1-HERO-MOBILE.jpeg");
+    background-position: center bottom;
+  }
+  .hero__inner { max-width: none; padding-block: 2.5rem 14rem; }
+  .benefits { grid-template-columns: 1fr; }
+  .benefits__cell { min-height: auto; padding: 2.5rem 1.5rem; }
+}
