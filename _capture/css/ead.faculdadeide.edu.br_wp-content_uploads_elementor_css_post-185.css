@@ -1,0 +1,92 @@
+.elementor-185 .elementor-element.elementor-element-7fee6be{--display:flex;--flex-direction:column;--container-widget-width:calc( ( 1 - var( --container-widget-flex-grow ) ) * 100% );--container-widget-height:initial;--container-widget-flex-grow:0;--container-widget-align-self:initial;--flex-wrap-mobile:wrap;--align-items:center;--gap:32px 32px;--row-gap:32px;--column-gap:32px;--padding-top:40px;--padding-bottom:40px;--padding-left:40px;--padding-right:40px;}.elementor-widget-heading .elementor-heading-title{font-family:var( --e-global-typography-primary-font-family ), Sans-serif;font-weight:var( --e-global-typography-primary-font-weight );color:var( --e-global-color-primary );}.elementor-185 .elementor-element.elementor-element-d5953f3 .elementor-heading-title{font-family:"Gotham", Sans-serif;font-size:20px;font-weight:600;line-height:28px;color:#FFFFFF;}.elementor-185 .elementor-element.elementor-element-6973115{width:100%;max-width:100%;text-align:center;}.elementor-185 .elementor-element.elementor-element-6973115 > .elementor-widget-container{margin:0px 0px 0px 0px;padding:0px 0px 0px 0px;}.elementor-185 .elementor-element.elementor-element-6973115 .elementor-heading-title{font-family:"Gotham", Sans-serif;font-size:14px;font-weight:600;line-height:1em;color:#C2DCDF;}#elementor-popup-modal-185{background-color:rgba(0,0,0,.8);justify-content:center;align-items:center;pointer-events:all;}#elementor-popup-modal-185 .dialog-message{width:672px;height:auto;}#elementor-popup-modal-185 .dialog-close-button{display:flex;top:-26px;font-size:20px;}#elementor-popup-modal-185 .dialog-widget-content{box-shadow:2px 8px 23px 3px rgba(0,0,0,0.2);}body:not(.rtl) #elementor-popup-modal-185 .dialog-close-button{right:6%;}body.rtl #elementor-popup-modal-185 .dialog-close-button{left:6%;}@media(max-width:767px){.elementor-185 .elementor-element.elementor-element-6973115 > .elementor-widget-container{margin:0px 0px 0px 0px;padding:0px 0px 0px 0px;}.elementor-185 .elementor-element.elementor-element-6973115{text-align:center;}.elementor-185 .elementor-element.elementor-element-6973115 .elementor-heading-title{font-size:37px;line-height:36px;}}/* Start custom CSS for heading, class: .elementor-element-d5953f3 */.elementor-185 .elementor-element.elementor-element-d5953f3{
+    text-wrap: balance;
+}/* End custom CSS */
+/* Start custom CSS for heading, class: .elementor-element-6973115 *//* Container principal */
+#parcela .elementor-heading-title ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: "IBM Plex Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Cada item - estilo card */
+#parcela .elementor-heading-title li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.0;
+    font-style: italic;
+    border: 0;
+    outline: 0;
+    vertical-align: baseline;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-transition: .3s ease-out;
+    transition: .3s ease-out;
+    min-width: 120px;
+    flex: 1;
+
+
+}
+
+
+
+/* Preços em destaque */
+#parcela .elementor-heading-title li strong {
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+    font-style: normal;
+    display: block;
+    margin: 8px 0;
+}
+
+/* Texto de desconto */
+#parcela .elementor-heading-title li em {
+    color: #5a7a94 !important;
+    font-size: 11px;
+    display: block;
+}
+
+/* Remove quebras de linha */
+#parcela .elementor-heading-title li br {
+    display: none;
+}
+
+/* Tablet */
+@media (max-width: 991px) {
+    #parcela .elementor-heading-title li {
+        padding: 30px 20px 25px 20px;
+        min-width: 160px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 575px) {
+    #parcela .elementor-heading-title ul {
+        gap: 15px;
+    }
+    
+    #parcela .elementor-heading-title li {
+        padding: 25px 15px 20px 15px;
+        min-width: 140px;
+        max-width: 48%;
+    }
+    
+    #parcela .elementor-heading-title li strong {
+        font-size: 22px;
+    }
+}/* End custom CSS */
+/* Start custom CSS for container, class: .elementor-element-7fee6be */.elementor-185 .elementor-element.elementor-element-7fee6be{
+    background: radial-gradient(100% 256% at 100% 0%, #2B325C 0%, #2B325C 100%) 
+
+}/* End custom CSS */
