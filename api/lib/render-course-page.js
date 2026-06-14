@@ -27,6 +27,22 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;");
 }
 
+/** Destaca a partir do "R$" (ex.: 24x de <span>R$ 277,08</span>). */
+function formatPriceWithHighlight(value, { highlightClass = "course-investment__price-highlight" } = {}) {
+  const text = String(value ?? "").trim();
+  if (!text) return "";
+  const currencyMatch = text.match(/R\s*\$/i);
+  const idx = currencyMatch ? currencyMatch.index : -1;
+  if (idx === -1) return escapeHtml(text);
+
+  const prefix = text.slice(0, idx).trimEnd();
+  const highlight = text.slice(idx).trimStart();
+  if (!highlight) return escapeHtml(text);
+
+  const marked = `<span class="${highlightClass}">${escapeHtml(highlight)}</span>`;
+  return prefix ? `${escapeHtml(prefix)} ${marked}` : marked;
+}
+
 function assetUrl(path, base = "../../") {
   if (!path) return "";
   if (/^https?:\/\//.test(path)) return path;
@@ -108,18 +124,39 @@ function renderJsonLd(course, faq) {
 
 function renderModulesGrid(modulos) {
   return modulos
-    .map((mod) => {
+    .map((mod, index) => {
       const body = mod.itens?.length
-        ? `<ul class="course-modules__list">${mod.itens.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ul>`
+        ? `<ul class="course-modules__list">${mod.itens
+            .map(
+              (line, itemIndex) =>
+                `<li class="course-modules__item">
+          <span class="course-modules__item-index" aria-hidden="true">${String(itemIndex + 1).padStart(2, "0")}</span>
+          <span class="course-modules__item-text">${escapeHtml(line)}</span>
+        </li>`,
+            )
+            .join("")}</ul>`
         : mod.resposta
           ? `<p class="course-modules__text">${escapeHtml(mod.resposta)}</p>`
           : "";
       return `<article class="course-modules__card">
-        <h3 class="course-modules__title">${escapeHtml(mod.titulo || "Módulo")}</h3>
-        ${body}
+        <header class="course-modules__head">
+          <h3 class="course-modules__title">${escapeHtml(mod.titulo || `Módulo ${index + 1}`)}</h3>
+        </header>
+        <div class="course-modules__body">${body}</div>
       </article>`;
     })
     .join("");
+}
+
+function renderModulesSection(modulos) {
+  if (!modulos?.length) return "";
+
+  return `<section class="course-modules-section" aria-labelledby="course-modules-title">
+    <div class="course-modules-section__inner">
+      <h2 id="course-modules-title" class="course-modules-section__title">O que você vai aprender:</h2>
+      <div class="course-modules">${renderModulesGrid(modulos)}</div>
+    </div>
+  </section>`;
 }
 
 function renderFaqSection(faq) {
@@ -180,8 +217,8 @@ function renderInvestmentSection(inv, inscricaoLink, base) {
       </div>
       <div class="course-investment__pricing">
         <span class="course-investment__badge">${escapeHtml(inv.oferta_label || "Oferta de lançamento")}</span>
-        ${inv.oferta_valor ? `<p class="course-investment__price">${escapeHtml(inv.oferta_valor)}</p>` : ""}
-        ${inv.taxa_inscricao ? `<p class="course-investment__fee">${escapeHtml(inv.taxa_inscricao)}</p>` : ""}
+        ${inv.oferta_valor ? `<p class="course-investment__price">${formatPriceWithHighlight(inv.oferta_valor)}</p>` : ""}
+        ${inv.taxa_inscricao ? `<p class="course-investment__fee">${formatPriceWithHighlight(inv.taxa_inscricao, { highlightClass: "course-investment__fee-highlight" })}</p>` : ""}
         ${inv.parcelas_html ? `<div class="course-investment__extra">${inv.parcelas_html}</div>` : ""}
         <div class="course-investment__links">
           <a href="#">Confira outras opções de parcelamento.</a>
@@ -486,16 +523,7 @@ export function renderCoursePage(course, ctx) {
       <div class="elementor-element elementor-element-ad3d8d1 e-con-full e-flex e-con e-parent">
         ${
           modulos.length
-            ? `<div class="elementor-element elementor-element-2f21298 e-flex e-con-boxed e-con e-child">
-          <div class="e-con-inner">
-            <div class="elementor-element elementor-element-e523a03 elementor-widget elementor-widget-heading">
-              <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default">O que você vai aprender:</h2></div>
-            </div>
-            <div class="elementor-element elementor-element-e036d55 e-con-full e-flex e-con e-child">
-              <div class="course-modules">${renderModulesGrid(modulos)}</div>
-            </div>
-          </div>
-        </div>`
+            ? renderModulesSection(modulos)
             : ""
         }
 

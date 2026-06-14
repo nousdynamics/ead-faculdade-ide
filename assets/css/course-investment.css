@@ -185,10 +185,20 @@
 .course-investment__price {
   margin: 0.5rem 0 0;
   font-family: var(--font-heading);
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.25;
+  color: #fff;
+  text-align: center;
+}
+
+.course-investment__price-highlight {
+  display: block;
+  margin-top: 0.15rem;
   font-size: clamp(2rem, 4vw, 3.25rem);
   font-weight: 600;
-  line-height: 1.1;
-  color: #fff;
+  line-height: 1.05;
+  color: var(--color-accent);
 }
 
 .course-investment__fee {
@@ -199,6 +209,13 @@
   font-style: italic;
   line-height: 1.3;
   color: rgb(255 255 255 / 0.92);
+  text-align: center;
+}
+
+.course-investment__fee-highlight {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--color-accent-bright);
 }
 
 .course-investment__extra {
