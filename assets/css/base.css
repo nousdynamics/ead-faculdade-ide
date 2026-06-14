@@ -25,7 +25,11 @@
 /* ---- Reset ---- */
 *, *::before, *::after { box-sizing: border-box; }
 * { margin: 0; padding: 0; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--site-header-offset, 96px);
+}
 
 body {
   font-family: var(--font-body);

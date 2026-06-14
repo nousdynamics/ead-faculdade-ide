@@ -561,6 +561,13 @@ body.admin-mode {
   overflow: auto;
 }
 
+.template-preview .elementor-1567 .elementor-element-6b816b8,
+.template-preview--course .elementor-1567 .elementor-element-6b816b8 {
+  max-width: 400px;
+  width: 100%;
+  margin-inline: auto;
+}
+
 .template-preview-shell--editor {
   margin-top: 1rem;
 }

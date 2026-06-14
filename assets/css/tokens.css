@@ -3,6 +3,8 @@
    Faculdade IDE EAD
    ============================================================ */
 :root {
+  --site-header-offset: 96px;
+
   /* ---- Cores (Elementor global kit) ---- */
   --color-primary: #2B325C;   /* navy — títulos, texto, botões */
   --color-accent:  #13A6B4;   /* teal — destaques, links, CTAs */

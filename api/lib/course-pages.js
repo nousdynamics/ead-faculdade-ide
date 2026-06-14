@@ -4,6 +4,7 @@ import { list } from "@vercel/blob";
 import { writeBlob } from "./blob-storage.js";
 import { readAllCollections } from "./cms.js";
 import { renderCoursePage } from "./render-course-page.js";
+import { render404Page } from "./site-layout.js";
 
 const PAGE_PREFIX = "pages/pos-graduacao";
 
@@ -131,7 +132,11 @@ export async function handleCoursePageRequest(req, res, slug) {
   const html = await resolveCoursePageHtml(slug);
   if (!html) {
     res.status(404).setHeader("Content-Type", "text/html; charset=utf-8");
-    return res.end("<!DOCTYPE html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><title>Curso não encontrado</title></head><body><h1>Curso não encontrado</h1><p><a href=\"/\">Voltar ao início</a></p></body></html>");
+    return res.end(render404Page({
+      title: "Curso não encontrado — EAD Faculdade IDE",
+      heading: "Curso não encontrado",
+      message: "O curso que você procura não existe ou foi removido.",
+    }));
   }
 
   res.status(200).setHeader("Content-Type", "text/html; charset=utf-8");

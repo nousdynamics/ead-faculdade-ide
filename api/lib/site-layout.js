@@ -1,67 +1,46 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Página não encontrada — EAD Faculdade IDE</title>
-  <meta name="robots" content="noindex, follow">
-  <link rel="icon" href="/assets/img/FAV-ICON-3.svg" sizes="any">
-  <link rel="stylesheet" href="/assets/css/tokens.css">
-  <link rel="stylesheet" href="/assets/css/base.css">
-  <link rel="stylesheet" href="/assets/css/components.css">
-  <style>
-    .not-found {
-      flex: 1 0 auto;
-      display: grid;
-      place-content: center;
-      text-align: center;
-      padding: 2rem;
-      gap: 1rem;
-    }
-    .not-found h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--color-primary); }
-    .not-found p { color: var(--color-muted); max-width: 40ch; margin: 0 auto; }
-  </style>
-</head>
-<body class="site-layout">
-  <header class="site-header" id="topo">
+/**
+ * Header, footer e páginas de erro compartilhados entre home, cursos e 404.
+ */
+const SITE_URL = "https://ead.faculdadeide.edu.br";
+
+export function renderHeader({ base = "", ctaHref = "#inscricao" } = {}) {
+  return `<header class="site-header" id="topo">
     <div class="container site-header__inner">
       <a class="site-header__logo" href="/" aria-label="Faculdade IDE EAD — início">
-        <img src="/assets/img/LOGO-IDE-ONLINE-02.svg" width="229" height="88" alt="Faculdade IDE EAD">
+        <img src="${base}assets/img/LOGO-IDE-ONLINE-02.svg" width="229" height="88" alt="Faculdade IDE EAD">
       </a>
       <nav class="site-nav__menu" aria-label="Menu principal">
-        <a href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Pós-Graduação</a>
+        <a href="${SITE_URL}/paginas-de-cursos/">Pós-Graduação</a>
         <span class="site-nav__divider" aria-hidden="true"></span>
-        <a href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Graduação</a>
+        <a href="${SITE_URL}/paginas-de-cursos/">Graduação</a>
         <span class="site-nav__divider" aria-hidden="true"></span>
-        <a href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Curta Duração</a>
+        <a href="${SITE_URL}/paginas-de-cursos/">Curta Duração</a>
         <span class="site-nav__divider" aria-hidden="true"></span>
-        <a href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Todos os cursos</a>
+        <a href="${SITE_URL}/paginas-de-cursos/">Todos os cursos</a>
       </nav>
       <div class="site-nav__actions">
         <a class="site-header__login" href="https://institutode131845.rm.cloudtotvs.com.br/FrameHTML/web/app/edu/PortalEducacional/login/" target="_blank" rel="noopener">Já sou Aluno(a)</a>
-        <a class="site-header__cta" href="#inscricao">inscreva-se</a>
+        <a class="site-header__cta" href="${ctaHref}">inscreva-se</a>
       </div>
     </div>
-  </header>
-  <main class="not-found">
-    <h1>404</h1>
-    <p>A página que você procura não existe ou foi movida.</p>
-    <a class="btn btn--primary" href="/">Voltar para a home</a>
-  </main>
-  <footer class="site-footer">
+  </header>`;
+}
+
+export function renderFooter({ base = "" } = {}) {
+  return `<footer class="site-footer">
     <div class="container site-footer__grid">
       <div class="site-footer__col">
-        <img class="site-footer__logo" src="/assets/img/LOGO-IDE-ONLINE-02.svg" alt="Faculdade IDE EAD">
+        <img class="site-footer__logo" src="${base}assets/img/LOGO-IDE-ONLINE-02.svg" alt="Faculdade IDE EAD">
         <div class="site-footer__block">
           <h3>Políticas</h3>
           <ul>
-            <li><a href="https://ead.faculdadeide.edu.br/?page_id=773">Termos de uso</a></li>
-            <li><a href="https://ead.faculdadeide.edu.br/?page_id=3">Política de privacidade</a></li>
+            <li><a href="${SITE_URL}/?page_id=773">Termos de uso</a></li>
+            <li><a href="${SITE_URL}/?page_id=3">Política de privacidade</a></li>
           </ul>
         </div>
         <div class="site-footer__emec">
           <p>Consulte aqui o cadastro da Instituição no Sistema e-MEC</p>
-          <img src="/assets/img/e-mec-qrcode.png" alt="QR Code e-MEC">
+          <img src="${base}assets/img/e-mec-qrcode.png" alt="QR Code e-MEC">
         </div>
       </div>
       <div class="site-footer__col site-footer__col--stack-sm">
@@ -100,9 +79,56 @@
     <div class="site-footer__rule" aria-hidden="true"></div>
     <div class="container site-footer__bottom">
       <p>© Faculdade IDE | Mude O Seu Mundo! 2024 • Todos os direitos reservados<br>CNPJ: 08.469.669/0001-39 — Instituto de Desenvolvimento Educacional</p>
-      <a class="dev-by" href="https://wa.me/5571991065853?text=Eu%20quero%20um%20site%20para%20minha%20empresa!" target="_blank" rel="noopener">Desenvolvido por: <img src="/assets/img/Nous-Dynamics-Favicon-01.svg" alt="Nous Dynamics"></a>
+      <a class="dev-by" href="https://wa.me/5571991065853?text=Eu%20quero%20um%20site%20para%20minha%20empresa!" target="_blank" rel="noopener">Desenvolvido por: <img src="${base}assets/img/Nous-Dynamics-Favicon-01.svg" alt="Nous Dynamics"></a>
     </div>
-  </footer>
-  <script src="/assets/js/site-header-offset.js" defer></script>
+  </footer>`;
+}
+
+export function renderSiteLayoutScripts({ base = "" } = {}) {
+  return `<script src="${base}assets/js/site-header-offset.js" defer></script>`;
+}
+
+export function render404Page({
+  title = "Página não encontrada — EAD Faculdade IDE",
+  heading = "404",
+  message = "A página que você procura não existe ou foi movida.",
+  base = "/",
+} = {}) {
+  const assetBase = base.endsWith("/") ? base : `${base}/`;
+
+  return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <meta name="robots" content="noindex, follow">
+  <link rel="icon" href="${assetBase}assets/img/FAV-ICON-3.svg" sizes="any">
+  <link rel="stylesheet" href="${assetBase}assets/css/tokens.css">
+  <link rel="stylesheet" href="${assetBase}assets/css/base.css">
+  <link rel="stylesheet" href="${assetBase}assets/css/components.css">
+  <style>
+    .not-found {
+      flex: 1 0 auto;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      padding: 2rem;
+      gap: 1rem;
+    }
+    .not-found h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--color-primary); }
+    .not-found p { color: var(--color-muted); max-width: 40ch; margin: 0 auto; }
+  </style>
+</head>
+<body class="site-layout">
+  ${renderHeader({ base: assetBase, ctaHref: "#inscricao" })}
+  <main class="not-found">
+    <h1>${heading}</h1>
+    <p>${message}</p>
+    <a class="btn btn--primary" href="/">Voltar para a home</a>
+  </main>
+  ${renderFooter({ base: assetBase })}
+  ${renderSiteLayoutScripts({ base: assetBase })}
 </body>
-</html>
+</html>`;
+}

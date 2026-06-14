@@ -52,14 +52,22 @@
 
 .jet-listing-grid--1567 .jet-listing-grid__items {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-@media (max-width: 1024px) {
-  .jet-listing-grid--1567 .jet-listing-grid__items { grid-template-columns: repeat(2, 1fr); }
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 400px));
+  justify-content: center;
+  gap: 1.5rem;
 }
 @media (max-width: 767px) {
-  .jet-listing-grid--1567 .jet-listing-grid__items { grid-template-columns: 1fr; }
+  .jet-listing-grid--1567 .jet-listing-grid__items {
+    grid-template-columns: minmax(0, 400px);
+    justify-content: center;
+  }
+}
+
+.elementor-1567 .elementor-element-6b816b8 {
+  max-width: 400px;
+  width: 100%;
+  margin-inline: auto;
+  box-sizing: border-box;
 }
 
 .testimonial-item__inner {
