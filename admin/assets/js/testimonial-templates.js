@@ -211,25 +211,33 @@ export function renderTestimonialsSectionPreview(course, testimonials, templates
   const sectionTpl = byTemplateId(templates, resolveSectionTemplateId(cfg, templates));
   const itemsHtml = deps.map((dep) => renderTestimonialItem(dep, templates, cfg, base)).join("");
 
-  if (!sectionTpl?.html) return wrapTestimonialPreviewHtml(itemsHtml);
+  if (!sectionTpl?.html) return wrapTestimonialPreviewHtml(itemsHtml, "secao");
 
   return wrapTestimonialPreviewHtml(
     applyTemplate(sectionTpl.html, {
       titulo_secao: escapeHtml(titulo),
       itens: itemsHtml,
     }),
+    "secao",
   );
 }
 
-export function wrapTestimonialPreviewHtml(html) {
+export function wrapTestimonialPreviewHtml(html, escopo = null) {
   if (!html?.trim()) return "";
-  return `<div class="elementor elementor-13 elementor-kit-5 template-preview-scope">${html}</div>`;
+  const scopeMod =
+    escopo === "item"
+      ? " template-preview-scope--item"
+      : escopo === "secao"
+        ? " template-preview-scope--secao"
+        : "";
+  return `<div class="elementor elementor-13 elementor-kit-5 template-preview-scope${scopeMod}">${html}</div>`;
 }
 
 export function previewTemplate(template, templates = [], sample = TESTIMONIAL_SAMPLE, base = "/") {
   if (!template?.html) return "";
+  const escopo = template.escopo === "secao" ? "secao" : "item";
   let html;
-  if (template.escopo === "secao") {
+  if (escopo === "secao") {
     const itemTpl = byTemplateId(templates, DEFAULTS.item);
     const fakeItem = itemTpl?.html
       ? applyTemplate(itemTpl.html, buildTestimonialVars(sample, base))
@@ -241,7 +249,7 @@ export function previewTemplate(template, templates = [], sample = TESTIMONIAL_S
   } else {
     html = applyTemplate(template.html, buildTestimonialVars(sample, base));
   }
-  return wrapTestimonialPreviewHtml(html);
+  return wrapTestimonialPreviewHtml(html, escopo);
 }
 
 export function starterHtmlFor(escopo) {

@@ -1,6 +1,6 @@
 /**
- * Pré-visualização de depoimentos no painel — espelha a seção da página de curso.
- * Usado junto com post-1567.css e overrides.css (escopo .template-preview).
+ * Pré-visualização de depoimentos no painel — espelha Elementor 1567.
+ * O admin não carrega frontend.min.css; emulamos o mínimo de .e-con aqui.
  */
 
 .template-preview-scope {
@@ -8,21 +8,31 @@
   --e-global-color-secondary: #d3dbe1;
   --e-global-color-text: #2b325c;
   --e-global-color-accent: #13a6b4;
-  color: var(--color-primary);
+  color: var(--e-global-color-primary, var(--color-primary));
   font-family: var(--font-body, "Gotham", sans-serif);
-  width: 100%;
-}
-
-.template-preview-scope .e-flex {
-  display: flex;
-}
-
-.template-preview-scope .e-con-boxed,
-.template-preview-scope .e-con-full {
   width: 100%;
   box-sizing: border-box;
 }
 
+/* Subset de frontend.min.css — containers flex do Elementor */
+.template-preview-scope .e-con.e-flex {
+  display: flex;
+  flex-direction: var(--flex-direction, column);
+  flex-wrap: var(--flex-wrap, wrap);
+  justify-content: var(--justify-content, flex-start);
+  align-items: var(--align-items, stretch);
+  gap: var(--row-gap, 0) var(--column-gap, 0);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.template-preview-scope .e-con-full {
+  width: 100%;
+  max-width: 100%;
+}
+
+.template-preview-scope .e-con-boxed > .e-con-inner,
 .template-preview-scope .e-con-inner {
   width: min(100%, 1280px);
   max-width: 100%;
@@ -31,6 +41,93 @@
   box-sizing: border-box;
 }
 
+/* Card depoimento — post-1567 */
+.template-preview-scope .elementor-1567 {
+  width: 100%;
+}
+
+.template-preview-scope .elementor-1567 .elementor-element-6b816b8 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  max-width: 400px;
+  margin-inline: auto;
+  box-sizing: border-box;
+  border: 1px solid var(--e-global-color-secondary);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+}
+
+.template-preview-scope .elementor-1567 .elementor-element-83bd929 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+}
+
+.template-preview-scope .elementor-1567 .elementor-widget-heading {
+  width: 100%;
+}
+
+.template-preview-scope .elementor-1567 .elementor-element-2558536 .elementor-heading-title {
+  font-family: "Gotham", sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 32px;
+  margin: 0;
+  text-align: center;
+}
+
+.template-preview-scope .elementor-1567 .elementor-element-c9a8ffe .elementor-heading-title {
+  font-family: "Gotham", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  margin: 0;
+  text-align: center;
+}
+
+.template-preview-scope .elementor-1567 .elementor-element-980275a {
+  width: 100%;
+  text-align: center;
+}
+
+.template-preview-scope .elementor-1567 .elementor-element-980275a .elementor-heading-title {
+  font-family: "Gotham", sans-serif;
+  font-size: 0.8em;
+  font-weight: 400;
+  line-height: 1.1em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* Prévia do modelo de depoimento (card isolado) */
+.template-preview--item {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 1.5rem;
+  background: #eef0f4;
+  min-height: 220px;
+}
+
+.template-preview-scope--item {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.template-preview-scope--item .jet-listing-grid__item {
+  width: 100%;
+  max-width: 400px;
+  flex: 0 1 400px;
+}
+
+/* Prévia do modelo de seção (wrapper + grid) */
 .template-preview-scope .elementor-element-55eefa2 {
   display: flex;
   flex-direction: column;
@@ -78,14 +175,6 @@
   justify-content: center;
   gap: 1.5rem;
   width: 100%;
-}
-
-.template-preview .elementor-1567 .elementor-element-6b816b8,
-.template-preview-scope .elementor-1567 .elementor-element-6b816b8 {
-  max-width: 400px;
-  width: 100%;
-  margin-inline: auto;
-  box-sizing: border-box;
 }
 
 .template-preview-shell .template-preview {

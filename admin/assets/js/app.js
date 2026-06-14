@@ -988,8 +988,8 @@ function renderTestimonialTemplatesList() {
           <tr class="template-preview-row" data-preview-row="${item.id}" hidden>
             <td colspan="4">
               <div class="template-preview-shell">
-                <p class="template-preview-shell__label">Pré-visualização (dados de exemplo)</p>
-                <div class="template-preview">${previewTemplate(item, allTemplates)}</div>
+                <p class="template-preview-shell__label">${item.escopo === "item" ? "Pré-visualização do card de depoimento" : "Pré-visualização da seção (wrapper)"}</p>
+                <div class="template-preview ${item.escopo === "item" ? "template-preview--item" : "template-preview--secao"}">${previewTemplate(item, allTemplates)}</div>
                 <p class="template-vars">Variáveis: ${(item.variaveis || []).map((v) => `<code>{{${escapeHtml(v)}}}</code>`).join(" ") || "—"}</p>
               </div>
             </td>
@@ -1055,8 +1055,8 @@ function renderTestimonialTemplateForm(item, { isNew = false } = {}) {
             </div>
           </div>
           <div class="template-preview-shell template-preview-shell--editor">
-            <p class="template-preview-shell__label">Pré-visualização ao vivo</p>
-            <div class="template-preview" id="template-live-preview">${preview}</div>
+            <p class="template-preview-shell__label">${p.escopo === "item" ? "Pré-visualização do card de depoimento" : "Pré-visualização da seção (wrapper)"}</p>
+            <div class="template-preview ${p.escopo === "item" ? "template-preview--item" : "template-preview--secao"}" id="template-live-preview">${preview}</div>
           </div>
           <div class="form-actions">
             <button type="button" class="btn btn--ghost" id="cancel-template">${icon("x", { size: 16 })} Cancelar</button>
@@ -1427,7 +1427,11 @@ function bindTestimonialTemplateForm(original, { isNew = false } = {}) {
 
   const updatePreview = () => {
     const draft = getDraft();
-    if (previewEl) previewEl.innerHTML = previewTemplate(draft, templates);
+    if (previewEl) {
+      previewEl.classList.remove("template-preview--item", "template-preview--secao");
+      previewEl.classList.add(draft.escopo === "item" ? "template-preview--item" : "template-preview--secao");
+      previewEl.innerHTML = previewTemplate(draft, templates);
+    }
     syncVarsHelp();
   };
 

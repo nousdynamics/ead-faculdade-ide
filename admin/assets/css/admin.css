@@ -539,6 +539,11 @@ body.admin-mode {
 .template-preview-row td {
   background: var(--color-surface-alt, #f8f9fc);
   padding: 0 !important;
+  width: 100%;
+}
+
+.template-preview-row td[colspan] {
+  width: 100%;
 }
 
 .template-preview-shell {
