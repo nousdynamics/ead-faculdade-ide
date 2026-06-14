@@ -3,6 +3,24 @@
    Overrides alinhados ao original + embed fornecido
    ============================================================ */
 
+.hero__form,
+#home-site-ead-3e90cfebb8378f18fbf8 {
+  width: 100%;
+  max-width: 558px;
+  margin: 0;
+  text-align: left;
+}
+
+#rd-section-mo0jfho4,
+#rd-row-mo0jfho9,
+#rd-column-mo0jfhoa,
+#bricks-component-xm_F9ldqJ1j6VQWfv1um6A {
+  max-width: 558px !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
 #rd-section-mo0jfho4,
 #rd-row-mo0jfho9,
 #rd-column-mo0jfhoa,
