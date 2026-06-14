@@ -1,6 +1,102 @@
 /* ============================================================
-   Página de curso — Aleitamento Materno e Banco de Leite Humano
+   Página de curso — template Pós-Graduação (Elementor)
    ============================================================ */
+
+/* ===================== HERO BANNER (Elementor sec. 1) ===================== */
+.course-hero-banner {
+  position: relative;
+  margin-top: -6.75rem;
+  padding-block: 7.5rem 4rem;
+  background-image: var(--hero-bg);
+  background-size: cover;
+  background-position: center;
+}
+.course-hero-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,.86) 0%, rgba(255,255,255,.96) 55%, rgba(255,255,255,.78) 100%);
+}
+.course-hero-banner__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+}
+.course-hero-banner__title {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-title);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+}
+.course-hero-banner__subtitle {
+  color: var(--color-muted);
+  font-size: 1.05rem;
+  line-height: 1.55;
+  margin-bottom: 1.75rem;
+  max-width: 52ch;
+}
+.course-hero-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+/* ===================== STICKY BAR (Elementor sec. 2) ===================== */
+.course-sticky-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+}
+.course-sticky-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: .85rem;
+}
+.course-sticky-bar__label {
+  display: block;
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  opacity: .8;
+}
+.course-sticky-bar__title {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  line-height: 1.3;
+}
+.course-sticky-bar__meta {
+  display: block;
+  font-size: .82rem;
+  opacity: .85;
+  margin-top: .15rem;
+}
+.course-sticky-bar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  flex-shrink: 0;
+}
+
+.btn--ghost-light {
+  background: rgba(255,255,255,.15);
+  color: var(--color-primary);
+  border: 1px solid rgba(43,50,92,.15);
+}
+.btn--outline-light {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.45);
+}
+.btn--outline-light:hover {
+  background: rgba(255,255,255,.08);
+}
 
 /* ===================== HERO ===================== */
 .course-hero { background: #fff; padding-block: 3rem; }
@@ -30,6 +126,18 @@
 }
 .course-hero__subtitle { color: var(--color-muted); font-size: 1.1rem; margin-bottom: 1.5rem; max-width: 46ch; font-weight: var(--fw-body); }
 .course-hero__meta { color: var(--color-primary); font-weight: var(--fw-body); font-size: .95rem; margin-bottom: 1.75rem; }
+.course-hero__status {
+  display: inline-block;
+  background: var(--status-color, var(--color-success));
+  color: #fff;
+  font-size: .78rem;
+  font-weight: var(--fw-body);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: .45rem 1rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: 1rem;
+}
 .course-hero__media { position: relative; }
 .course-hero__media img { width: 100%; border-radius: var(--radius-lg); object-fit: cover; }
 .course-hero__badge {
@@ -65,6 +173,67 @@
 }
 .course-infobar__item + .course-infobar__item { border-left: 1px solid rgba(255,255,255,.15); }
 .course-infobar__item svg { width: 26px; height: 26px; fill: none; stroke: var(--color-accent); stroke-width: 1.8; flex-shrink: 0; }
+
+/* ===================== VÍDEO PROMOCIONAL ===================== */
+.course-video { padding-block: var(--space-lg); background: #fff; }
+.course-video__frame {
+  position: relative;
+  width: min(100%, 920px);
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.course-video__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ===================== INFORMAÇÕES IMPORTANTES (Elementor sec. 6) ===================== */
+.course-info-grid {
+  padding-block: var(--space-xl);
+  background: var(--color-surface-2);
+}
+.course-info-grid__title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-family: var(--font-heading);
+  color: var(--color-primary);
+}
+.course-info-grid__items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+.course-info-grid__item {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  text-align: center;
+}
+.course-info-grid__item h3 {
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--color-accent);
+  margin-bottom: .5rem;
+}
+.course-info-grid__item p {
+  color: var(--color-text-body);
+  font-size: .95rem;
+  line-height: 1.45;
+}
+
+/* ===================== DETALHES (accordions extras) ===================== */
+.course-details { padding-block: var(--space-lg); }
+.course-about__coord-wrap .coord-card { max-width: 360px; margin: 0 auto; }
+.faculty-grid--compact { grid-template-columns: repeat(3, 1fr); }
+.faculty-grid--compact .faculty-card { aspect-ratio: 4 / 5; }
 
 /* ===================== CONHEÇA O CURSO ===================== */
 .course-about { padding-block: var(--space-xl); }
@@ -155,7 +324,8 @@
 }
 .course-guide__inner { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
 .course-guide__text { padding-block: var(--space-xl); }
-.course-guide__text h2 { color: #fff; max-width: 18ch; margin-bottom: 1.5rem; }
+.course-guide__text h2 { color: #fff; max-width: 18ch; margin-bottom: 1rem; }
+.course-guide__desc { opacity: .9; margin-bottom: 1.5rem; max-width: 42ch; line-height: 1.5; }
 .course-guide__media { display: flex; justify-content: center; }
 .course-guide__media img { max-width: 320px; }
 
@@ -236,6 +406,7 @@
 /* ===================== RELACIONADOS ===================== */
 .course-related { padding-block: var(--space-xl); }
 .course-related h2 { margin-bottom: 2.5rem; }
+.course-related__more { margin-top: 2rem; text-align: center; }
 .course-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -254,6 +425,11 @@
   .faculty-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 767px) {
+  .course-hero-banner { margin-top: 0; padding-block: 4rem 2.5rem; }
+  .course-sticky-bar__inner { flex-direction: column; align-items: stretch; }
+  .course-sticky-bar__actions { justify-content: stretch; }
+  .course-sticky-bar__actions .btn { flex: 1; justify-content: center; }
+  .course-info-grid__items { grid-template-columns: 1fr 1fr; }
   .course-hero__inner,
   .course-about__inner,
   .course-guide__inner,
@@ -262,6 +438,8 @@
   .course-infobar__item:nth-child(odd) { border-left: none; }
   .accordion--2col { grid-template-columns: 1fr; }
   .course-audience__grid { grid-template-columns: 1fr; }
+  .course-info-grid__items { grid-template-columns: 1fr; }
+  .faculty-grid--compact { grid-template-columns: 1fr 1fr; }
   .course-guide__media { order: -1; padding-top: 2rem; }
 }
 @media (max-width: 575px) {

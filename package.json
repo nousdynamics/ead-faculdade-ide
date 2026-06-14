@@ -9,6 +9,8 @@
     "dev:vercel": "vercel dev",
     "cms": "node scripts/cms-server.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs",
+    "generate:courses": "node scripts/generate-course-pages.mjs",
+    "generate:all": "node scripts/generate-course-pages.mjs --all && node scripts/generate-sitemap.mjs",
     "deploy:preview": "vercel",
     "deploy:prod": "vercel --prod"
   },
