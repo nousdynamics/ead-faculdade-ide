@@ -19,6 +19,7 @@ import {
 import {
   enterAdminFromLogin,
   transitionPage,
+  withSaveFeedback,
 } from "./motion.js";
 
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
@@ -47,11 +48,33 @@ let editId = null;
 
 function toast(msg, type = "success") {
   const el = $("#toast");
-  el.textContent = msg;
-  el.className = `toast${type === "error" ? " toast--error" : ""}`;
-  el.hidden = false;
+  if (!el) return;
+
   clearTimeout(el._t);
+  el.hidden = false;
+
+  if (type === "loading") {
+    el.className = "toast toast--loading";
+    el.innerHTML = `<span class="toast__spinner" aria-hidden="true"></span><span class="toast__text">${escapeHtml(msg)}</span>`;
+    return;
+  }
+
+  el.className = `toast${type === "error" ? " toast--error" : ""}`;
+  el.textContent = msg;
   el._t = setTimeout(() => { el.hidden = true; }, 3200);
+}
+
+async function saveWithFeedback(task, { loading = "Salvando...", success, submitBtn = null } = {}) {
+  toast(loading, "loading");
+  try {
+    const result = await withSaveFeedback(task, { message: loading, submitBtn });
+    const successMsg = typeof success === "function" ? success(result) : success;
+    if (successMsg) toast(successMsg, "success");
+    return result;
+  } catch (err) {
+    toast(err.message, "error");
+    throw err;
+  }
 }
 
 function setPage(title, subtitle) {
@@ -1229,10 +1252,14 @@ function bindEvents() {
   $$(".tab").forEach((tab) => {
     tab.addEventListener("click", () => {
       const panel = tab.dataset.tab;
-      tab.closest(".section__body")?.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
-      tab.closest(".section__body")?.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+      const body = tab.closest(".section__body");
+      body?.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+      body?.querySelectorAll(".tab-panel").forEach((p) => {
+        p.classList.remove("active", "tab-panel--enter");
+      });
       tab.classList.add("active");
-      document.getElementById(panel)?.classList.add("active");
+      const activePanel = document.getElementById(panel);
+      activePanel?.classList.add("active", "tab-panel--enter");
     });
   });
 
@@ -1242,21 +1269,26 @@ function bindEvents() {
 
     courseForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      const submitBtn = courseForm.querySelector('[type="submit"]');
       try {
-        const course = collectCourseForm(courseForm);
-        const { result } = await upsertItem("courses", course);
-        const page = result?.pages?.find((entry) => entry.slug === (course.slug || course.id) && entry.published);
-        if (page?.path) {
-          toast(`Curso salvo! Página publicada em ${page.path}`);
-        } else if (course.publicado === false) {
-          toast("Curso salvo como rascunho (página não publicada).");
-        } else {
-          toast("Curso salvo com sucesso!");
-        }
-        location.hash = `#/courses/${course.id}`;
-        await navigate();
-      } catch (err) {
-        toast(err.message, "error");
+        await saveWithFeedback(async () => {
+          const course = collectCourseForm(courseForm);
+          const { result } = await upsertItem("courses", course);
+          location.hash = `#/courses/${course.id}`;
+          await navigate();
+          return { course, result };
+        }, {
+          loading: "Salvando curso e republicando a página...",
+          submitBtn,
+          success: ({ course, result }) => {
+            const page = result?.pages?.find((entry) => entry.slug === (course.slug || course.id) && entry.published);
+            if (page?.path) return `Curso salvo! Página publicada em ${page.path}`;
+            if (course.publicado === false) return "Curso salvo como rascunho (página não publicada).";
+            return "Curso salvo com sucesso!";
+          },
+        });
+      } catch {
+        /* toast já exibido */
       }
     });
   }
@@ -1264,9 +1296,14 @@ function bindEvents() {
   $$("[data-delete-course]").forEach((btn) => {
     btn.addEventListener("click", async () => {
       if (!confirm("Excluir este curso?")) return;
-      await deleteItem("courses", btn.dataset.deleteCourse);
-      toast("Curso excluído");
-      navigate();
+      try {
+        await saveWithFeedback(async () => {
+          await deleteItem("courses", btn.dataset.deleteCourse);
+          await navigate();
+        }, { loading: "Excluindo curso...", success: "Curso excluído" });
+      } catch {
+        /* toast já exibido */
+      }
     });
   });
 
@@ -1285,9 +1322,15 @@ function bindAccountEvents() {
   emailForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     emailError.hidden = true;
+    const submitBtn = emailForm.querySelector('[type="submit"]');
     try {
-      await updateAccount({ email: emailForm.email.value.trim() });
-      toast("E-mail salvo com sucesso!");
+      await saveWithFeedback(async () => {
+        await updateAccount({ email: emailForm.email.value.trim() });
+      }, {
+        loading: "Salvando e-mail...",
+        submitBtn,
+        success: "E-mail salvo com sucesso!",
+      });
     } catch (err) {
       emailError.textContent = err.message;
       emailError.hidden = false;
@@ -1311,10 +1354,16 @@ function bindAccountEvents() {
       return;
     }
 
+    const submitBtn = passwordForm.querySelector('[type="submit"]');
     try {
-      await updateAccount({ currentPassword, newPassword });
-      passwordForm.reset();
-      toast("Senha atualizada com sucesso!");
+      await saveWithFeedback(async () => {
+        await updateAccount({ currentPassword, newPassword });
+        passwordForm.reset();
+      }, {
+        loading: "Atualizando senha...",
+        submitBtn,
+        success: "Senha atualizada com sucesso!",
+      });
     } catch (err) {
       passwordError.textContent = err.message;
       passwordError.hidden = false;
@@ -1385,11 +1434,12 @@ function bindTestimonialTemplateEvents() {
       }
       if (!confirm("Excluir este modelo permanentemente?")) return;
       try {
-        await deleteItem("testimonial-templates", id);
-        toast("Modelo excluído.");
-        navigate();
-      } catch (err) {
-        toast(err.message, "error");
+        await saveWithFeedback(async () => {
+          await deleteItem("testimonial-templates", id);
+          await navigate();
+        }, { loading: "Excluindo modelo...", success: "Modelo excluído." });
+      } catch {
+        /* toast já exibido */
       }
     });
   });
@@ -1496,13 +1546,20 @@ function bindTestimonialTemplateForm(original, { isNew = false } = {}) {
     }
 
     try {
-      await upsertItem("testimonial-templates", item);
-      toast(isNew ? "Modelo criado! Páginas de curso republicadas." : "Modelo salvo! Páginas de curso republicadas.");
-      const slot = $("#template-form-slot");
-      if (slot) slot.innerHTML = "";
-      navigate();
-    } catch (err) {
-      toast(err.message, "error");
+      await saveWithFeedback(async () => {
+        await upsertItem("testimonial-templates", item);
+        const slot = $("#template-form-slot");
+        if (slot) slot.innerHTML = "";
+        await navigate();
+      }, {
+        loading: "Salvando modelo e republicando páginas de curso...",
+        submitBtn: form.querySelector('[type="submit"]'),
+        success: isNew
+          ? "Modelo criado! Páginas de curso republicadas."
+          : "Modelo salvo! Páginas de curso republicadas.",
+      });
+    } catch {
+      /* toast já exibido */
     }
   });
 }
@@ -1536,9 +1593,14 @@ function bindEntityEvents() {
   $$("[data-delete-entity]").forEach((btn) => {
     btn.addEventListener("click", async () => {
       if (!confirm("Excluir registro?")) return;
-      await deleteItem(collection, btn.dataset.deleteEntity);
-      toast("Registro excluído");
-      navigate();
+      try {
+        await saveWithFeedback(async () => {
+          await deleteItem(collection, btn.dataset.deleteEntity);
+          await navigate();
+        }, { loading: "Excluindo registro...", success: "Registro excluído" });
+      } catch {
+        /* toast já exibido */
+      }
     });
   });
 }
@@ -1593,12 +1655,21 @@ function bindEntityForm(collection) {
     }
 
     try {
-      await upsertItem(collection, data);
-      toast(collection === "testimonials" ? "Depoimento salvo! Páginas de curso republicadas." : "Salvo!");
-      $("#entity-form-panel")?.remove();
-      navigate();
-    } catch (err) {
-      toast(err.message, "error");
+      await saveWithFeedback(async () => {
+        await upsertItem(collection, data);
+        $("#entity-form-panel")?.remove();
+        await navigate();
+      }, {
+        loading: collection === "testimonials"
+          ? "Salvando depoimento e republicando páginas..."
+          : "Salvando registro...",
+        submitBtn: form.querySelector('[type="submit"]'),
+        success: collection === "testimonials"
+          ? "Depoimento salvo! Páginas de curso republicadas."
+          : "Salvo!",
+      });
+    } catch {
+      /* toast já exibido */
     }
   });
 }
@@ -1613,20 +1684,30 @@ function bindTaxonomyEvents() {
     const slug = form.slug.value.trim() || slugify(nome);
     const item = { id: slug, nome, slug };
     try {
-      await upsertItem(currentRoute, item);
-      toast("Adicionado!");
-      navigate();
-    } catch (err) {
-      toast(err.message, "error");
+      await saveWithFeedback(async () => {
+        await upsertItem(currentRoute, item);
+        await navigate();
+      }, {
+        loading: "Adicionando registro...",
+        submitBtn: form.querySelector('[type="submit"]'),
+        success: "Adicionado!",
+      });
+    } catch {
+      /* toast já exibido */
     }
   });
 
   $$("[data-delete-tax]").forEach((btn) => {
     btn.addEventListener("click", async () => {
       if (!confirm("Excluir? Cursos vinculados podem ficar inconsistentes.")) return;
-      await deleteItem(currentRoute, btn.dataset.deleteTax);
-      toast("Excluído");
-      navigate();
+      try {
+        await saveWithFeedback(async () => {
+          await deleteItem(currentRoute, btn.dataset.deleteTax);
+          await navigate();
+        }, { loading: "Excluindo...", success: "Excluído" });
+      } catch {
+        /* toast já exibido */
+      }
     });
   });
 }

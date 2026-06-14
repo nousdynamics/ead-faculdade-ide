@@ -395,6 +395,7 @@ body.admin-mode {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  position: relative;
 }
 
 .admin__topbar {
@@ -1395,6 +1396,21 @@ tr:hover td {
   display: block;
 }
 
+.tab-panel.tab-panel--enter {
+  animation: tab-panel-enter 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes tab-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ---- Toast ---- */
 .toast {
   position: fixed;
@@ -1406,16 +1422,111 @@ tr:hover td {
   border-radius: var(--radius-sm);
   font-size: 0.875rem;
   box-shadow: var(--shadow-md);
-  z-index: 100;
+  z-index: 120;
   animation: slideUp 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  max-width: min(28rem, calc(100vw - 2rem));
 }
 
 .toast--error {
   background: var(--admin-danger);
 }
 
+.toast--loading {
+  background: var(--color-primary-dark);
+}
+
+.toast__spinner,
+.save-status__spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+  flex: 0 0 auto;
+}
+
 @keyframes slideUp {
   from { transform: translateY(1rem); opacity: 0; }
+}
+
+/* ---- Salvamento em andamento ---- */
+.save-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 30;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.save-bar::before {
+  content: "";
+  display: block;
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  transform: translateX(-120%);
+}
+
+.save-bar.is-active::before {
+  animation: save-bar-slide 1.1s ease-in-out infinite;
+}
+
+@keyframes save-bar-slide {
+  from { transform: translateX(-120%); }
+  to { transform: translateX(320%); }
+}
+
+.save-status {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  z-index: 25;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(43, 50, 92, 0.92);
+  color: #fff;
+  font-size: 0.8125rem;
+  box-shadow: var(--shadow-md);
+  animation: save-status-in 0.24s ease;
+}
+
+@keyframes save-status-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.admin__main.is-saving .admin__content {
+  opacity: 0.72;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.btn.is-loading {
+  opacity: 0.82;
+  pointer-events: none;
+}
+
+.btn.is-loading::after {
+  content: "";
+  width: 0.95rem;
+  height: 0.95rem;
+  margin-left: 0.35rem;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .empty {
@@ -1793,6 +1904,12 @@ tr:hover td {
 .page-stagger > .panel,
 .page-stagger .account-grid > .panel,
 .page-stagger > .form-shell,
+.page-stagger .course-section,
+.page-stagger .course-form__section,
+.page-stagger .form-section,
+.page-stagger .template-preview-shell,
+.page-stagger #template-form-panel,
+.page-stagger #entity-form-panel,
 .page-stagger .data-table tbody tr {
   opacity: 0;
   animation: stagger-in 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -1845,13 +1962,26 @@ tr:hover td {
   .page-stagger > .panel,
   .page-stagger .account-grid > .panel,
   .page-stagger > .form-shell,
+  .page-stagger .course-section,
+  .page-stagger .course-form__section,
+  .page-stagger .form-section,
+  .page-stagger .template-preview-shell,
+  .page-stagger #template-form-panel,
+  .page-stagger #entity-form-panel,
   .page-stagger .data-table tbody tr,
   .admin__topbar.topbar-enter #page-title,
   .admin__topbar.topbar-enter #page-subtitle,
+  .tab-panel.tab-panel--enter,
+  .save-bar.is-active::before,
+  .save-status,
   .toast {
     animation: none !important;
     transition: none !important;
     transform: none !important;
     opacity: 1 !important;
+  }
+
+  .admin__main.is-saving .admin__content {
+    opacity: 1;
   }
 }
