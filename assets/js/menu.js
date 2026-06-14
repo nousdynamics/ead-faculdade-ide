@@ -29,6 +29,6 @@
   });
 
   window.addEventListener('resize', function () {
-    if (window.innerWidth >= 1024 && !menu.hidden) close();
+    if (window.innerWidth > 767 && !menu.hidden) close();
   });
 })();

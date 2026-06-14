@@ -53,7 +53,7 @@
 
 #rd-form-mo0jfhob .bricks-form__label {
   color: #084E3F !important;
-  font-family: "Open Sans", Arial, sans-serif !important;
+  font-family: var(--font-primary) !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   margin-bottom: 5px !important;
@@ -75,7 +75,7 @@
   border-radius: 10px !important;
   box-shadow: none !important;
   color: #333333 !important;
-  font-family: "Open Sans", Arial, sans-serif !important;
+  font-family: var(--font-primary) !important;
   font-size: 15px !important;
   height: 48px !important;
   padding: 0 16px !important;
@@ -140,9 +140,9 @@
   border-radius: 10px !important;
   box-shadow: 0 8px 20px rgba(19, 166, 180, 0.3) !important;
   color: #ffffff !important;
-  font-family: "Montserrat", sans-serif !important;
+  font-family: var(--font-primary) !important;
   font-size: 17px !important;
-  font-weight: 700 !important;
+  font-weight: var(--fw-bold) !important;
   height: 54px !important;
   margin-top: 18px !important;
   width: 100% !important;

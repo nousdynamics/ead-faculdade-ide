@@ -27,9 +27,9 @@
   --fw-light: 300;
   --fw-book: 400;
   --fw-medium: 500;
-  --fw-bold: 700;
-  --fw-black: 800;
-  --fw-ultra: 900;
+  --fw-bold: 600;
+  --fw-black: 700;
+  --fw-ultra: 800;
 
   /* ---- Espaçamento ---- */
   --space-xs: 0.5rem;

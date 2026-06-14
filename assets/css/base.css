@@ -2,14 +2,23 @@
    Base — reset, fontes, tipografia, helpers globais
    ============================================================ */
 
-/* ---- Gotham (@font-face, arquivos locais) ---- */
+/* ---- Gotham (@font-face — espelho do Elementor kit post-5) ---- */
+@font-face { font-family:"Gotham"; font-style:normal; font-weight:100; font-display:swap; src:url("../fonts/Gotham-Thin.ttf") format("truetype"); }
+@font-face { font-family:"Gotham"; font-style:normal; font-weight:200; font-display:swap; src:url("../fonts/Gotham-XLight.ttf") format("truetype"); }
 @font-face { font-family:"Gotham"; font-style:normal; font-weight:300; font-display:swap; src:url("../fonts/Gotham-Light.ttf") format("truetype"); }
 @font-face { font-family:"Gotham"; font-style:normal; font-weight:400; font-display:swap; src:url("../fonts/Gotham-Book.ttf") format("truetype"); }
 @font-face { font-family:"Gotham"; font-style:normal; font-weight:500; font-display:swap; src:url("../fonts/Gotham-Medium.ttf") format("truetype"); }
-@font-face { font-family:"Gotham"; font-style:normal; font-weight:700; font-display:swap; src:url("../fonts/Gotham-Bold.ttf") format("truetype"); }
-@font-face { font-family:"Gotham"; font-style:normal; font-weight:800; font-display:swap; src:url("../fonts/Gotham-Black.ttf") format("truetype"); }
-@font-face { font-family:"Gotham"; font-style:normal; font-weight:900; font-display:swap; src:url("../fonts/Gotham-Ultra.ttf") format("truetype"); }
+@font-face { font-family:"Gotham"; font-style:normal; font-weight:600; font-display:swap; src:url("../fonts/Gotham-Bold.ttf") format("truetype"); }
+@font-face { font-family:"Gotham"; font-style:normal; font-weight:700; font-display:swap; src:url("../fonts/Gotham-Black.ttf") format("truetype"); }
+@font-face { font-family:"Gotham"; font-style:normal; font-weight:800; font-display:swap; src:url("../fonts/Gotham-Ultra.ttf") format("truetype"); }
+@font-face { font-family:"Gotham"; font-style:italic; font-weight:100; font-display:swap; src:url("../fonts/Gotham-ThinItalic.ttf") format("truetype"); }
+@font-face { font-family:"Gotham"; font-style:italic; font-weight:200; font-display:swap; src:url("../fonts/Gotham-XLightItalic.ttf") format("truetype"); }
+@font-face { font-family:"Gotham"; font-style:italic; font-weight:300; font-display:swap; src:url("../fonts/Gotham-LightItalic.ttf") format("truetype"); }
 @font-face { font-family:"Gotham"; font-style:italic; font-weight:400; font-display:swap; src:url("../fonts/Gotham-BookItalic.ttf") format("truetype"); }
+@font-face { font-family:"Gotham"; font-style:italic; font-weight:500; font-display:swap; src:url("../fonts/Gotham-MediumItalic.ttf") format("truetype"); }
+@font-face { font-family:"Gotham"; font-style:italic; font-weight:600; font-display:swap; src:url("../fonts/Gotham-BoldItalic.ttf") format("truetype"); }
+@font-face { font-family:"Gotham"; font-style:italic; font-weight:700; font-display:swap; src:url("../fonts/Gotham-BlackItalic.ttf") format("truetype"); }
+@font-face { font-family:"Gotham"; font-style:italic; font-weight:800; font-display:swap; src:url("../fonts/Gotham-UltraItalic.ttf") format("truetype"); }
 
 /* ---- Reset ---- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -34,7 +43,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 input, textarea, select { font: inherit; }
 
 /* ---- Tipografia ---- */
-h1, h2, h3, h4, h5, h6 { font-weight: var(--fw-black); line-height: 1.15; color: var(--color-primary); }
+h1, h2, h3, h4, h5, h6 { font-weight: var(--fw-bold); line-height: 1.15; color: var(--color-primary); }
 h1 { font-size: clamp(2rem, 4vw, 3.25rem); }
 h2 { font-size: clamp(1.6rem, 3vw, 2.5rem); }
 h3 { font-size: clamp(1.25rem, 2vw, 1.6rem); }
