@@ -515,6 +515,72 @@ body.admin-mode {
   font-weight: var(--fw-title);
 }
 
+.panel__head-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.form-hint {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  color: var(--color-muted, var(--muted));
+  line-height: 1.5;
+}
+
+.form-hint code {
+  font-size: 0.8125rem;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--color-surface-alt, rgba(0, 0, 0, 0.04));
+}
+
+.template-preview-row td {
+  background: var(--color-surface-alt, #f8f9fc);
+  padding: 0 !important;
+}
+
+.template-preview-shell {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.template-preview-shell__label {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-muted, var(--muted));
+}
+
+.template-preview {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem;
+  background: #fff;
+  max-height: 420px;
+  overflow: auto;
+}
+
+.template-preview-shell--editor {
+  margin-top: 1rem;
+}
+
+.template-vars {
+  margin: 0.75rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-muted, var(--muted));
+}
+
+.template-vars code {
+  margin-right: 0.35rem;
+}
+
+.template-editor__code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
 .panel__body {
   padding: 1.25rem;
 }

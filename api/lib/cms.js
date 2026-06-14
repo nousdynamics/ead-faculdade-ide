@@ -8,6 +8,7 @@ export const COLLECTIONS = {
   professors: "professors.json",
   coordination: "coordination.json",
   testimonials: "testimonials.json",
+  "testimonial-templates": "testimonial-templates.json",
   areas: "areas.json",
   "formation-levels": "formation-levels.json",
   statuses: "statuses.json",

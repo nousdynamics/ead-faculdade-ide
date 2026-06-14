@@ -27,6 +27,7 @@ const COLLECTIONS = {
   professors: "professors.json",
   coordination: "coordination.json",
   testimonials: "testimonials.json",
+  "testimonial-templates": "testimonial-templates.json",
   areas: "areas.json",
   "formation-levels": "formation-levels.json",
   statuses: "statuses.json",
@@ -123,6 +124,7 @@ async function writeCollection(name, data) {
       professors: ctx.professors,
       coordination: ctx.coordination,
       testimonials: ctx.testimonials,
+      testimonialTemplates: ctx["testimonial-templates"] || [],
       statuses: ctx.statuses,
     }).catch((err) => console.error("[course-pages]", err));
 

@@ -22,15 +22,16 @@ async function loadJson(relPath) {
 }
 
 async function main() {
-  const [courses, professors, coordination, testimonials, statuses] = await Promise.all([
+  const [courses, professors, coordination, testimonials, testimonialTemplates, statuses] = await Promise.all([
     loadJson("data/cms/courses.json"),
     loadJson("data/cms/professors.json"),
     loadJson("data/cms/coordination.json"),
     loadJson("data/cms/testimonials.json"),
+    loadJson("data/cms/testimonial-templates.json"),
     loadJson("data/cms/statuses.json"),
   ]);
 
-  const ctx = { courses, professors, coordination, testimonials, statuses };
+  const ctx = { courses, professors, coordination, testimonials, testimonialTemplates, statuses };
   let selected = courses.filter(isPosGraduacaoCourse);
 
   if (args.slug) {

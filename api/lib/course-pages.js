@@ -22,6 +22,7 @@ export async function loadCourseContext() {
     professors: all.professors || [],
     coordination: all.coordination || [],
     testimonials: all.testimonials || [],
+    testimonialTemplates: all["testimonial-templates"] || [],
     statuses: all.statuses || [],
   };
 }

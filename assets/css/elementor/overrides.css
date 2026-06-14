@@ -49,3 +49,46 @@
 @media (max-width: 767px) {
   .professores .jet-listing-grid__items { grid-template-columns: repeat(2, 1fr); }
 }
+
+.jet-listing-grid--1567 .jet-listing-grid__items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 1024px) {
+  .jet-listing-grid--1567 .jet-listing-grid__items { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 767px) {
+  .jet-listing-grid--1567 .jet-listing-grid__items { grid-template-columns: 1fr; }
+}
+
+.testimonial-item__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: 100%;
+}
+.testimonial-item__media { border-radius: 8px; overflow: hidden; background: #f0f0f0; }
+.testimonial-item__video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+}
+.testimonial-item__name { font-weight: 700; margin: 0.5rem 0 0; }
+.testimonial-item__role,
+.testimonial-item__caption { margin: 0; font-size: 0.9rem; opacity: 0.85; }
+.testimonial-item__figure { margin: 0; }
+.testimonial-item__figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+.testimonial-item__figure figcaption {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}

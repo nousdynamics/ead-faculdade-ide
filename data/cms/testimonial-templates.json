@@ -1,0 +1,42 @@
+[
+  {
+    "id": "secao-depoimentos-elementor",
+    "nome": "Seção — O que nossos alunos dizem (Elementor)",
+    "escopo": "secao",
+    "tipo": null,
+    "descricao": "Wrapper da seção de depoimentos na página de curso (container 55eefa2). Use {{titulo_secao}} e {{itens}}.",
+    "ativo": true,
+    "html": "<div class=\"elementor-element elementor-element-55eefa2 e-flex e-con-boxed e-con e-parent\">\n  <div class=\"e-con-inner\">\n    <div class=\"elementor-element elementor-element-6a28cb7 elementor-widget elementor-widget-heading\">\n      <div class=\"elementor-widget-container\">\n        <h2 class=\"elementor-heading-title elementor-size-default\">{{titulo_secao}}</h2>\n      </div>\n    </div>\n    <div class=\"elementor-element elementor-element-0df9a46 elementor-widget__width-inherit elementor-widget elementor-widget-jet-listing-grid\">\n      <div class=\"elementor-widget-container\">\n        <div class=\"jet-listing-grid jet-listing\">\n          <div class=\"jet-listing-grid__items grid-col-desk-3 grid-col-tablet-3 grid-col-mobile-1 jet-listing-grid--1567\">{{itens}}</div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>",
+    "variaveis": ["titulo_secao", "itens"]
+  },
+  {
+    "id": "item-texto-elementor",
+    "nome": "Item — Depoimento em texto (Elementor 1567)",
+    "escopo": "item",
+    "tipo": "texto",
+    "descricao": "Card de depoimento textual com nome, profissão e texto — layout original WordPress.",
+    "ativo": true,
+    "html": "<div class=\"jet-listing-grid__item\">\n  <div class=\"elementor elementor-1567\">\n    <div class=\"elementor-element elementor-element-6b816b8 e-con-full e-flex e-con e-parent\">\n      <div class=\"elementor-element elementor-element-83bd929 e-con-full e-flex e-con e-child\">\n        <div class=\"elementor-element elementor-element-2558536 elementor-widget elementor-widget-heading\">\n          <div class=\"elementor-widget-container\">\n            <h2 class=\"elementor-heading-title elementor-size-default\">{{nome}}</h2>\n          </div>\n        </div>\n        <div class=\"elementor-element elementor-element-c9a8ffe elementor-widget elementor-widget-heading\">\n          <div class=\"elementor-widget-container\">\n            <h2 class=\"elementor-heading-title elementor-size-default\">{{profissao}}</h2>\n          </div>\n        </div>\n      </div>\n      <div class=\"elementor-element elementor-element-980275a elementor-widget elementor-widget-heading\">\n        <div class=\"elementor-widget-container\">\n          <h2 class=\"elementor-heading-title elementor-size-default\">{{texto}}</h2>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>",
+    "variaveis": ["nome", "profissao", "texto", "legenda"]
+  },
+  {
+    "id": "item-video-padrao",
+    "nome": "Item — Depoimento em vídeo",
+    "escopo": "item",
+    "tipo": "video",
+    "descricao": "Card com vídeo incorporado (YouTube), nome e legenda opcional.",
+    "ativo": true,
+    "html": "<div class=\"jet-listing-grid__item testimonial-item testimonial-item--video\">\n  <div class=\"testimonial-item__inner\">\n    <div class=\"testimonial-item__media\">{{video_embed}}</div>\n    <p class=\"testimonial-item__name\">{{nome}}</p>\n    <p class=\"testimonial-item__role\">{{profissao}}</p>\n    <p class=\"testimonial-item__caption\">{{legenda}}</p>\n  </div>\n</div>",
+    "variaveis": ["nome", "profissao", "legenda", "video_url", "video_embed", "thumbnail"]
+  },
+  {
+    "id": "item-imagem-padrao",
+    "nome": "Item — Depoimento em imagem",
+    "escopo": "item",
+    "tipo": "imagem",
+    "descricao": "Card com imagem e legenda.",
+    "ativo": true,
+    "html": "<div class=\"jet-listing-grid__item testimonial-item testimonial-item--imagem\">\n  <figure class=\"testimonial-item__figure\">\n    <img src=\"{{imagem}}\" alt=\"{{nome}}\" loading=\"lazy\">\n    <figcaption>\n      <strong>{{nome}}</strong>\n      <span>{{legenda}}</span>\n    </figcaption>\n  </figure>\n</div>",
+    "variaveis": ["nome", "legenda", "imagem"]
+  }
+]

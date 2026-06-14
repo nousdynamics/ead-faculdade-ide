@@ -2,6 +2,8 @@
  * Renderiza HTML de páginas de pós-graduação — clone fiel do template Elementor (post-13).
  * Referência: _capture/curso.html + assets/css/elementor/post-*.css
  */
+import { renderTestimonialsSection } from "./testimonial-templates.js";
+
 const SITE_URL = "https://ead.faculdadeide.edu.br";
 const WP_UPLOADS = `${SITE_URL}/wp-content/uploads`;
 const GUIDE_IMG = "assets/img/IMG-GUIA-DO-CURSO-01.webp";
@@ -315,10 +317,6 @@ export function renderCoursePage(course, ctx) {
     .map((id) => byId(ctx.professors, id))
     .filter(Boolean);
 
-  const testimonials = (course.depoimento_ids || [])
-    .map((id) => byId(ctx.testimonials, id))
-    .filter(Boolean);
-
   const related = ctx.courses
     .filter((c) => c.id !== course.id && c.publicado !== false)
     .slice(0, 4);
@@ -552,38 +550,7 @@ export function renderCoursePage(course, ctx) {
           : ""
       }
 
-      ${
-        testimonials.length
-          ? `<div class="elementor-element elementor-element-55eefa2 e-flex e-con-boxed e-con e-parent">
-        <div class="e-con-inner">
-          <div class="elementor-element elementor-element-6a28cb7 elementor-widget elementor-widget-heading">
-            <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default">O que nossos alunos dizem</h2></div>
-          </div>
-          ${testimonials
-            .map(
-              (dep) => `<div class="elementor-element elementor-element-0df9a46 elementor-widget elementor-widget-jet-listing-grid">
-            <div class="elementor-widget-container">
-              <div class="jet-listing-grid jet-listing"><div class="jet-listing-grid__items">
-                <div class="jet-listing-grid__item">
-                  <div class="elementor elementor-1567">
-                    <div class="elementor-element elementor-element-6b816b8 e-con-full e-flex e-con e-parent">
-                      <div class="elementor-element elementor-element-83bd929 e-con-full e-flex e-con e-child">
-                        <div class="elementor-element elementor-element-2558536 elementor-widget elementor-widget-heading"><div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default">${escapeHtml(dep.nome)}</h2></div></div>
-                        <div class="elementor-element elementor-element-c9a8ffe elementor-widget elementor-widget-heading"><div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default">${escapeHtml(dep.profissao || dep.legenda || "")}</h2></div></div>
-                      </div>
-                      <div class="elementor-element elementor-element-980275a elementor-widget elementor-widget-heading"><div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default">${escapeHtml(dep.texto || dep.legenda || "")}</h2></div></div>
-                    </div>
-                  </div>
-                </div>
-              </div></div>
-            </div>
-          </div>`,
-            )
-            .join("")}
-        </div>
-      </div>`
-          : ""
-      }
+      ${renderTestimonialsSection(course, ctx, base)}
 
       <!-- INVESTIMENTO -->
       <div class="elementor-element elementor-element-da640a5 e-flex e-con-boxed e-con e-parent" id="investimento">
