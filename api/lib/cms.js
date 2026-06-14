@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { list } from "@vercel/blob";
-import { writeBlob } from "./blob-storage.js";
+import { hasBlobStorage, writeBlob } from "./blob-storage.js";
 
 export const COLLECTIONS = {
   courses: "courses.json",
@@ -35,7 +35,7 @@ function legacyRepoPath(legacyKey) {
 }
 
 async function readFromBlob(pathname) {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return null;
+  if (!hasBlobStorage()) return null;
 
   try {
     const { blobs } = await list({ prefix: pathname, limit: 10 });

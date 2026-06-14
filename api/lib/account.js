@@ -3,7 +3,7 @@ import { join, dirname } from "node:path";
 import { randomBytes, scrypt, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
 import { list } from "@vercel/blob";
-import { writeBlob } from "./blob-storage.js";
+import { hasBlobStorage, writeBlob } from "./blob-storage.js";
 
 const scryptAsync = promisify(scrypt);
 
@@ -41,7 +41,7 @@ async function verifyPassword(password, storedHash) {
 }
 
 async function readFromBlob() {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return null;
+  if (!hasBlobStorage()) return null;
   try {
     const { blobs } = await list({ prefix: BLOB_PATH, limit: 5 });
     const match = blobs.find((blob) => blob.pathname === BLOB_PATH);
@@ -81,7 +81,7 @@ export async function readAccount() {
 async function persistAccount(account) {
   const payload = JSON.stringify(account, null, 2) + "\n";
 
-  if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) {
+  if (hasBlobStorage()) {
     await writeBlob(BLOB_PATH, payload);
     return;
   }

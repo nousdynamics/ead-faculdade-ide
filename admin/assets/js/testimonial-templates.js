@@ -34,29 +34,21 @@ const DEFAULTS = {
 };
 
 export const STARTER_HTML = {
-  secao: `<div class="testimonial-section">
-  <h2>{{titulo_secao}}</h2>
-  <div class="testimonial-section__items">{{itens}}</div>
-</div>`,
-  item: `<div class="jet-listing-grid__item">
-  <div data-elementor-type="jet-listing-items" data-elementor-id="1567" class="elementor elementor-1567">
-    <div class="elementor-element elementor-element-6b816b8 e-con-full e-flex e-con e-parent">
-      {{bloco_foto}}
-      {{bloco_video}}
-      {{bloco_imagem}}
-      <div class="elementor-element elementor-element-83bd929 e-con-full e-flex e-con e-child">
-        <div class="elementor-element elementor-element-2558536 elementor-widget elementor-widget-heading">
-          <div class="elementor-widget-container">
-            <h2 class="elementor-heading-title elementor-size-default">{{nome}}</h2>
-          </div>
-        </div>
-        {{bloco_profissao}}
-      </div>
-      {{bloco_texto}}
-      {{bloco_legenda}}
-    </div>
-  </div>
-</div>`,
+  secao: `<section class="testimonials-section">
+  <h2 class="testimonials-section__title">{{titulo_secao}}</h2>
+  <div class="testimonials-section__grid">{{itens}}</div>
+</section>`,
+  item: `<article class="testimonial-card">
+  {{bloco_foto}}
+  {{bloco_video}}
+  {{bloco_imagem}}
+  <header class="testimonial-card__header">
+    <h3 class="testimonial-card__name">{{nome}}</h3>
+    {{bloco_profissao}}
+  </header>
+  {{bloco_texto}}
+  {{bloco_legenda}}
+</article>`,
 };
 
 function escapeHtml(value) {
@@ -114,51 +106,27 @@ function buildAdaptiveBlocks(dep, base, wrap) {
   const embed = youtubeEmbed(dep.video_url);
 
   const bloco_foto = fotoSrc
-    ? `<div class="elementor-element elementor-element-dep-foto testimonial-dep__avatar elementor-widget elementor-widget-image">
-      <div class="elementor-widget-container">
-        <img src="${assetUrl(fotoSrc, base)}" alt="${nome}" loading="lazy" width="72" height="72">
-      </div>
-    </div>`
+    ? `<figure class="testimonial-card__avatar"><img src="${assetUrl(fotoSrc, base)}" alt="${nome}" width="72" height="72" loading="lazy"></figure>`
     : "";
 
   const bloco_video = embed
-    ? `<div class="elementor-element elementor-element-dep-video testimonial-dep__video elementor-widget elementor-widget-video">
-      <div class="elementor-widget-container">
-        <iframe class="testimonial-dep__iframe" src="${embed}" title="Depoimento — ${nome}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
-      </div>
-    </div>`
+    ? `<div class="testimonial-card__video"><iframe src="${embed}" title="Depoimento — ${nome}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>`
     : "";
 
   const bloco_imagem = dep.imagem
-    ? `<div class="elementor-element elementor-element-dep-imagem testimonial-dep__figure elementor-widget elementor-widget-image">
-      <div class="elementor-widget-container">
-        <img src="${assetUrl(dep.imagem, base)}" alt="${nome}" loading="lazy">
-      </div>
-    </div>`
+    ? `<figure class="testimonial-card__figure"><img src="${assetUrl(dep.imagem, base)}" alt="${nome}" loading="lazy"></figure>`
     : "";
 
   const bloco_profissao = dep.profissao
-    ? `<div class="elementor-element elementor-element-c9a8ffe elementor-widget elementor-widget-heading">
-      <div class="elementor-widget-container">
-        <h2 class="elementor-heading-title elementor-size-default">${wrap(dep.profissao)}</h2>
-      </div>
-    </div>`
+    ? `<p class="testimonial-card__role">${wrap(dep.profissao)}</p>`
     : "";
 
   const bloco_texto = dep.texto
-    ? `<div class="elementor-element elementor-element-980275a elementor-widget elementor-widget-heading">
-      <div class="elementor-widget-container">
-        <h2 class="elementor-heading-title elementor-size-default">${wrap(dep.texto)}</h2>
-      </div>
-    </div>`
+    ? `<blockquote class="testimonial-card__quote"><p>${wrap(dep.texto)}</p></blockquote>`
     : "";
 
   const bloco_legenda = dep.legenda
-    ? `<div class="elementor-element elementor-element-dep-legenda elementor-widget elementor-widget-heading">
-      <div class="elementor-widget-container">
-        <p class="elementor-heading-title elementor-size-default testimonial-dep__legenda">${wrap(dep.legenda)}</p>
-      </div>
-    </div>`
+    ? `<p class="testimonial-card__caption">${wrap(dep.legenda)}</p>`
     : "";
 
   return { bloco_foto, bloco_video, bloco_imagem, bloco_profissao, bloco_texto, bloco_legenda };
@@ -230,7 +198,7 @@ export function wrapTestimonialPreviewHtml(html, escopo = null) {
       : escopo === "secao"
         ? " template-preview-scope--secao"
         : "";
-  return `<div class="elementor elementor-13 elementor-kit-5 template-preview-scope${scopeMod}">${html}</div>`;
+  return `<div class="template-preview-scope${scopeMod}">${html}</div>`;
 }
 
 export function previewTemplate(template, templates = [], sample = TESTIMONIAL_SAMPLE, base = "/") {

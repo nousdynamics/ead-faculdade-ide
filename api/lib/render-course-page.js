@@ -316,7 +316,7 @@ export function renderCoursePage(course, ctx) {
   <link rel="stylesheet" href="${base}assets/css/elementor/post-13.css">
   <link rel="stylesheet" href="${base}assets/css/elementor/post-1076.css">
   <link rel="stylesheet" href="${base}assets/css/elementor/post-1141.css">
-  <link rel="stylesheet" href="${base}assets/css/elementor/post-1567.css">
+  <link rel="stylesheet" href="${base}assets/css/testimonials.css">
   <link rel="stylesheet" href="${base}assets/css/elementor/overrides.css">
   <link rel="stylesheet" href="${base}assets/css/tokens.css">
   <link rel="stylesheet" href="${base}assets/css/base.css">

@@ -570,8 +570,8 @@ body.admin-mode {
   min-height: 0;
 }
 
-.template-preview .elementor-1567 .elementor-element-6b816b8,
-.template-preview--course .elementor-1567 .elementor-element-6b816b8 {
+.template-preview .template-preview-scope .testimonial-card,
+.template-preview--course .testimonial-card {
   max-width: 400px;
   width: 100%;
   margin-inline: auto;

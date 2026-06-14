@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { list } from "@vercel/blob";
-import { writeBlob } from "./blob-storage.js";
+import { hasBlobStorage, writeBlob } from "./blob-storage.js";
 import { readAllCollections } from "./cms.js";
 import { renderCoursePage } from "./render-course-page.js";
 import { render404Page } from "./site-layout.js";
@@ -45,7 +45,7 @@ export async function publishCoursePage(course, ctx) {
   const html = renderCoursePage(course, ctx);
   const pathname = `${PAGE_PREFIX}/${slug}.html`;
 
-  if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) {
+  if (hasBlobStorage()) {
     await writeBlob(pathname, html, "text/html; charset=utf-8");
   }
 
@@ -79,7 +79,7 @@ export async function publishCoursePages(courses, ctx = null) {
 }
 
 async function readPageFromBlob(slug) {
-  if (!process.env.BLOB_READ_WRITE_TOKEN?.trim()) return null;
+  if (!hasBlobStorage()) return null;
 
   const pathname = `${PAGE_PREFIX}/${slug}.html`;
   try {

@@ -1,6 +1,6 @@
 import { writeFile, mkdir } from "node:fs/promises";
 import { join, extname } from "node:path";
-import { writeBlob } from "./blob-storage.js";
+import { hasBlobStorage, writeBlob } from "./blob-storage.js";
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
@@ -49,7 +49,7 @@ export async function saveUploadedImage({ filename, data, contentType, folder = 
   const storedName = `${Date.now()}-${safeFilename(filename).replace(/\.[^.]+$/, "")}${ext}`;
   const blobPath = `${folder}/${storedName}`;
 
-  if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) {
+  if (hasBlobStorage()) {
     const result = await writeBlob(blobPath, buffer, contentType);
     const url = result?.url || result?.downloadUrl;
     if (!url) {

@@ -1,29 +1,31 @@
-const BLOB_API = process.env.VERCEL_BLOB_API_URL || "https://blob.vercel-storage.com";
-const BLOB_API_VERSION = process.env.VERCEL_BLOB_API_VERSION_OVERRIDE || "9";
+import { put } from "@vercel/blob";
 
-export function getBlobToken() {
-  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
-  if (!token) {
-    throw Object.assign(
-      new Error(
-        "Armazenamento não configurado. No painel Vercel: Storage → Blob → Connect to Project e faça redeploy.",
-      ),
-      { status: 503 },
-    );
-  }
-  return token;
+const STORAGE_ERROR =
+  "Armazenamento não configurado. No painel Vercel: Storage → ead-faculdade-ide-blob → Projects → conecte ao projeto e faça redeploy.";
+
+/** Blob disponível via token estático ou OIDC (conexão moderna da Vercel). */
+export function hasBlobStorage() {
+  if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) return true;
+  if (process.env.BLOB_STORE_ID?.trim() && process.env.VERCEL_OIDC_TOKEN?.trim()) return true;
+  return false;
 }
 
-function blobRequestId(token) {
-  const storeId = token.split("_")[3] || "cms";
-  return `${storeId}:${Date.now()}:${Math.random().toString(16).slice(2)}`;
+export function getBlobStorageMode() {
+  if (process.env.BLOB_STORE_ID?.trim() && process.env.VERCEL_OIDC_TOKEN?.trim()) return "oidc";
+  if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) return "token";
+  return null;
+}
+
+function assertBlobStorage() {
+  if (hasBlobStorage()) return;
+  throw Object.assign(new Error(STORAGE_ERROR), { status: 503 });
 }
 
 /**
- * Grava JSON ou binário no Vercel Blob via fetch nativo (evita crash do SDK em alguns runtimes).
+ * Grava JSON ou binário no Vercel Blob (OIDC ou BLOB_READ_WRITE_TOKEN).
  */
 export async function writeBlob(pathname, body, contentType = "application/json; charset=utf-8") {
-  const token = getBlobToken();
+  assertBlobStorage();
 
   let payload;
   if (Buffer.isBuffer(body)) {
@@ -38,39 +40,19 @@ export async function writeBlob(pathname, body, contentType = "application/json;
     throw Object.assign(new Error("Dados inválidos para salvar"), { status: 400 });
   }
 
-  const byteLength = Buffer.isBuffer(payload)
-    ? payload.byteLength
-    : Buffer.byteLength(payload, "utf8");
-
-  const url = `${BLOB_API}/?${new URLSearchParams({ pathname })}`;
-
-  const res = await fetch(url, {
-    method: "PUT",
-    headers: {
-      authorization: `Bearer ${token}`,
-      "x-api-version": BLOB_API_VERSION,
-      "x-api-blob-request-id": blobRequestId(token),
-      "x-api-blob-request-attempt": "0",
-      "x-content-type": contentType,
-      "x-add-random-suffix": "0",
-      "x-content-length": String(byteLength),
-    },
-    body: payload,
-  });
-
-  if (!res.ok) {
-    let message = `Falha ao salvar no Blob (HTTP ${res.status})`;
-    try {
-      const data = await res.json();
-      message = data?.error?.message || data?.message || message;
-    } catch {
-      const text = await res.text().catch(() => "");
-      if (text) message = text.slice(0, 300);
-    }
-
-    const status = res.status === 401 || res.status === 403 ? 503 : res.status >= 500 ? 502 : 400;
+  try {
+    return await put(pathname, payload, {
+      access: "private",
+      contentType,
+      addRandomSuffix: false,
+      allowOverwrite: true,
+    });
+  } catch (err) {
+    const message = err?.message || "Falha ao salvar no Blob";
+    const status =
+      err?.name === "BlobStoreNotFoundError" || /token|auth|unauthorized/i.test(message)
+        ? 503
+        : 502;
     throw Object.assign(new Error(message), { status });
   }
-
-  return res.json().catch(() => ({}));
 }
