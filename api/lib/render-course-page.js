@@ -15,6 +15,8 @@ const BTN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44"
 const CARET_DOWN = `<svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>`;
 const CARET_UP = `<svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/></svg>`;
 
+const MINI_CV_CHEVRON = `<svg class="coord-mini-cv__chevron" aria-hidden="true" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>`;
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -102,22 +104,24 @@ function renderJsonLd(course, faq) {
   return JSON.stringify({ "@context": "https://schema.org", "@graph": graph }, null, 2);
 }
 
-function renderJetAccordion(items, { dark = false, idStart = 1 } = {}) {
+function renderJetAccordion(items, { dark = false, idStart = 1, faq = false } = {}) {
   return items
     .map((item, i) => {
       const id = idStart + i;
-      const icon = i === 0 && dark
-        ? ""
-        : `<div class="jet-toggle__label-icon jet-toggle-icon-position-right"><span class="jet-toggle__icon icon-normal jet-tabs-icon">${CARET_DOWN}</span><span class="jet-toggle__icon icon-active jet-tabs-icon">${CARET_UP}</span></div>`;
+      const effectClass = faq ? "jet-toggle-zoom-in-effect" : "jet-toggle-move-up-effect";
+      const icon =
+        faq || !(i === 0 && dark)
+          ? `<div class="jet-toggle__label-icon jet-toggle-icon-position-right"><span class="jet-toggle__icon icon-normal jet-tabs-icon">${CARET_DOWN}</span><span class="jet-toggle__icon icon-active jet-tabs-icon">${CARET_UP}</span></div>`
+          : "";
       const body =
         item.itens?.length
           ? `<ul>${item.itens.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ul>`
           : `<p>${escapeHtml(item.resposta || "")}</p>`;
-      return `<div class="jet-accordion__item jet-toggle jet-toggle-move-up-effect">
+      return `<div class="jet-accordion__item jet-toggle ${effectClass}">
         <div id="jet-toggle-control-${id}" class="jet-toggle__control" role="button" tabindex="0" aria-controls="jet-toggle-content-${id}" aria-expanded="false">
           ${icon}<div class="jet-toggle__label-text">${escapeHtml(item.titulo || item.pergunta)}</div>
         </div>
-        <div id="jet-toggle-content-${id}" class="jet-toggle__content" role="region" hidden>
+        <div id="jet-toggle-content-${id}" class="jet-toggle__content" role="region">
           <div class="jet-toggle__content-inner">${body}</div>
         </div>
       </div>`;
@@ -145,14 +149,29 @@ function renderCoordCard(coord, base) {
         </div>
         ${
           cvItems
-            ? `<details class="e-n-accordion-item">
-            <summary class="e-n-accordion-item-title"><span class="e-n-accordion-item-title-text">Mini-currículo</span></summary>
-            <div class="elementor-element elementor-element-7b25652 elementor-widget elementor-widget-heading">
-              <div class="elementor-widget-container">
-                <h2 class="elementor-heading-title elementor-size-default"><ul>${cvItems}</ul></h2>
-              </div>
+            ? `<div class="elementor-element elementor-element-4b71303 elementor-widget elementor-widget-n-accordion">
+          <div class="elementor-widget-container">
+            <div class="e-n-accordion">
+              <details class="e-n-accordion-item coord-mini-cv">
+                <summary class="e-n-accordion-item-title">
+                  <span class="e-n-accordion-item-title-icon">${MINI_CV_CHEVRON}</span>
+                  <span class="e-n-accordion-item-title-header">
+                    <span class="e-n-accordion-item-title-text">Mini-currículo</span>
+                  </span>
+                </summary>
+                <div class="coord-mini-cv__panel">
+                  <div class="coord-mini-cv__panel-inner">
+                    <div class="elementor-element elementor-element-7b25652 elementor-widget elementor-widget-heading">
+                      <div class="elementor-widget-container">
+                        <h2 class="elementor-heading-title elementor-size-default"><ul>${cvItems}</ul></h2>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </details>
             </div>
-          </details>`
+          </div>
+        </div>`
             : ""
         }
       </div>
@@ -248,7 +267,7 @@ export function renderCoursePage(course, ctx) {
       const ids = ["bd1680a", "63840b1", "7b903f9", "8de6b8f"];
       const imgW = item.wide ? 82 : 32;
       return `${divider}
-        <div class="elementor-element elementor-element-${ids[idx]} elementor-widget__width-initial elementor-position-top elementor-widget elementor-widget-image-box">
+        <div class="elementor-element elementor-element-${ids[idx]} elementor-widget__width-initial elementor-position-left elementor-widget elementor-widget-image-box">
           <div class="elementor-widget-container">
             <div class="elementor-image-box-wrapper">
               <figure class="elementor-image-box-img"><img width="${imgW}" height="32" src="${item.icon}" alt=""></figure>
@@ -531,9 +550,9 @@ export function renderCoursePage(course, ctx) {
           <div class="elementor-element elementor-element-6a2dda1 elementor-widget elementor-widget-heading">
             <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default">FAQ - Perguntas Frequentes</h2></div>
           </div>
-          <div class="elementor-element elementor-element-98d8a99 elementor-widget elementor-widget-jet-accordion">
+          <div class="elementor-element elementor-element-98d8a99 course-faq-accordion elementor-widget elementor-widget-jet-accordion">
             <div class="elementor-widget-container">
-              <div class="jet-accordion"><div class="jet-accordion__inner">${renderJetAccordion(course.faq, { idStart: 100 })}</div></div>
+              <div class="jet-accordion"><div class="jet-accordion__inner">${renderJetAccordion(course.faq, { idStart: 100, faq: true })}</div></div>
             </div>
           </div>
         </div>

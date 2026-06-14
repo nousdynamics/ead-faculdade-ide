@@ -1,0 +1,97 @@
+/**
+ * Pré-visualização de depoimentos no painel — espelha a seção da página de curso.
+ * Usado junto com post-1567.css e overrides.css (escopo .template-preview).
+ */
+
+.template-preview-scope {
+  --e-global-color-primary: #2b325c;
+  --e-global-color-secondary: #d3dbe1;
+  --e-global-color-text: #2b325c;
+  --e-global-color-accent: #13a6b4;
+  color: var(--color-primary);
+  font-family: var(--font-body, "Gotham", sans-serif);
+  width: 100%;
+}
+
+.template-preview-scope .e-flex {
+  display: flex;
+}
+
+.template-preview-scope .e-con-boxed,
+.template-preview-scope .e-con-full {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.template-preview-scope .e-con-inner {
+  width: min(100%, 1280px);
+  max-width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--container-pad, 1rem);
+  box-sizing: border-box;
+}
+
+.template-preview-scope .elementor-element-55eefa2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 48px 0;
+  background: #fff;
+  width: 100%;
+}
+
+.template-preview-scope .elementor-element-55eefa2 > .e-con-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+}
+
+.template-preview-scope .elementor-element-6a28cb7 {
+  text-align: center;
+  width: 100%;
+}
+
+.template-preview-scope .elementor-element-6a28cb7 .elementor-heading-title {
+  font-family: var(--font-heading, "Gotham", sans-serif);
+  font-size: clamp(1.35rem, 2.5vw, 1.8em);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--color-primary);
+  text-wrap: balance;
+  margin: 0;
+}
+
+.template-preview-scope .elementor-element-0df9a46,
+.template-preview-scope .elementor-widget-jet-listing-grid {
+  width: 100%;
+  max-width: 100%;
+}
+
+.template-preview .jet-listing-grid--1567 .jet-listing-grid__items,
+.template-preview-scope .jet-listing-grid--1567 .jet-listing-grid__items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 400px));
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.template-preview .elementor-1567 .elementor-element-6b816b8,
+.template-preview-scope .elementor-1567 .elementor-element-6b816b8 {
+  max-width: 400px;
+  width: 100%;
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
+.template-preview-shell .template-preview {
+  background: #fff;
+}
+
+.template-preview--course {
+  padding: 0.5rem;
+}

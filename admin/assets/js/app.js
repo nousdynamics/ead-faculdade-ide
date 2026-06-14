@@ -510,9 +510,9 @@ function renderCourseForm(course) {
               <div class="form-group"><label>Formato das aulas</label><input name="info_aulas" value="${escapeHtml(i.aulas || "")}" placeholder="Ex: Aula ao vivo"></div>
               <div class="form-group form-group--full"><label>Vídeo promocional (YouTube)</label><input name="info_video" value="${escapeHtml(i.video || "")}" placeholder="https://www.youtube.com/watch?v=..."></div>
               <div class="form-group form-group--full course-form__flags">
-                <label class="form-check"><input type="checkbox" name="info_ultimas_vagas" ${i.ultimas_vagas ? "checked" : ""}> Destacar “Últimas vagas”</label>
-                <label class="form-check"><input type="checkbox" name="info_confirmado" ${i.confirmado ? "checked" : ""}> Turma confirmada</label>
-                <label class="form-check"><input type="checkbox" name="info_pre_inscricao" ${i.pre_inscricao ? "checked" : ""}> Modo pré-inscrição</label>
+                <label class="form-check form-check--switch"><input type="checkbox" name="info_ultimas_vagas" ${i.ultimas_vagas ? "checked" : ""}> Destacar “Últimas vagas”</label>
+                <label class="form-check form-check--switch"><input type="checkbox" name="info_confirmado" ${i.confirmado ? "checked" : ""}> Turma confirmada</label>
+                <label class="form-check form-check--switch"><input type="checkbox" name="info_pre_inscricao" ${i.pre_inscricao ? "checked" : ""}> Modo pré-inscrição</label>
               </div>
             </div>
             <div class="form-divider"><span>Botão principal (hero)</span></div>
@@ -857,7 +857,7 @@ function renderProfessorForm(item) {
         <textarea id="descricao" name="descricao" rows="3" maxlength="120" data-char-counter="descricao-count">${escapeHtml(p.descricao || "")}</textarea>
         <small><span id="descricao-count">${descLen}</span>/120 caracteres</small>
       </div>
-      <div class="form-group"><label class="form-check"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
+      <div class="form-group"><label class="form-check form-check--switch"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
     </div>`);
 }
 
@@ -869,7 +869,7 @@ function renderCoordForm(item) {
       <div class="form-group form-group--full"><label>Cargo / Resumo</label><input name="cargo" value="${escapeHtml(p.cargo || "")}"></div>
       ${renderImageUploadField({ value: p.foto || "", label: "Foto", folder: "coordination", dimensions: "350×350 px" })}
       <div class="form-group form-group--full"><label>Mini-currículo (um item por linha)</label><textarea name="mini_curriculo" rows="5">${escapeHtml((p.mini_curriculo || []).join("\n"))}</textarea></div>
-      <div class="form-group"><label class="form-check"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
+      <div class="form-group"><label class="form-check form-check--switch"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
     </div>`);
 }
 
@@ -933,7 +933,7 @@ function renderTestimonialForm(item) {
     <div class="form-grid">
       <div class="form-group form-group--full"><label>Nome *</label><input name="nome" value="${escapeHtml(p.nome)}" required></div>
       <div class="form-group"><label>Profissão / Curso</label><input name="profissao" value="${escapeHtml(p.profissao || "")}"></div>
-      <div class="form-group"><label class="form-check"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
+      <div class="form-group"><label class="form-check form-check--switch"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
       ${renderImageUploadField({ name: "foto", value: p.foto || p.thumbnail || "", label: "Foto da pessoa", folder: "testimonials" })}
       <div class="form-group form-group--full"><label>URL do vídeo (YouTube)</label><input name="video_url" value="${escapeHtml(p.video_url || "")}" placeholder="https://www.youtube.com/watch?v=..."></div>
       ${renderImageUploadField({ name: "imagem", value: p.imagem || "", label: "Imagem do depoimento", folder: "testimonials" })}
@@ -1044,7 +1044,7 @@ function renderTestimonialTemplateForm(item, { isNew = false } = {}) {
               <div class="form-group"><label>Comportamento</label><input value="${escapeHtml(templateTipoLabel())}" disabled></div>
             `}
             ${isNew ? `<div class="form-group form-group--full"><label>Descrição</label><input name="descricao" value="${escapeHtml(p.descricao || "")}"></div>` : ""}
-            <div class="form-group"><label class="form-check"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
+            <div class="form-group"><label class="form-check form-check--switch"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
             <div class="form-group form-group--full">
               <label>HTML do modelo</label>
               <textarea name="html" rows="14" class="template-editor__code" data-template-html>${escapeHtml(p.html || "")}</textarea>

@@ -27,7 +27,7 @@ export const TESTIMONIAL_SAMPLE = {
   nome: "Michelle dos Santos",
   profissao: "Terapia Ocupacional",
   texto:
-    "Sobre as aulas, tem sido uma experiência incrível e enriquecedora até o momento. Com profissionais de alta qualidade e ótima didática.",
+    "Sobre as aulas, tem sido uma experiência incrível e enriquecedora até o momento. Com profissionais de alta qualidade e ótima didática, acho que o curso conta com uma grade de aulas bem completa. Tenho gostado bastante!",
   legenda: "",
   video_url: "",
   foto: "",
@@ -188,27 +188,37 @@ export function renderTestimonialsSection(course, ctx, base) {
   const sectionTpl = byTemplateId(templates, resolveSectionTemplateId(cfg, templates));
   const itemsHtml = deps.map((dep) => renderTestimonialItem(dep, templates, cfg, base)).join("");
 
-  if (!sectionTpl?.html) return itemsHtml;
+  if (!sectionTpl?.html) return wrapTestimonialPreviewHtml(itemsHtml);
 
-  return applyTemplate(sectionTpl.html, {
-    titulo_secao: escapeHtml(titulo),
-    itens: itemsHtml,
-  });
+  return wrapTestimonialPreviewHtml(
+    applyTemplate(sectionTpl.html, {
+      titulo_secao: escapeHtml(titulo),
+      itens: itemsHtml,
+    }),
+  );
+}
+
+export function wrapTestimonialPreviewHtml(html) {
+  if (!html?.trim()) return "";
+  return `<div class="elementor elementor-13 elementor-kit-5 template-preview-scope">${html}</div>`;
 }
 
 export function previewTemplate(template, templates = [], sample = TESTIMONIAL_SAMPLE, base = "../../") {
   if (!template?.html) return "";
+  let html;
   if (template.escopo === "secao") {
     const itemTpl = byTemplateId(templates, DEFAULTS.item);
     const fakeItem = itemTpl?.html
       ? applyTemplate(itemTpl.html, buildTestimonialVars(sample, base))
       : "";
-    return applyTemplate(template.html, {
+    html = applyTemplate(template.html, {
       titulo_secao: escapeHtml("O que nossos alunos dizem"),
       itens: fakeItem,
     });
+  } else {
+    html = applyTemplate(template.html, buildTestimonialVars(sample, base));
   }
-  return applyTemplate(template.html, buildTestimonialVars(sample, base));
+  return wrapTestimonialPreviewHtml(html);
 }
 
 export function renderTestimonialsSectionPreview(course, ctx, base = "../../") {
