@@ -1,4 +1,4 @@
-/* Depoimentos — seção + card adaptativo */
+/* Depoimentos — seção (fixa) + fallback do card quando o modelo não define CSS */
 
 .testimonials-section {
   display: flex;

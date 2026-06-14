@@ -108,13 +108,18 @@ body.site-layout > #content {
   color: var(--color-white);
 }
 
-.site-header__cta {
+.site-header a.site-header__cta,
+.elementor-kit-5 .site-header a.site-header__cta {
   background: var(--color-primary);
-  color: var(--color-white);
+  color: #fff;
 }
 
-.site-header__cta:hover {
+.site-header a.site-header__cta:hover,
+.site-header a.site-header__cta:focus-visible,
+.elementor-kit-5 .site-header a.site-header__cta:hover,
+.elementor-kit-5 .site-header a.site-header__cta:focus-visible {
   background: var(--color-primary-dark);
+  color: #fff;
 }
 
 @media (max-width: 1230px) {

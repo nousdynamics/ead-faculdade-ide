@@ -1,4 +1,4 @@
-/* Módulos do curso — grid 2 colunas, cards com borda e hover */
+/* Módulos do curso — grid 2 colunas; borda só nos itens da lista */
 
 .course-modules {
   display: grid;
@@ -16,27 +16,16 @@
 
 .course-modules__card {
   box-sizing: border-box;
-  border: 2px solid #fff;
-  border-radius: 12px;
-  padding: 24px 28px;
+  border: none;
+  border-radius: 0;
+  padding: 0;
   background: transparent;
   color: #fff;
-  transition:
-    border-color 0.32s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.course-modules__card:hover {
-  border-color: #01e3f8;
-  box-shadow: 0 12px 32px rgba(1, 227, 248, 0.12);
-}
-
-.course-modules__card:focus-within {
-  border-color: #01e3f8;
-}
-
+.elementor-13 .elementor-element-ad3d8d1 .course-modules__title,
 .course-modules__title {
-  margin: 0 0 16px;
+  margin: 0 0 12px;
   font-family: var(--font-body, "Gotham", sans-serif);
   font-size: 1rem;
   font-weight: 600;
@@ -50,23 +39,35 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.course-modules__list li {
-  margin: 0 0 10px;
+.course-modules__list li,
+.course-modules__text {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 16px 20px;
+  border: 2px solid #fff;
+  border-radius: 12px;
   font-family: var(--font-body, "Gotham", sans-serif);
   font-size: 0.9375rem;
   font-weight: 400;
   line-height: 1.35;
   color: #fff;
+  background: transparent;
+  transition: border-color 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.course-modules__list li:last-child {
-  margin-bottom: 0;
+.course-modules__list li:hover,
+.course-modules__text:hover {
+  border-color: #01e3f8;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .course-modules__card {
+  .course-modules__list li,
+  .course-modules__text {
     transition: none;
   }
 }

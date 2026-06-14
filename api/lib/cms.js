@@ -96,6 +96,12 @@ async function readTestimonialsCollection() {
   }
 }
 
+/** Modelos de seção foram removidos — só cards de depoimento são editáveis. */
+function normalizeTestimonialTemplates(data) {
+  if (!Array.isArray(data)) return [];
+  return data.filter((t) => t?.escopo === "item");
+}
+
 export async function readCollection(name) {
   if (!COLLECTIONS[name]) {
     throw Object.assign(new Error("Coleção não encontrada"), { status: 404 });
@@ -106,9 +112,18 @@ export async function readCollection(name) {
   }
 
   const fromBlob = await readFromBlob(blobPathname(name));
-  if (fromBlob !== null) return fromBlob;
+  let data;
+  if (fromBlob !== null) {
+    data = fromBlob;
+  } else {
+    data = await readFromRepo(name);
+  }
 
-  return readFromRepo(name);
+  if (name === "testimonial-templates") {
+    return normalizeTestimonialTemplates(data);
+  }
+
+  return data;
 }
 
 export async function writeCollection(name, data) {
@@ -120,7 +135,9 @@ export async function writeCollection(name, data) {
     throw Object.assign(new Error("Corpo da requisição inválido"), { status: 400 });
   }
 
-  await writeBlob(blobPathname(name), JSON.stringify(data, null, 2) + "\n");
+  const payload = name === "testimonial-templates" ? normalizeTestimonialTemplates(data) : data;
+
+  await writeBlob(blobPathname(name), JSON.stringify(payload, null, 2) + "\n");
 
   const { publishCoursePages } = await import("./course-pages.js");
 

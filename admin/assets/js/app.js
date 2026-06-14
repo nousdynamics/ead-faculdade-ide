@@ -15,6 +15,12 @@ import {
   variablesForTemplate,
   renderVariablesHelp,
   starterHtmlFor,
+  starterCssFor,
+  DEFAULT_CLASS_ROOT,
+  normalizeClassRoot,
+  defaultClassRootForId,
+  getTemplateClassRoot,
+  remapTemplateClassNames,
 } from "./testimonial-templates.js";
 import {
   enterAdminFromLogin,
@@ -333,15 +339,14 @@ function testimonialTypeBadge(tipo) {
   return `<span class="badge ${cls}">${escapeHtml(testimonialTypeLabel(tipo))}</span>`;
 }
 
-function testimonialTemplateSelect(name, { escopo, value = "", label }) {
-  const templates = getAll("testimonial-templates").filter((t) => t.ativo !== false);
-  const options = templates.filter((t) => t.escopo === escopo);
+function testimonialTemplateSelect(name, { value = "", label }) {
+  const templates = getAll("testimonial-templates").filter((t) => t.ativo !== false && t.escopo === "item");
 
   return `
     <div class="form-group">
       <label>${label}</label>
       <select name="${name}">
-        ${options.map((t) => `<option value="${escapeHtml(t.id)}" ${value === t.id ? "selected" : ""}>${escapeHtml(t.nome)}</option>`).join("")}
+        ${templates.map((t) => `<option value="${escapeHtml(t.id)}" ${value === t.id ? "selected" : ""}>${escapeHtml(t.nome)}</option>`).join("")}
       </select>
     </div>`;
 }
@@ -349,7 +354,6 @@ function testimonialTemplateSelect(name, { escopo, value = "", label }) {
 function templateUsedByCourse(course, templateId) {
   const d = course.depoimentos || {};
   return [
-    d.template_secao_id,
     d.template_item_id,
     d.template_item_texto_id,
     d.template_item_video_id,
@@ -364,7 +368,6 @@ function templateUsageCount(templateId) {
 function collectDepoimentosConfig(form) {
   return {
     titulo_secao: form.dep_titulo_secao?.value.trim() || "O que nossos alunos dizem",
-    template_secao_id: form.dep_template_secao_id?.value || "secao-depoimentos-elementor",
     template_item_id: form.dep_template_item_id?.value || "item-depoimento-adaptativo",
   };
 }
@@ -552,25 +555,19 @@ function renderCourseForm(course) {
               ${checkboxGroup("depoimento_ids", "testimonials", getCourseDepoimentoIds(c), "Depoimentos")}
             </div>
             <div class="form-divider"><span>Modelo de exibição</span></div>
-            <p class="form-hint">Um único modelo adapta-se aos dados de cada depoimento: vídeo, foto, imagem e texto aparecem somente quando preenchidos. Edite o layout em <a href="#/testimonial-templates">Modelos de depoimento</a>.</p>
+            <p class="form-hint">O layout da seção é fixo; edite o card de cada depoimento em <a href="#/testimonial-templates">Modelos de depoimento</a>. Blocos como <code>{{bloco_video}}</code> somem quando o depoimento não tem esses dados.</p>
             <div class="form-grid">
               <div class="form-group form-group--full">
                 <label>Título da seção</label>
                 <input name="dep_titulo_secao" value="${escapeHtml(c.depoimentos?.titulo_secao || "O que nossos alunos dizem")}">
               </div>
-              ${testimonialTemplateSelect("dep_template_secao_id", {
-                escopo: "secao",
-                value: c.depoimentos?.template_secao_id || "secao-depoimentos-elementor",
-                label: "Modelo da seção",
-              })}
               ${testimonialTemplateSelect("dep_template_item_id", {
-                escopo: "item",
                 value: c.depoimentos?.template_item_id || c.depoimentos?.template_item_texto_id || "item-depoimento-adaptativo",
                 label: "Modelo do depoimento",
               })}
             </div>
             <div class="form-divider"><span>Pré-visualização da seção</span></div>
-            <p class="form-hint">Atualiza conforme você altera depoimentos, título ou modelos selecionados.</p>
+            <p class="form-hint">Atualiza conforme você altera depoimentos, título ou modelo selecionado.</p>
             <div class="template-preview-shell">
               <div class="template-preview template-preview--course" id="course-depoimentos-preview">${renderCourseDepoimentosPreview(c)}</div>
             </div>
@@ -780,7 +777,6 @@ function emptyCourse() {
     depoimento_ids: [],
     depoimentos: {
       titulo_secao: "O que nossos alunos dizem",
-      template_secao_id: "secao-depoimentos-elementor",
       template_item_id: "item-depoimento-adaptativo",
     },
     hero: {},
@@ -966,8 +962,8 @@ function renderTestimonialForm(item) {
 }
 
 function renderTestimonialTemplatesList() {
-  setPage("Modelos de depoimento", "HTML reutilizável com variáveis para a seção de depoimentos nas páginas de curso");
-  const templates = getAll("testimonial-templates");
+  setPage("Modelos de depoimento", "HTML reutilizável para o card de depoimento nas páginas de curso");
+  const templates = getAll("testimonial-templates").filter((t) => t.escopo === "item");
   const allTemplates = templates;
 
   return `
@@ -980,7 +976,7 @@ function renderTestimonialTemplatesList() {
         </div>
       </div>
       <div class="panel__body">
-        <p class="form-hint">Modelo adaptativo: blocos como <code>{{bloco_video}}</code>, <code>{{bloco_foto}}</code> e <code>{{bloco_imagem}}</code> somem quando o depoimento não tem esses dados.</p>
+        <p class="form-hint">Edite o <strong>HTML</strong> e o <strong>CSS</strong> do card. Blocos como <code>{{bloco_video}}</code> somem quando o depoimento não tem esses dados. O wrapper da seção (título + grid) é fixo no site.</p>
       </div>
       <div class="panel__body panel__body--flush table-wrap">
         <table class="data-table data-table--entities">
@@ -995,10 +991,10 @@ function renderTestimonialTemplatesList() {
             return `<tr>
             <td class="col-name">
               <span class="cell-name__title">${escapeHtml(item.nome)}</span>
-              <span class="cell-name__meta">${escapeHtml(item.descricao || item.id)}${usage ? ` · ${usage} curso(s)` : ""}</span>
+              <span class="cell-name__meta">${escapeHtml(item.descricao || item.id)} · <code>.${escapeHtml(getTemplateClassRoot(item))}</code>${usage ? ` · ${usage} curso(s)` : ""}</span>
             </td>
-            <td class="col-course"><span class="badge badge--open">${escapeHtml(templateEscopoLabel(item.escopo))}</span></td>
-            <td class="col-status">${item.escopo === "item" ? '<span class="badge badge--live">Adaptativo</span>' : '<span class="badge badge--draft">Wrapper</span>'}</td>
+            <td class="col-course"><span class="badge badge--open">${escapeHtml(templateEscopoLabel())}</span></td>
+            <td class="col-status"><span class="badge badge--live">Adaptativo</span></td>
             <td class="col-actions">
               <div class="table-actions">
                 <button type="button" class="btn btn--ghost btn--sm" data-preview-template="${item.id}">${icon("layout", { size: 14 })} Visualizar</button>
@@ -1011,8 +1007,8 @@ function renderTestimonialTemplatesList() {
           <tr class="template-preview-row" data-preview-row="${item.id}" hidden>
             <td colspan="4">
               <div class="template-preview-shell">
-                <p class="template-preview-shell__label">${item.escopo === "item" ? "Pré-visualização do card de depoimento" : "Pré-visualização da seção (wrapper)"}</p>
-                <div class="template-preview ${item.escopo === "item" ? "template-preview--item" : "template-preview--secao"}">${previewTemplate(item, allTemplates)}</div>
+                <p class="template-preview-shell__label">Pré-visualização do card de depoimento</p>
+                <div class="template-preview template-preview--item">${previewTemplate(item, allTemplates)}</div>
                 <p class="template-vars">Variáveis: ${(item.variaveis || []).map((v) => `<code>{{${escapeHtml(v)}}}</code>`).join(" ") || "—"}</p>
               </div>
             </td>
@@ -1026,19 +1022,25 @@ function renderTestimonialTemplatesList() {
 }
 
 function renderTestimonialTemplateForm(item, { isNew = false } = {}) {
+  const defaultRoot = isNew ? DEFAULT_CLASS_ROOT : getTemplateClassRoot(item);
   const p = item || {
     id: "",
     nome: "",
     escopo: "item",
     tipo: null,
     descricao: "",
-    html: starterHtmlFor("item"),
-    variaveis: variablesForTemplate("item"),
+    classe_raiz: defaultRoot,
+    html: starterHtmlFor(defaultRoot),
+    css: starterCssFor(defaultRoot),
+    variaveis: variablesForTemplate(),
     ativo: true,
   };
+  const classRoot = getTemplateClassRoot(p);
+  const htmlValue = p.html || starterHtmlFor(classRoot);
+  const cssValue = p.css || starterCssFor(classRoot);
   const templates = getAll("testimonial-templates");
-  const preview = previewTemplate(p, templates);
-  const varsHelp = renderVariablesHelp(p.escopo);
+  const preview = previewTemplate({ ...p, html: htmlValue, css: cssValue, classe_raiz: classRoot }, templates);
+  const varsHelp = renderVariablesHelp();
   const title = isNew ? "Novo modelo de depoimento" : `Editar modelo: ${p.nome || p.id}`;
 
   return `
@@ -1054,38 +1056,62 @@ function renderTestimonialTemplateForm(item, { isNew = false } = {}) {
                 <input name="template_id" value="${escapeHtml(p.id || "")}" placeholder="ex: item-depoimento-custom" required>
                 <small>Usado internamente e nos cursos. Apenas letras minúsculas, números e hífens.</small>
               </div>
-              <div class="form-group">
-                <label>Escopo *</label>
-                <select name="escopo" id="template-escopo">
-                  <option value="secao" ${p.escopo === "secao" ? "selected" : ""}>Seção (wrapper)</option>
-                  <option value="item" ${p.escopo === "item" ? "selected" : ""}>Depoimento (card adaptativo)</option>
-                </select>
-              </div>
             ` : `
               <div class="form-group form-group--full"><label>Descrição</label><input name="descricao" value="${escapeHtml(p.descricao || "")}"></div>
-              <div class="form-group"><label>Escopo</label><input value="${escapeHtml(templateEscopoLabel(p.escopo))}" disabled></div>
+              <div class="form-group"><label>Escopo</label><input value="${escapeHtml(templateEscopoLabel())}" disabled></div>
               <div class="form-group"><label>Comportamento</label><input value="${escapeHtml(templateTipoLabel())}" disabled></div>
             `}
             ${isNew ? `<div class="form-group form-group--full"><label>Descrição</label><input name="descricao" value="${escapeHtml(p.descricao || "")}"></div>` : ""}
-            <div class="form-group"><label class="form-check form-check--switch"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
             <div class="form-group form-group--full">
-              <label>HTML do modelo</label>
-              <textarea name="html" rows="14" class="template-editor__code" data-template-html>${escapeHtml(p.html || "")}</textarea>
+              <label>Classe raiz (CSS) *</label>
+              <input name="classe_raiz" id="template-classe-raiz" value="${escapeHtml(classRoot)}" placeholder="ex: depoimento-premium" required>
+              <small>Prefixo BEM do card e dos blocos gerados (<code>.minha-classe__nome</code>). Use uma classe única por modelo para evitar conflito entre estilos.</small>
             </div>
+            <div class="form-group"><label class="form-check form-check--switch"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
             <div class="form-group form-group--full template-vars-help">
               <label>Referência de variáveis (blocos vazios não aparecem na página)</label>
               <ul class="template-vars-list" id="template-vars-list">${varsHelp}</ul>
             </div>
           </div>
+          <textarea name="html" class="template-fields-hidden" data-template-html>${escapeHtml(htmlValue)}</textarea>
+          <textarea name="css" class="template-fields-hidden" data-template-css>${escapeHtml(cssValue)}</textarea>
           <div class="template-preview-shell template-preview-shell--editor">
-            <p class="template-preview-shell__label">${p.escopo === "item" ? "Pré-visualização do card de depoimento" : "Pré-visualização da seção (wrapper)"}</p>
-            <div class="template-preview ${p.escopo === "item" ? "template-preview--item" : "template-preview--secao"}" id="template-live-preview">${preview}</div>
+            <div class="template-preview-shell__toolbar">
+              <p class="template-preview-shell__label">Pré-visualização do card de depoimento</p>
+              <button type="button" class="btn btn--ghost btn--sm template-code-open" id="open-template-code" title="Editar HTML e CSS" aria-label="Editar HTML e CSS">
+                ${icon("code", { size: 18 })}
+              </button>
+            </div>
+            <div class="template-preview template-preview--item" id="template-live-preview">${preview}</div>
           </div>
           <div class="form-actions">
             <button type="button" class="btn btn--ghost" id="cancel-template">${icon("x", { size: 16 })} Cancelar</button>
             <button type="submit" class="btn btn--primary">${icon("save", { size: 16 })} Salvar modelo</button>
           </div>
         </form>
+      </div>
+    </div>
+    <div class="template-code-modal" id="template-code-modal" hidden aria-hidden="true">
+      <div class="template-code-modal__backdrop" data-close-template-code></div>
+      <div class="template-code-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="template-code-modal-title">
+        <div class="template-code-modal__head">
+          <h3 id="template-code-modal-title">HTML e CSS do modelo</h3>
+          <button type="button" class="btn btn--ghost btn--sm" data-close-template-code aria-label="Fechar">${icon("x", { size: 16 })}</button>
+        </div>
+        <div class="template-code-modal__body">
+          <div class="template-code-modal__pane">
+            <label for="template-modal-html">HTML</label>
+            <textarea id="template-modal-html" rows="16" class="template-editor__code"></textarea>
+          </div>
+          <div class="template-code-modal__pane">
+            <label for="template-modal-css">CSS</label>
+            <textarea id="template-modal-css" rows="16" class="template-editor__code"></textarea>
+          </div>
+        </div>
+        <div class="template-code-modal__foot">
+          <button type="button" class="btn btn--ghost" data-close-template-code>Cancelar</button>
+          <button type="button" class="btn btn--primary" id="apply-template-code">${icon("check-circle", { size: 16 })} Aplicar</button>
+        </div>
       </div>
     </div>`;
 }
@@ -1412,10 +1438,16 @@ function bindTestimonialTemplateEvents() {
     btn.addEventListener("click", () => {
       const source = getById("testimonial-templates", btn.dataset.duplicateTemplate);
       if (!source) return;
+      const oldRoot = getTemplateClassRoot(source);
+      const newRoot = normalizeClassRoot(`${oldRoot}-copia`);
+      const remapped = remapTemplateClassNames(source.html, source.css, oldRoot, newRoot);
       const copy = {
         ...source,
         id: `${source.id}-copia-${Date.now().toString(36).slice(-4)}`,
         nome: `${source.nome} (cópia)`,
+        classe_raiz: newRoot,
+        html: remapped.html,
+        css: remapped.css,
       };
       const slot = $("#template-form-slot");
       if (slot) slot.innerHTML = renderTestimonialTemplateForm(copy, { isNew: true });
@@ -1450,72 +1482,141 @@ function bindTestimonialTemplateForm(original, { isNew = false } = {}) {
   if (!form) return;
 
   const htmlField = form.querySelector("[data-template-html]");
+  const cssField = form.querySelector("[data-template-css]");
   const previewEl = $("#template-live-preview");
   const varsList = $("#template-vars-list");
-  const escopoSelect = form.querySelector("#template-escopo");
   const idField = form.querySelector("[name='template_id']");
   const nomeField = form.querySelector("[name='nome']");
+  const classeField = form.querySelector("[name='classe_raiz']");
+  const modal = $("#template-code-modal");
+  const modalHtml = $("#template-modal-html");
+  const modalCss = $("#template-modal-css");
   const templates = getAll("testimonial-templates");
 
-  const getDraft = () => {
-    const escopo = escopoSelect?.value || original?.escopo || "item";
-    return {
-      ...(original || {}),
-      id: idField?.value.trim() || original?.id || "",
-      nome: nomeField?.value.trim() || original?.nome || "",
-      escopo,
-      tipo: null,
-      html: htmlField?.value || "",
-      ativo: form.ativo?.checked ?? true,
-    };
-  };
+  let lastClassRoot = getTemplateClassRoot(original || { classe_raiz: classeField?.value });
+  if (classeField) classeField.dataset.lastRoot = lastClassRoot;
+
+  const getDraft = () => ({
+    ...(original || {}),
+    id: idField?.value.trim() || original?.id || "",
+    nome: nomeField?.value.trim() || original?.nome || "",
+    classe_raiz: normalizeClassRoot(classeField?.value || lastClassRoot),
+    escopo: "item",
+    tipo: null,
+    html: htmlField?.value || "",
+    css: cssField?.value || "",
+    ativo: form.ativo?.checked ?? true,
+  });
 
   const syncVarsHelp = () => {
-    const draft = getDraft();
-    if (varsList) varsList.innerHTML = renderVariablesHelp(draft.escopo);
+    if (varsList) varsList.innerHTML = renderVariablesHelp();
   };
 
   const updatePreview = () => {
     const draft = getDraft();
     if (previewEl) {
-      previewEl.classList.remove("template-preview--item", "template-preview--secao");
-      previewEl.classList.add(draft.escopo === "item" ? "template-preview--item" : "template-preview--secao");
+      previewEl.classList.remove("template-preview--secao");
+      previewEl.classList.add("template-preview--item");
       previewEl.innerHTML = previewTemplate(draft, templates);
     }
     syncVarsHelp();
   };
 
   const applyStarterIfEmpty = () => {
-    if (!isNew || !htmlField || htmlField.value.trim()) return;
-    htmlField.value = starterHtmlFor(getDraft().escopo);
+    if (!isNew) return;
+    const root = normalizeClassRoot(classeField?.value || defaultClassRootForId(idField?.value));
+    if (htmlField && !htmlField.value.trim()) htmlField.value = starterHtmlFor(root);
+    if (cssField && !cssField.value.trim()) cssField.value = starterCssFor(root);
   };
 
-  escopoSelect?.addEventListener("change", () => {
-    if (isNew && htmlField && !htmlField.dataset.userEdited) {
-      htmlField.value = starterHtmlFor(getDraft().escopo);
+  const syncClassRootInCode = (oldRoot, newRoot) => {
+    if (!htmlField || !cssField || oldRoot === newRoot) return;
+    const remapped = remapTemplateClassNames(htmlField.value, cssField.value, oldRoot, newRoot);
+    htmlField.value = remapped.html;
+    cssField.value = remapped.css;
+    lastClassRoot = newRoot;
+    if (classeField) {
+      classeField.value = newRoot;
+      classeField.dataset.lastRoot = newRoot;
     }
     updatePreview();
-  });
+  };
+
+  let escHandler = null;
+
+  const openCodeModal = () => {
+    if (!modal || !modalHtml || !modalCss) return;
+    modalHtml.value = htmlField?.value || "";
+    modalCss.value = cssField?.value || "";
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    modalHtml.focus();
+    escHandler = (ev) => {
+      if (ev.key === "Escape") closeCodeModal();
+    };
+    document.addEventListener("keydown", escHandler);
+  };
+
+  const closeCodeModal = () => {
+    if (!modal) return;
+    modal.hidden = true;
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    if (escHandler) {
+      document.removeEventListener("keydown", escHandler);
+      escHandler = null;
+    }
+  };
 
   nomeField?.addEventListener("input", () => {
     if (isNew && idField && !idField.dataset.userEdited) {
       idField.value = slugify(nomeField.value);
     }
+    if (isNew && classeField && !classeField.dataset.userEdited && idField?.value) {
+      classeField.value = defaultClassRootForId(idField.value);
+    }
   });
 
   idField?.addEventListener("input", () => {
     idField.dataset.userEdited = "1";
+    if (isNew && classeField && !classeField.dataset.userEdited) {
+      classeField.value = defaultClassRootForId(idField.value);
+    }
   });
 
-  htmlField?.addEventListener("input", () => {
-    htmlField.dataset.userEdited = "1";
+  classeField?.addEventListener("input", () => {
+    classeField.dataset.userEdited = "1";
+  });
+
+  classeField?.addEventListener("blur", () => {
+    const newRoot = normalizeClassRoot(classeField.value);
+    const oldRoot = classeField.dataset.lastRoot || lastClassRoot;
+    if (newRoot !== oldRoot) {
+      syncClassRootInCode(oldRoot, newRoot);
+    }
+  });
+
+  $("#open-template-code")?.addEventListener("click", openCodeModal);
+
+  modal?.addEventListener("click", (e) => {
+    if (e.target.closest("[data-close-template-code]")) closeCodeModal();
+  });
+
+  $("#apply-template-code")?.addEventListener("click", () => {
+    if (htmlField && modalHtml) htmlField.value = modalHtml.value;
+    if (cssField && modalCss) cssField.value = modalCss.value;
+    htmlField && (htmlField.dataset.userEdited = "1");
     updatePreview();
+    closeCodeModal();
+    toast("HTML e CSS aplicados na pré-visualização. Salve o modelo para publicar.");
   });
 
   applyStarterIfEmpty();
   updatePreview();
 
   $("#cancel-template")?.addEventListener("click", () => {
+    closeCodeModal();
     const slot = $("#template-form-slot");
     if (slot) slot.innerHTML = "";
   });
@@ -1528,9 +1629,11 @@ function bindTestimonialTemplateForm(original, { isNew = false } = {}) {
       id: isNew ? slugify(draft.id || draft.nome) : (original?.id || draft.id),
       nome: draft.nome,
       descricao: form.descricao?.value.trim() || "",
-      escopo: draft.escopo,
+      classe_raiz: draft.classe_raiz,
+      escopo: "item",
       tipo: null,
       html: form.html.value,
+      css: form.css?.value || "",
       variaveis: extractTemplateVariables(form.html.value),
       ativo: form.ativo?.checked ?? true,
     };

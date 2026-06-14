@@ -582,6 +582,116 @@ body.admin-mode {
   margin-top: 1rem;
 }
 
+.template-preview-shell__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.template-preview-shell__toolbar .template-preview-shell__label {
+  margin: 0;
+}
+
+.template-code-open {
+  flex-shrink: 0;
+}
+
+.template-code-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.template-code-modal[hidden] {
+  display: none;
+}
+
+.template-code-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgb(15 23 42 / 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.template-code-modal__dialog {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(960px, 100%);
+  max-height: min(90vh, 900px);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface, #fff);
+  box-shadow: 0 24px 48px rgb(15 23 42 / 0.18);
+}
+
+.template-code-modal__head,
+.template-code-modal__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.template-code-modal__foot {
+  border-bottom: 0;
+  border-top: 1px solid var(--color-border);
+  justify-content: flex-end;
+}
+
+.template-code-modal__head h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.template-code-modal__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1.25rem;
+  overflow: auto;
+}
+
+.template-code-modal__pane label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.template-code-modal__pane textarea {
+  width: 100%;
+  min-height: 320px;
+  resize: vertical;
+}
+
+@media (max-width: 767px) {
+  .template-code-modal__body {
+    grid-template-columns: 1fr;
+  }
+}
+
+.template-fields-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .template-vars {
   margin: 0.75rem 0 0;
   font-size: 0.8125rem;

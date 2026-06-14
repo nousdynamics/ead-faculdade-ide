@@ -1,22 +1,14 @@
 [
   {
-    "id": "secao-depoimentos-elementor",
-    "nome": "Seção — O que nossos alunos dizem",
-    "escopo": "secao",
-    "tipo": null,
-    "descricao": "Wrapper da seção. Variáveis: {{titulo_secao}} e {{itens}}.",
-    "ativo": true,
-    "html": "<section class=\"testimonials-section\">\n  <h2 class=\"testimonials-section__title\">{{titulo_secao}}</h2>\n  <div class=\"testimonials-section__grid\">{{itens}}</div>\n</section>",
-    "variaveis": ["titulo_secao", "itens"]
-  },
-  {
     "id": "item-depoimento-adaptativo",
     "nome": "Depoimento adaptativo",
     "escopo": "item",
     "tipo": null,
     "descricao": "Card enxuto. Vídeo, foto, imagem e textos aparecem só quando preenchidos.",
     "ativo": true,
+    "classe_raiz": "testimonial-card",
     "html": "<article class=\"testimonial-card\">\n  {{bloco_foto}}\n  {{bloco_video}}\n  {{bloco_imagem}}\n  <header class=\"testimonial-card__header\">\n    <h3 class=\"testimonial-card__name\">{{nome}}</h3>\n    {{bloco_profissao}}\n  </header>\n  {{bloco_texto}}\n  {{bloco_legenda}}\n</article>",
+    "css": ".testimonial-card {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  gap: 16px;\n  width: 100%;\n  max-width: 400px;\n  margin-inline: auto;\n  padding: 32px;\n  box-sizing: border-box;\n  border: 1px solid #d3dbe1;\n  border-radius: 24px;\n  background: #fff;\n  box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;\n}\n\n.testimonial-card__header {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 2px;\n  width: 100%;\n}\n\n.testimonial-card__name {\n  margin: 0;\n  font-family: var(--font-heading, \"Gotham\", sans-serif);\n  font-size: 22px;\n  font-weight: 500;\n  line-height: 32px;\n  text-align: center;\n  color: var(--color-primary, #2b325c);\n}\n\n.testimonial-card__role {\n  margin: 0;\n  font-size: 12px;\n  font-weight: 400;\n  line-height: 18px;\n  text-align: center;\n  color: var(--color-primary, #2b325c);\n}\n\n.testimonial-card__quote {\n  margin: 0;\n  width: 100%;\n  text-align: center;\n}\n\n.testimonial-card__quote p {\n  margin: 0;\n  font-size: 0.8em;\n  font-weight: 400;\n  line-height: 1.1em;\n  text-wrap: balance;\n  color: var(--color-primary, #2b325c);\n}\n\n.testimonial-card__caption {\n  margin: 0;\n  width: 100%;\n  font-size: 0.75rem;\n  line-height: 1.4;\n  text-align: center;\n  opacity: 0.85;\n  color: var(--color-primary, #2b325c);\n}\n\n.testimonial-card__avatar {\n  margin: 0 auto;\n  width: 100%;\n  text-align: center;\n}\n\n.testimonial-card__avatar img {\n  width: 72px;\n  height: 72px;\n  border-radius: 50%;\n  object-fit: cover;\n}\n\n.testimonial-card__video {\n  position: relative;\n  width: 100%;\n  aspect-ratio: 16 / 9;\n  border-radius: 12px;\n  overflow: hidden;\n  background: #000;\n}\n\n.testimonial-card__video iframe {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  border: 0;\n}\n\n.testimonial-card__figure {\n  margin: 0;\n  width: 100%;\n}\n\n.testimonial-card__figure img {\n  width: 100%;\n  height: auto;\n  display: block;\n  border-radius: 12px;\n}",
     "variaveis": [
       "nome",
       "bloco_foto",

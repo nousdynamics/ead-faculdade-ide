@@ -20,7 +20,7 @@
     ".site-footer__grid > .site-footer__col",
   ];
 
-  var LIFT_SELECTORS = ".course-card, .course-modules__card, .testimonial-card, .review-card, .jet-listing-grid__item";
+  var LIFT_SELECTORS = ".course-card, .course-modules__list li, .testimonial-card, .review-card, .jet-listing-grid__item";
 
   var observer;
   var observed = new WeakSet();
