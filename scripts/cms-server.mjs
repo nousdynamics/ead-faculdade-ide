@@ -9,7 +9,7 @@ import {
   getAccountProfile,
   updateAccountProfile,
 } from "../api/lib/account.js";
-import { saveUploadedImage } from "../api/lib/upload.js";
+import { saveUploadedImage } from "../api/lib/image-storage.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -210,7 +210,7 @@ const server = createServer(async (req, res) => {
     return send(res, 200, { ok: true });
   }
 
-  if (url.pathname === "/api/upload" && req.method === "POST") {
+  if (url.pathname === "/api/media/upload" && req.method === "POST") {
     const session = requireAuth(req, res);
     if (!session) return;
 

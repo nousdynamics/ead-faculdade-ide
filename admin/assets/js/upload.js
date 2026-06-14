@@ -32,7 +32,7 @@ export async function uploadImage(file, folder = "uploads") {
   }
 
   const data = await readFileAsBase64(file);
-  const res = await fetch("/api/upload", {
+  const res = await fetch("/api/media/upload", {
     method: "POST",
     headers: authHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({

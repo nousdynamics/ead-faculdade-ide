@@ -4,6 +4,11 @@
   "name": "ead-faculdade-ide",
   "cleanUrls": true,
   "trailingSlash": false,
+  "functions": {
+    "api/[...path].js": {
+      "maxDuration": 10
+    }
+  },
   "headers": [
     {
       "source": "/assets/(.*)",
