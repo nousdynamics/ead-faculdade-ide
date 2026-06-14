@@ -801,11 +801,15 @@ function bindTaxonomyEvents() {
 }
 
 function showLogin() {
+  document.body.classList.add("login-mode");
+  document.body.classList.remove("admin-mode");
   $("#login-screen").hidden = false;
   $("#app").hidden = true;
 }
 
 function showApp() {
+  document.body.classList.remove("login-mode");
+  document.body.classList.add("admin-mode");
   $("#login-screen").hidden = true;
   $("#app").hidden = false;
   const user = getUser();

@@ -31,13 +31,29 @@ export function authHeaders(extra = {}) {
 }
 
 export async function login(username, password) {
-  const res = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "Login inválido");
+  let res;
+  try {
+    res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+  } catch {
+    throw new Error("Servidor CMS indisponível. Execute npm run cms no projeto para acessar o painel.");
+  }
+
+  const contentType = res.headers.get("content-type") || "";
+  const data = contentType.includes("application/json")
+    ? await res.json().catch(() => ({}))
+    : {};
+
+  if (!res.ok) {
+    if (res.status === 404 || res.status === 405) {
+      throw new Error("Servidor CMS indisponível. Execute npm run cms no projeto para acessar o painel.");
+    }
+    throw new Error(data.error || "Usuário ou senha incorretos");
+  }
+
   setSession(data.token, data.user);
   return data;
 }

@@ -10,15 +10,30 @@
   --admin-success: #059669;
 }
 
+/* hidden deve vencer display:flex do painel */
+[hidden] {
+  display: none !important;
+}
+
+body.login-mode {
+  overflow: hidden;
+}
+
+body.admin-mode {
+  overflow-x: hidden;
+}
+
 /* ---- Login ---- */
 .login-screen {
-  position: relative;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-md);
-  overflow: hidden;
+  overflow: auto;
   background: var(--color-primary);
 }
 
@@ -218,6 +233,7 @@
   display: flex;
   min-height: 100vh;
   background: var(--admin-bg);
+  width: 100%;
 }
 
 .admin__sidebar {
