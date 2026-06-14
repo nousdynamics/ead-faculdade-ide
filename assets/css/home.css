@@ -149,3 +149,113 @@
 @media (max-width: 575px) {
   .course-grid { grid-template-columns: 1fr; }
 }
+
+/* ===================== DEPOIMENTOS ===================== */
+.testimonials { background: #fff; padding-block: var(--space-2xl); }
+.testimonials__head { text-align: center; margin-bottom: 2.5rem; }
+.testimonials__layout {
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+.reviews-summary {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .6rem;
+}
+.reviews-summary__name { font-weight: var(--fw-bold); color: var(--color-primary); font-size: 1.05rem; }
+.reviews-summary__count { font-size: .85rem; color: var(--color-muted); }
+.stars { display: inline-flex; gap: 2px; color: #fbbc04; }
+.stars svg { width: 18px; height: 18px; fill: currentColor; }
+.google-g { width: 60px; height: auto; }
+
+.reviews-scroller { position: relative; min-width: 0; }
+.reviews-track {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: .25rem .25rem 1rem;
+  scrollbar-width: none;
+}
+.reviews-track::-webkit-scrollbar { display: none; }
+.review-card {
+  flex: 0 0 300px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+.review-card__head { display: flex; align-items: center; gap: .7rem; }
+.review-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: var(--fw-bold);
+  flex-shrink: 0;
+}
+.review-card__name { font-weight: var(--fw-bold); font-size: .9rem; color: var(--color-primary); }
+.review-card__text { font-size: .85rem; color: #555; line-height: 1.5; }
+.reviews-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow-md);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2;
+  color: var(--color-primary);
+}
+.reviews-nav:hover { background: var(--color-accent); color: #fff; }
+.reviews-nav--prev { left: -14px; }
+.reviews-nav--next { right: -14px; }
+.reviews-nav svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* ===================== NEWSLETTER ===================== */
+.newsletter { background: var(--color-accent); }
+.newsletter__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 2.5rem;
+}
+.newsletter__brand { display: flex; align-items: center; justify-content: center; padding: 3rem 1rem; }
+.newsletter__brand img { width: min(260px, 70%); filter: brightness(0) invert(1); opacity: .95; }
+.newsletter__card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 2.5rem;
+  margin: 2.5rem 0;
+}
+.newsletter__sub { color: var(--color-muted); margin: .5rem 0 1.5rem; }
+.newsletter__card .lead-form { flex-direction: column; }
+.newsletter__row { display: flex; gap: 1rem; align-items: flex-end; }
+.newsletter__row .field { flex: 1; }
+
+@media (max-width: 767px) {
+  .testimonials__layout { grid-template-columns: 1fr; }
+  .review-card { flex-basis: 82%; }
+  .reviews-nav--prev { left: 0; }
+  .reviews-nav--next { right: 0; }
+  .newsletter__inner { grid-template-columns: 1fr; gap: 0; }
+  .newsletter__brand { padding: 2.5rem 1rem 0; }
+  .newsletter__card { margin: 1.5rem 0 2.5rem; padding: 1.75rem; }
+  .newsletter__row { flex-direction: column; align-items: stretch; gap: .9rem; }
+}
