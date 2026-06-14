@@ -1,6 +1,6 @@
 /* ============================================================
    RD Station — formulário hero (home)
-   Overrides alinhados ao original + embed fornecido
+   Contraste alto sobre gradiente teal/navy
    ============================================================ */
 
 .hero__form,
@@ -51,50 +51,65 @@
   padding-right: 0 !important;
 }
 
-#rd-form-mo0jfhob .bricks-form__label {
-  color: #084E3F !important;
-  font-family: var(--font-primary) !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  margin-bottom: 5px !important;
-}
-
 #rd-form-mo0jfhob,
 #rd-button-mo0jfhoe.bricks--component-button {
   margin-left: 0 !important;
   padding-left: 0 !important;
 }
 
+/* Labels */
+#rd-form-mo0jfhob .bricks-form__label,
+#rd-form-mo0jfhob label {
+  color: #ffffff !important;
+  font-family: var(--font-primary) !important;
+  font-size: 13px !important;
+  font-weight: var(--fw-bold) !important;
+  line-height: 1.35 !important;
+  margin-bottom: 6px !important;
+  display: inline-block !important;
+  text-shadow: 0 1px 8px rgba(19, 30, 68, 0.18);
+}
+
+/* Campos — glass sobre o hero */
 #rd-form-mo0jfhob .bricks-form__input,
 #rd-form-mo0jfhob input[type="text"],
 #rd-form-mo0jfhob input[type="email"],
 #rd-form-mo0jfhob input[type="tel"],
 #rd-form-mo0jfhob select {
-  background-color: rgba(255, 255, 255, 0.75) !important;
-  border: 1.5px solid #c0c0c0 !important;
-  border-radius: 10px !important;
-  box-shadow: none !important;
-  color: #333333 !important;
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.55) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 18px rgba(19, 30, 68, 0.12) !important;
+  color: var(--color-primary) !important;
   font-family: var(--font-primary) !important;
   font-size: 15px !important;
+  font-weight: var(--fw-book) !important;
   height: 48px !important;
   padding: 0 16px !important;
   width: 100% !important;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease !important;
   -webkit-appearance: none !important;
   appearance: none !important;
 }
 
+#rd-form-mo0jfhob select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' stroke='%232B325C' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 16px center !important;
+  padding-right: 40px !important;
+}
+
 #rd-form-mo0jfhob .bricks-form__input::placeholder,
 #rd-form-mo0jfhob input::placeholder {
-  color: #aaaaaa !important;
+  color: rgba(43, 50, 92, 0.45) !important;
   opacity: 1 !important;
 }
 
 #rd-form-mo0jfhob .bricks-form__input:focus,
 #rd-form-mo0jfhob input:focus,
 #rd-form-mo0jfhob select:focus {
-  border-color: #084E3F !important;
-  box-shadow: 0 0 0 3px rgba(8, 78, 63, 0.12) !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.28), 0 8px 24px rgba(19, 30, 68, 0.18) !important;
   outline: none !important;
   background-color: #ffffff !important;
 }
@@ -103,58 +118,86 @@
   margin-bottom: 14px !important;
 }
 
+/* Select2 / dropdown de área */
 #rd-form-mo0jfhob .select2-container .select2-choice {
-  background: rgba(255, 255, 255, 0.75) !important;
-  border: none !important;
-  color: #333333 !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.55) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 18px rgba(19, 30, 68, 0.12) !important;
+  color: var(--color-primary) !important;
   height: 46px !important;
   line-height: 46px !important;
-  border-radius: 10px !important;
-  box-shadow: none !important;
 }
 
+#rd-form-mo0jfhob .select2-container .select2-chosen {
+  color: var(--color-primary) !important;
+}
+
+/* Privacidade e textos auxiliares */
 #rd-form-mo0jfhob .bricks-form__static,
 #rd-form-mo0jfhob .bricks-form__static span,
-#rd-form-mo0jfhob .bricks-form__static a {
-  color: #888888 !important;
-  font-size: 12px !important;
-}
-
+#rd-form-mo0jfhob .bricks-form__static a,
+#rd-text-mo0jfhof,
 #rd-text-mo0jfhof p,
 #rd-text-mo0jfhof p span {
-  color: #555555 !important;
-  font-size: 13px !important;
-  line-height: 1.5 !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+  font-family: var(--font-primary) !important;
+  font-size: 12px !important;
+  line-height: 1.55 !important;
+  text-shadow: 0 1px 6px rgba(19, 30, 68, 0.2);
+}
+
+#rd-form-mo0jfhob .bricks-form__static a {
+  color: #ffffff !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 #rd-form-mo0jfhob label.error {
-  color: #c0392b !important;
+  color: #ffb4b4 !important;
   font-size: 12px !important;
-  font-weight: 600 !important;
+  font-weight: var(--fw-bold) !important;
+  text-shadow: none !important;
 }
 
+/* Botão CTA */
 #rd-button-mo0jfhoe.bricks--component-button {
-  background-color: #13A6B4 !important;
-  background: #13A6B4 !important;
-  border: none !important;
-  border-radius: 10px !important;
-  box-shadow: 0 8px 20px rgba(19, 166, 180, 0.3) !important;
-  color: #ffffff !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f4f7fb 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 10px 28px rgba(19, 30, 68, 0.28),
+    0 1px 0 rgba(255, 255, 255, 0.8) inset !important;
+  color: var(--color-primary) !important;
   font-family: var(--font-primary) !important;
-  font-size: 17px !important;
+  font-size: 16px !important;
   font-weight: var(--fw-bold) !important;
+  letter-spacing: 0.03em !important;
   height: 54px !important;
   margin-top: 18px !important;
   width: 100% !important;
   max-width: var(--form-width) !important;
   cursor: pointer !important;
-  transition: all 0.25s ease !important;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease,
+    color 0.22s ease !important;
 }
 
 #rd-button-mo0jfhoe.bricks--component-button:hover {
-  background-color: #2b325c !important;
-  background: #2b325c !important;
-  transform: translateY(-1px) !important;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #1e2444 100%) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow:
+    0 14px 32px rgba(19, 30, 68, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
+}
+
+#rd-button-mo0jfhoe.bricks--component-button:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 6px 16px rgba(19, 30, 68, 0.24) !important;
 }
 
 @media (max-width: 767px) {
