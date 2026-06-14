@@ -8,7 +8,8 @@
     ["#courseGrid", ".course-card"],
     [".benefits", ".benefits__cell"],
     [".reviews-track", ".review-card"],
-    [".course-faq-accordion", ".jet-accordion__item"],
+    [".course-investment__inner", ".course-investment__benefits, .course-investment__pricing"],
+    [".course-faq__list", ".course-faq__item"],
   ];
 
   var SECTION_SELECTORS = [
@@ -53,7 +54,7 @@
   function sectionHasStagger(section) {
     return Boolean(
       section.querySelector(
-        ".course-modules, .professores, .course-faq-accordion, .testimonials-section"
+        ".course-modules, .professores, .course-investment, .course-faq, .testimonials-section"
       )
     );
   }
@@ -154,6 +155,16 @@
 
     if (document.querySelector(".elementor-13")) {
       setupCourseSections();
+      document.querySelectorAll(".course-faq").forEach(function (section) {
+        var title = section.querySelector(".course-faq__title");
+        if (title) addReveal(title);
+        setupStagger(section.querySelector(".course-faq__list"), ".course-faq__item");
+      });
+      document.querySelectorAll(".course-investment").forEach(function (section) {
+        var title = section.querySelector(".course-investment__title");
+        if (title) addReveal(title);
+        setupStagger(section.querySelector(".course-investment__inner"), ".course-investment__benefits, .course-investment__pricing");
+      });
     } else {
       setupHome();
     }

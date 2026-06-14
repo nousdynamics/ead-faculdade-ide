@@ -5,97 +5,6 @@
 .jet-accordion__item.active-toggle .icon-normal { display: none; }
 .jet-accordion__item:not(.active-toggle) .icon-active { display: none; }
 
-/* FAQ — ícones circulares, hover sutil e animação suave */
-.course-faq-accordion .jet-accordion__inner {
-  max-width: 820px;
-  margin-inline: auto;
-}
-
-.course-faq-accordion .jet-toggle__control {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  width: 100%;
-  cursor: pointer;
-  transition: background-color 0.25s ease;
-}
-
-.course-faq-accordion .jet-toggle__control:hover {
-  background-color: rgba(43, 50, 92, 0.04);
-}
-
-.course-faq-accordion .jet-toggle__control:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-.course-faq-accordion .jet-toggle__label-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.course-faq-accordion .jet-toggle__label-icon {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.course-faq-accordion .jet-toggle__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-color: var(--color-primary);
-  color: #fff;
-  line-height: 0;
-  transition: transform 400ms ease, background-color 250ms ease;
-}
-
-.course-faq-accordion .jet-toggle__icon svg {
-  width: 10px;
-  height: 10px;
-  display: block;
-}
-
-.course-faq-accordion .jet-accordion__item.active-toggle .jet-toggle__icon.icon-active {
-  transform: scale(1.05);
-}
-
-.course-faq-accordion .jet-accordion__item:not(.active-toggle) .jet-toggle__content,
-.course-faq-accordion .jet-toggle__content {
-  display: grid !important;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 400ms ease;
-  overflow: hidden;
-}
-
-.course-faq-accordion .jet-accordion__item.active-toggle .jet-toggle__content {
-  grid-template-rows: 1fr;
-}
-
-.course-faq-accordion .jet-toggle__content-inner {
-  overflow: hidden;
-  min-height: 0;
-  opacity: 0;
-  transition: opacity 350ms ease;
-}
-
-.course-faq-accordion .jet-accordion__item.active-toggle .jet-toggle__content-inner {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .course-faq-accordion .jet-toggle__content,
-  .course-faq-accordion .jet-toggle__content-inner,
-  .course-faq-accordion .jet-toggle__icon {
-    transition-duration: 0.01ms;
-  }
-}
-
 .elementor-flip-box {
   position: relative;
   height: 320px;
@@ -120,9 +29,10 @@
   background: linear-gradient(transparent, rgba(43, 50, 92, 0.92));
   color: #fff;
 }
-.elementor-flip-box__back .elementor-flip-box__layer__overlay {
+.professores .elementor-flip-box__back .elementor-flip-box__layer__overlay {
   align-items: center;
-  background: rgba(43, 50, 92, 0.95);
+  justify-content: center;
+  background: var(--color-primary);
 }
 .elementor-flip-box__layer__title { font-size: 0.85rem; margin: 0 0 0.5rem; }
 .elementor-flip-box__layer__description { font-size: 0.78rem; line-height: 1.45; }
@@ -197,6 +107,44 @@
   max-width: 300px;
   height: auto;
   aspect-ratio: 300 / 469;
+  perspective: none;
+}
+
+.professores .elementor-flip-box__layer {
+  transition: opacity 0.45s ease;
+  transform: none;
+}
+
+.professores .elementor-flip-box__front {
+  opacity: 1;
+  z-index: 1;
+}
+
+.professores .elementor-flip-box__back {
+  opacity: 0;
+  z-index: 2;
+}
+
+@media (hover: hover) {
+  .professores .elementor-flip-box:hover .elementor-flip-box__front,
+  .professores .elementor-flip-box:focus-within .elementor-flip-box__front {
+    opacity: 0;
+  }
+
+  .professores .elementor-flip-box:hover .elementor-flip-box__back,
+  .professores .elementor-flip-box:focus-within .elementor-flip-box__back {
+    opacity: 1;
+  }
+}
+
+@media (hover: none) {
+  .professores .elementor-flip-box--flipped .elementor-flip-box__front {
+    opacity: 0;
+  }
+
+  .professores .elementor-flip-box--flipped .elementor-flip-box__back {
+    opacity: 1;
+  }
 }
 
 .professores .elementor-flip-box__layer,
@@ -204,6 +152,12 @@
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .professores .elementor-flip-box__layer {
+    transition-duration: 0.01ms;
+  }
 }
 
 @media (max-width: 767px) {

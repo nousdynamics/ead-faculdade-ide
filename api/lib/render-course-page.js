@@ -7,15 +7,17 @@ import { renderFooter, renderHeader, renderSiteLayoutScripts, renderSiteMotionSt
 
 const SITE_URL = "https://ead.faculdadeide.edu.br";
 const WP_UPLOADS = `${SITE_URL}/wp-content/uploads`;
+const CHECK_BULLET_URL = `${WP_UPLOADS}/2025/10/ICON-CHECKK-BOLLET-01.svg`;
+const DISCOUNTS_PDF = `${WP_UPLOADS}/2026/06/Tabela-de-Convenios-e-Descontos.pdf`;
+const SELO_VD_URL = `${WP_UPLOADS}/2024/08/SELO-VD-IDE-V2.svg`;
 const GUIDE_IMG = "assets/img/IMG-GUIA-DO-CURSO-01.webp";
 const DEFAULT_VIDEO = "https://www.youtube.com/watch?v=XHOmBV4js_E";
 
 const BTN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M44 22C44 34.1503 34.1503 44 22 44C9.84974 44 0 34.1503 0 22C0 9.84974 9.84974 0 22 0C34.1503 0 44 9.84974 44 22Z" fill="white"></path><path d="M24.5977 16L31 22.4023L24.5977 28.8046" stroke="black" stroke-width="1.30605"></path><line x1="30.4833" y1="22.4209" x2="11.6674" y2="22.4209" stroke="black" stroke-width="1.30605"></line></svg>`;
 
-const CARET_DOWN = `<svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>`;
-const CARET_UP = `<svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/></svg>`;
-
 const MINI_CV_CHEVRON = `<svg class="coord-mini-cv__chevron" aria-hidden="true" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>`;
+
+const FAQ_CHEVRON = `<svg class="course-faq__chevron" aria-hidden="true" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>`;
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -120,28 +122,74 @@ function renderModulesGrid(modulos) {
     .join("");
 }
 
-function renderJetAccordion(items, { idStart = 1, faq = false } = {}) {
-  return items
-    .map((item, i) => {
-      const id = idStart + i;
-      const effectClass = faq ? "jet-toggle-zoom-in-effect" : "jet-toggle-move-up-effect";
-      const icon = faq
-          ? `<div class="jet-toggle__label-icon jet-toggle-icon-position-right"><span class="jet-toggle__icon icon-normal jet-tabs-icon">${CARET_DOWN}</span><span class="jet-toggle__icon icon-active jet-tabs-icon">${CARET_UP}</span></div>`
-          : "";
-      const body =
-        item.itens?.length
-          ? `<ul>${item.itens.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ul>`
-          : `<p>${escapeHtml(item.resposta || "")}</p>`;
-      return `<div class="jet-accordion__item jet-toggle ${effectClass}">
-        <div id="jet-toggle-control-${id}" class="jet-toggle__control" role="button" tabindex="0" aria-controls="jet-toggle-content-${id}" aria-expanded="false">
-          ${icon}<div class="jet-toggle__label-text">${escapeHtml(item.titulo || item.pergunta)}</div>
+function renderFaqSection(faq) {
+  if (!faq?.length) return "";
+
+  const items = faq
+    .map((item) => {
+      const pergunta = escapeHtml(item.pergunta || item.titulo || "");
+      const resposta = escapeHtml(item.resposta || "");
+      if (!pergunta) return "";
+      return `<details class="course-faq__item">
+        <summary class="course-faq__question">
+          <span class="course-faq__icon">${FAQ_CHEVRON}</span>
+          <span class="course-faq__question-text">${pergunta}</span>
+        </summary>
+        <div class="course-faq__panel">
+          <div class="course-faq__panel-inner">
+            <div class="course-faq__answer"><p>${resposta}</p></div>
+          </div>
         </div>
-        <div id="jet-toggle-content-${id}" class="jet-toggle__content" role="region">
-          <div class="jet-toggle__content-inner">${body}</div>
-        </div>
-      </div>`;
+      </details>`;
     })
+    .filter(Boolean)
     .join("");
+
+  if (!items) return "";
+
+  return `<section class="course-faq" aria-labelledby="course-faq-title">
+    <div class="course-faq__inner">
+      <h2 id="course-faq-title" class="course-faq__title">FAQ - Perguntas Frequentes</h2>
+      <div class="course-faq__list">${items}</div>
+    </div>
+  </section>`;
+}
+
+function renderInvestmentSection(inv, inscricaoLink, base) {
+  const beneficios = (inv.beneficios || []).filter(Boolean);
+  if (!beneficios.length && !inv.oferta_valor) return "";
+
+  const ctaHref = escapeHtml(inv.link_botao || inscricaoLink);
+  const ctaText = escapeHtml(inv.texto_botao || "Adquira");
+  const listHtml = beneficios
+    .map((b) => `<li>${escapeHtml(b)}</li>`)
+    .join("");
+
+  return `<section class="course-investment" id="investimento" style="--course-investment-check-icon:url('${CHECK_BULLET_URL}')">
+    <div class="course-investment__inner">
+      <div class="course-investment__benefits">
+        <div class="course-investment__seal">
+          <img src="${SELO_VD_URL}" width="138" height="138" alt="" loading="lazy">
+        </div>
+        <h2 class="course-investment__title">Com esse investimento, você garante:</h2>
+        ${listHtml ? `<ul class="course-investment__list">${listHtml}</ul>` : ""}
+        <a class="course-investment__cta hovers" href="${ctaHref}" target="_blank" rel="noopener">
+          <span class="course-investment__cta-icon">${BTN_ICON}</span>
+          <span class="course-investment__cta-text">${ctaText}</span>
+        </a>
+      </div>
+      <div class="course-investment__pricing">
+        <span class="course-investment__badge">${escapeHtml(inv.oferta_label || "Oferta de lançamento")}</span>
+        ${inv.oferta_valor ? `<p class="course-investment__price">${escapeHtml(inv.oferta_valor)}</p>` : ""}
+        ${inv.taxa_inscricao ? `<p class="course-investment__fee">${escapeHtml(inv.taxa_inscricao)}</p>` : ""}
+        ${inv.parcelas_html ? `<div class="course-investment__extra">${inv.parcelas_html}</div>` : ""}
+        <div class="course-investment__links">
+          <a href="#">Confira outras opções de parcelamento.</a>
+          <a href="${DISCOUNTS_PDF}" target="_blank" rel="noopener">Confira descontos especiais.</a>
+        </div>
+      </div>
+    </div>
+  </section>`;
 }
 
 function renderCoordCard(coord, base) {
@@ -333,6 +381,8 @@ export function renderCoursePage(course, ctx) {
   <link rel="stylesheet" href="${base}assets/css/elementor/post-1141.css">
   <link rel="stylesheet" href="${base}assets/css/course-modules.css">
   <link rel="stylesheet" href="${base}assets/css/testimonials.css">
+  <link rel="stylesheet" href="${base}assets/css/course-faq.css">
+  <link rel="stylesheet" href="${base}assets/css/course-investment.css">
   <link rel="stylesheet" href="${base}assets/css/elementor/overrides.css">
   <link rel="stylesheet" href="${base}assets/css/tokens.css">
   <link rel="stylesheet" href="${base}assets/css/base.css">
@@ -505,73 +555,9 @@ export function renderCoursePage(course, ctx) {
 
       ${renderTestimonialsSection(course, ctx, base)}
 
-      <!-- INVESTIMENTO -->
-      <div class="elementor-element elementor-element-da640a5 e-flex e-con-boxed e-con e-parent" id="investimento">
-        <div class="e-con-inner">
-          <div class="elementor-element elementor-element-5f1a26f e-con-full e-flex e-con e-child">
-            <div class="elementor-element elementor-element-e50b80c e-con-full e-flex e-con e-child">
-              <div class="elementor-element elementor-element-6f4509a elementor-widget elementor-widget-image">
-                <div class="elementor-widget-container"><img width="138" height="138" src="${WP_UPLOADS}/2024/08/SELO-VD-IDE-V2.svg" alt=""></div>
-              </div>
-              <div class="elementor-element elementor-element-f0e0c04 elementor-widget elementor-widget-heading">
-                <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default">Com esse investimento, você garante:</h2></div>
-              </div>
-              <div class="elementor-element elementor-element-d0ac64b elementor-widget elementor-widget-heading">
-                <div class="elementor-widget-container">
-                  <div class="elementor-heading-title elementor-size-default"><ul>${(inv.beneficios || []).map((b) => `<li>${escapeHtml(b)}</li>`).join("")}</ul></div>
-                </div>
-              </div>
-              <div class="elementor-element elementor-element-d944fc6 hovers elementor-widget elementor-widget-button">
-                <div class="elementor-widget-container">
-                  <div class="elementor-button-wrapper">
-                    <a class="elementor-button elementor-button-link elementor-size-sm" href="${escapeHtml(inv.link_botao || inscricaoLink)}" target="_blank" rel="noopener">
-                      <span class="elementor-button-content-wrapper">
-                        <span class="elementor-button-icon">${BTN_ICON}</span>
-                        <span class="elementor-button-text">${escapeHtml(inv.texto_botao || "Adquira")}</span>
-                      </span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="elementor-element elementor-element-e454f78 e-con-full e-flex e-con e-child">
-              <div class="elementor-element elementor-element-741c6ef elementor-widget elementor-widget-icon-box">
-                <div class="elementor-widget-container">
-                  <div class="elementor-icon-box-wrapper">
-                    <div class="elementor-icon-box-content"><div class="elementor-icon-box-title"><span>${escapeHtml(inv.oferta_label || "Oferta de Lançamento")}</span></div></div>
-                  </div>
-                </div>
-              </div>
-              <div class="elementor-element elementor-element-9aadfc1 investiment elementor-widget elementor-widget-heading">
-                <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default"><p>${escapeHtml(inv.oferta_valor || "")}</p>${inv.taxa_inscricao ? `<p><em>${escapeHtml(inv.taxa_inscricao)}</em></p>` : ""}</h2></div>
-              </div>
-              <div class="elementor-element elementor-element-14a41fb elementor-widget elementor-widget-heading">
-                <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default"><a href="#">Confira outras opções de parcelamento.</a></h2></div>
-              </div>
-              <div class="elementor-element elementor-element-4484468 elementor-widget elementor-widget-heading">
-                <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default"><a href="${WP_UPLOADS}/2026/06/Tabela-de-Convenios-e-Descontos.pdf">Confira descontos especiais.</a></h2></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      ${renderInvestmentSection(inv, inscricaoLink, base)}
 
-      ${
-        course.faq?.length
-          ? `<div class="elementor-element elementor-element-3f9b093 e-flex e-con-boxed e-con e-parent">
-        <div class="e-con-inner">
-          <div class="elementor-element elementor-element-6a2dda1 elementor-widget elementor-widget-heading">
-            <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default">FAQ - Perguntas Frequentes</h2></div>
-          </div>
-          <div class="elementor-element elementor-element-98d8a99 course-faq-accordion elementor-widget elementor-widget-jet-accordion">
-            <div class="elementor-widget-container">
-              <div class="jet-accordion"><div class="jet-accordion__inner">${renderJetAccordion(course.faq, { idStart: 100, faq: true })}</div></div>
-            </div>
-          </div>
-        </div>
-      </div>`
-          : ""
-      }
+      ${renderFaqSection(course.faq)}
 
       ${
         related.length

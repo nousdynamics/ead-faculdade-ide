@@ -135,6 +135,8 @@
   <link rel="stylesheet" href="../../assets/css/elementor/post-1141.css">
   <link rel="stylesheet" href="../../assets/css/course-modules.css">
   <link rel="stylesheet" href="../../assets/css/testimonials.css">
+  <link rel="stylesheet" href="../../assets/css/course-faq.css">
+  <link rel="stylesheet" href="../../assets/css/course-investment.css">
   <link rel="stylesheet" href="../../assets/css/elementor/overrides.css">
   <link rel="stylesheet" href="../../assets/css/tokens.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
@@ -428,7 +430,115 @@
         </div>
       </div>
 
-      <section class="testimonials-section">
+      <style>.testimonial-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  max-width: 400px;
+  margin-inline: auto;
+  padding: 32px;
+  box-sizing: border-box;
+  border: 1px solid #d3dbe1;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+}
+
+.testimonial-card__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+}
+
+.testimonial-card__name {
+  margin: 0;
+  font-family: var(--font-heading, "Gotham", sans-serif);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 32px;
+  text-align: center;
+  color: var(--color-primary, #2b325c);
+}
+
+.testimonial-card__role {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  text-align: center;
+  color: var(--color-primary, #2b325c);
+}
+
+.testimonial-card__quote {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.testimonial-card__quote p {
+  margin: 0;
+  font-size: 0.8em;
+  font-weight: 400;
+  line-height: 1.1em;
+  text-wrap: balance;
+  color: var(--color-primary, #2b325c);
+}
+
+.testimonial-card__caption {
+  margin: 0;
+  width: 100%;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  text-align: center;
+  opacity: 0.85;
+  color: var(--color-primary, #2b325c);
+}
+
+.testimonial-card__avatar {
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+}
+
+.testimonial-card__avatar img {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.testimonial-card__video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+}
+
+.testimonial-card__video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.testimonial-card__figure {
+  margin: 0;
+  width: 100%;
+}
+
+.testimonial-card__figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}</style><section class="testimonials-section">
   <h2 class="testimonials-section__title">O que nossos alunos dizem</h2>
   <div class="testimonials-section__grid"><article class="testimonial-card">
   
@@ -443,118 +553,108 @@
 </article></div>
 </section>
 
-      <!-- INVESTIMENTO -->
-      <div class="elementor-element elementor-element-da640a5 e-flex e-con-boxed e-con e-parent" id="investimento">
-        <div class="e-con-inner">
-          <div class="elementor-element elementor-element-5f1a26f e-con-full e-flex e-con e-child">
-            <div class="elementor-element elementor-element-e50b80c e-con-full e-flex e-con e-child">
-              <div class="elementor-element elementor-element-6f4509a elementor-widget elementor-widget-image">
-                <div class="elementor-widget-container"><img width="138" height="138" src="https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/SELO-VD-IDE-V2.svg" alt=""></div>
-              </div>
-              <div class="elementor-element elementor-element-f0e0c04 elementor-widget elementor-widget-heading">
-                <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default">Com esse investimento, você garante:</h2></div>
-              </div>
-              <div class="elementor-element elementor-element-d0ac64b elementor-widget elementor-widget-heading">
-                <div class="elementor-widget-container">
-                  <div class="elementor-heading-title elementor-size-default"><ul><li>Formação em uma instituição referência na área da saúde.</li><li>Plataforma digital moderna, intuitiva e interativa para potencializar seu aprendizado.</li><li>Corpo docente experiente e atuante no mercado.</li><li>Metodologia atualizada, alinhada às exigências profissionais.</li><li>Certificação reconhecida que fortalece sua atuação profissional e credibilidade no mercado.</li><li>Metodologia com foco na atuação profissional real, preparando para os desafios do SUS e da saúde suplementar.</li></ul></div>
-                </div>
-              </div>
-              <div class="elementor-element elementor-element-d944fc6 hovers elementor-widget elementor-widget-button">
-                <div class="elementor-widget-container">
-                  <div class="elementor-button-wrapper">
-                    <a class="elementor-button elementor-button-link elementor-size-sm" href="https://inscricao.faculdadeide.edu.br/?idps=300&amp;curso=665" target="_blank" rel="noopener">
-                      <span class="elementor-button-content-wrapper">
-                        <span class="elementor-button-icon"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M44 22C44 34.1503 34.1503 44 22 44C9.84974 44 0 34.1503 0 22C0 9.84974 9.84974 0 22 0C34.1503 0 44 9.84974 44 22Z" fill="white"></path><path d="M24.5977 16L31 22.4023L24.5977 28.8046" stroke="black" stroke-width="1.30605"></path><line x1="30.4833" y1="22.4209" x2="11.6674" y2="22.4209" stroke="black" stroke-width="1.30605"></line></svg></span>
-                        <span class="elementor-button-text">Adquira</span>
-                      </span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="elementor-element elementor-element-e454f78 e-con-full e-flex e-con e-child">
-              <div class="elementor-element elementor-element-741c6ef elementor-widget elementor-widget-icon-box">
-                <div class="elementor-widget-container">
-                  <div class="elementor-icon-box-wrapper">
-                    <div class="elementor-icon-box-content"><div class="elementor-icon-box-title"><span>Oferta de lançamento</span></div></div>
-                  </div>
-                </div>
-              </div>
-              <div class="elementor-element elementor-element-9aadfc1 investiment elementor-widget elementor-widget-heading">
-                <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default"><p>24x de R$ 277,08</p><p><em>Taxa de Inscrição R$ 197,00</em></p></h2></div>
-              </div>
-              <div class="elementor-element elementor-element-14a41fb elementor-widget elementor-widget-heading">
-                <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default"><a href="#">Confira outras opções de parcelamento.</a></h2></div>
-              </div>
-              <div class="elementor-element elementor-element-4484468 elementor-widget elementor-widget-heading">
-                <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default"><a href="https://ead.faculdadeide.edu.br/wp-content/uploads/2026/06/Tabela-de-Convenios-e-Descontos.pdf">Confira descontos especiais.</a></h2></div>
-              </div>
-            </div>
-          </div>
+      <section class="course-investment" id="investimento" style="--course-investment-check-icon:url('https://ead.faculdadeide.edu.br/wp-content/uploads/2025/10/ICON-CHECKK-BOLLET-01.svg')">
+    <div class="course-investment__inner">
+      <div class="course-investment__benefits">
+        <div class="course-investment__seal">
+          <img src="https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/SELO-VD-IDE-V2.svg" width="138" height="138" alt="" loading="lazy">
+        </div>
+        <h2 class="course-investment__title">Com esse investimento, você garante:</h2>
+        <ul class="course-investment__list"><li>Formação em uma instituição referência na área da saúde.</li><li>Plataforma digital moderna, intuitiva e interativa para potencializar seu aprendizado.</li><li>Corpo docente experiente e atuante no mercado.</li><li>Metodologia atualizada, alinhada às exigências profissionais.</li><li>Certificação reconhecida que fortalece sua atuação profissional e credibilidade no mercado.</li><li>Metodologia com foco na atuação profissional real, preparando para os desafios do SUS e da saúde suplementar.</li></ul>
+        <a class="course-investment__cta hovers" href="https://inscricao.faculdadeide.edu.br/?idps=300&amp;curso=665" target="_blank" rel="noopener">
+          <span class="course-investment__cta-icon"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M44 22C44 34.1503 34.1503 44 22 44C9.84974 44 0 34.1503 0 22C0 9.84974 9.84974 0 22 0C34.1503 0 44 9.84974 44 22Z" fill="white"></path><path d="M24.5977 16L31 22.4023L24.5977 28.8046" stroke="black" stroke-width="1.30605"></path><line x1="30.4833" y1="22.4209" x2="11.6674" y2="22.4209" stroke="black" stroke-width="1.30605"></line></svg></span>
+          <span class="course-investment__cta-text">Adquira</span>
+        </a>
+      </div>
+      <div class="course-investment__pricing">
+        <span class="course-investment__badge">Oferta de lançamento</span>
+        <p class="course-investment__price">24x de R$ 277,08</p>
+        <p class="course-investment__fee">Taxa de Inscrição R$ 197,00</p>
+        
+        <div class="course-investment__links">
+          <a href="#">Confira outras opções de parcelamento.</a>
+          <a href="https://ead.faculdadeide.edu.br/wp-content/uploads/2026/06/Tabela-de-Convenios-e-Descontos.pdf" target="_blank" rel="noopener">Confira descontos especiais.</a>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="elementor-element elementor-element-3f9b093 e-flex e-con-boxed e-con e-parent">
-        <div class="e-con-inner">
-          <div class="elementor-element elementor-element-6a2dda1 elementor-widget elementor-widget-heading">
-            <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default">FAQ - Perguntas Frequentes</h2></div>
-          </div>
-          <div class="elementor-element elementor-element-98d8a99 course-faq-accordion elementor-widget elementor-widget-jet-accordion">
-            <div class="elementor-widget-container">
-              <div class="jet-accordion"><div class="jet-accordion__inner"><div class="jet-accordion__item jet-toggle jet-toggle-zoom-in-effect">
-        <div id="jet-toggle-control-100" class="jet-toggle__control" role="button" tabindex="0" aria-controls="jet-toggle-content-100" aria-expanded="false">
-          <div class="jet-toggle__label-icon jet-toggle-icon-position-right"><span class="jet-toggle__icon icon-normal jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span><span class="jet-toggle__icon icon-active jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/></svg></span></div><div class="jet-toggle__label-text">Como funcionam as aulas na modalidade EAD?</div>
-        </div>
-        <div id="jet-toggle-content-100" class="jet-toggle__content" role="region">
-          <div class="jet-toggle__content-inner"><p>As aulas acontecem ao vivo, por meio da plataforma Zoom, permitindo interação direta entre alunos e professores. Além dos encontros ao vivo, os alunos também têm acesso a conteúdos complementares na plataforma virtual de aprendizagem, com materiais de apoio e atividades.</p></div>
-        </div>
-      </div><div class="jet-accordion__item jet-toggle jet-toggle-zoom-in-effect">
-        <div id="jet-toggle-control-101" class="jet-toggle__control" role="button" tabindex="0" aria-controls="jet-toggle-content-101" aria-expanded="false">
-          <div class="jet-toggle__label-icon jet-toggle-icon-position-right"><span class="jet-toggle__icon icon-normal jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span><span class="jet-toggle__icon icon-active jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/></svg></span></div><div class="jet-toggle__label-text">Preciso assistir as aulas ao vivo?</div>
-        </div>
-        <div id="jet-toggle-content-101" class="jet-toggle__content" role="region">
-          <div class="jet-toggle__content-inner"><p>Recomendamos a participação ao vivo para aproveitar as discussões com o professor e os colegas. No entanto, todas as aulas ficam gravadas na plataforma, permitindo que o aluno assista posteriormente caso não possa participar no horário da transmissão.</p></div>
-        </div>
-      </div><div class="jet-accordion__item jet-toggle jet-toggle-zoom-in-effect">
-        <div id="jet-toggle-control-102" class="jet-toggle__control" role="button" tabindex="0" aria-controls="jet-toggle-content-102" aria-expanded="false">
-          <div class="jet-toggle__label-icon jet-toggle-icon-position-right"><span class="jet-toggle__icon icon-normal jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span><span class="jet-toggle__icon icon-active jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/></svg></span></div><div class="jet-toggle__label-text">O curso possui atividades avaliativas?</div>
-        </div>
-        <div id="jet-toggle-content-102" class="jet-toggle__content" role="region">
-          <div class="jet-toggle__content-inner"><p>Sim! Todos os módulos contam com atividades avaliativas, que fazem parte do processo de aprendizagem e da composição da carga horária do curso.</p></div>
-        </div>
-      </div><div class="jet-accordion__item jet-toggle jet-toggle-zoom-in-effect">
-        <div id="jet-toggle-control-103" class="jet-toggle__control" role="button" tabindex="0" aria-controls="jet-toggle-content-103" aria-expanded="false">
-          <div class="jet-toggle__label-icon jet-toggle-icon-position-right"><span class="jet-toggle__icon icon-normal jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span><span class="jet-toggle__icon icon-active jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/></svg></span></div><div class="jet-toggle__label-text">Preciso fazer Trabalho de Conclusão de Curso (TCC)?</div>
-        </div>
-        <div id="jet-toggle-content-103" class="jet-toggle__content" role="region">
-          <div class="jet-toggle__content-inner"><p>Não! Este curso não exige TCC. A certificação é obtida mediante o cumprimento da carga horária obrigatória do curso e aprovação nas atividades avaliativas previstas.</p></div>
-        </div>
-      </div><div class="jet-accordion__item jet-toggle jet-toggle-zoom-in-effect">
-        <div id="jet-toggle-control-104" class="jet-toggle__control" role="button" tabindex="0" aria-controls="jet-toggle-content-104" aria-expanded="false">
-          <div class="jet-toggle__label-icon jet-toggle-icon-position-right"><span class="jet-toggle__icon icon-normal jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span><span class="jet-toggle__icon icon-active jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/></svg></span></div><div class="jet-toggle__label-text">Onde acesso as aulas e materiais do curso?</div>
-        </div>
-        <div id="jet-toggle-content-104" class="jet-toggle__content" role="region">
-          <div class="jet-toggle__content-inner"><p>Os alunos têm acesso a uma plataforma virtual de aprendizagem, onde ficam disponíveis os conteúdos complementares, atividades, materiais de apoio e as gravações das aulas.</p></div>
-        </div>
-      </div><div class="jet-accordion__item jet-toggle jet-toggle-zoom-in-effect">
-        <div id="jet-toggle-control-105" class="jet-toggle__control" role="button" tabindex="0" aria-controls="jet-toggle-content-105" aria-expanded="false">
-          <div class="jet-toggle__label-icon jet-toggle-icon-position-right"><span class="jet-toggle__icon icon-normal jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span><span class="jet-toggle__icon icon-active jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/></svg></span></div><div class="jet-toggle__label-text">O curso oferece materiais de apoio para estudo?</div>
-        </div>
-        <div id="jet-toggle-content-105" class="jet-toggle__content" role="region">
-          <div class="jet-toggle__content-inner"><p>Sim! Além dos conteúdos disponibilizados na plataforma, os alunos também têm acesso a uma biblioteca virtual, com diversos títulos e materiais acadêmicos para apoiar os estudos ao longo da especialização.</p></div>
-        </div>
-      </div><div class="jet-accordion__item jet-toggle jet-toggle-zoom-in-effect">
-        <div id="jet-toggle-control-106" class="jet-toggle__control" role="button" tabindex="0" aria-controls="jet-toggle-content-106" aria-expanded="false">
-          <div class="jet-toggle__label-icon jet-toggle-icon-position-right"><span class="jet-toggle__icon icon-normal jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span><span class="jet-toggle__icon icon-active jet-tabs-icon"><svg aria-hidden="true" viewBox="0 0 320 512" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/></svg></span></div><div class="jet-toggle__label-text">O certificado tem validade nacional?</div>
-        </div>
-        <div id="jet-toggle-content-106" class="jet-toggle__content" role="region">
-          <div class="jet-toggle__content-inner"><p>Sim! O curso é uma Pós-Graduação Lato Sensu, com certificado emitido pela Faculdade IDE, instituição de ensino superior credenciada, seguindo as normas do Ministério da Educação (MEC). Por isso, o certificado possui validade em todo o território nacional.</p></div>
-        </div>
-      </div></div></div>
-            </div>
+      <section class="course-faq" aria-labelledby="course-faq-title">
+    <div class="course-faq__inner">
+      <h2 id="course-faq-title" class="course-faq__title">FAQ - Perguntas Frequentes</h2>
+      <div class="course-faq__list"><details class="course-faq__item">
+        <summary class="course-faq__question">
+          <span class="course-faq__icon"><svg class="course-faq__chevron" aria-hidden="true" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span>
+          <span class="course-faq__question-text">Como funcionam as aulas na modalidade EAD?</span>
+        </summary>
+        <div class="course-faq__panel">
+          <div class="course-faq__panel-inner">
+            <div class="course-faq__answer"><p>As aulas acontecem ao vivo, por meio da plataforma Zoom, permitindo interação direta entre alunos e professores. Além dos encontros ao vivo, os alunos também têm acesso a conteúdos complementares na plataforma virtual de aprendizagem, com materiais de apoio e atividades.</p></div>
           </div>
         </div>
-      </div>
+      </details><details class="course-faq__item">
+        <summary class="course-faq__question">
+          <span class="course-faq__icon"><svg class="course-faq__chevron" aria-hidden="true" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span>
+          <span class="course-faq__question-text">Preciso assistir as aulas ao vivo?</span>
+        </summary>
+        <div class="course-faq__panel">
+          <div class="course-faq__panel-inner">
+            <div class="course-faq__answer"><p>Recomendamos a participação ao vivo para aproveitar as discussões com o professor e os colegas. No entanto, todas as aulas ficam gravadas na plataforma, permitindo que o aluno assista posteriormente caso não possa participar no horário da transmissão.</p></div>
+          </div>
+        </div>
+      </details><details class="course-faq__item">
+        <summary class="course-faq__question">
+          <span class="course-faq__icon"><svg class="course-faq__chevron" aria-hidden="true" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span>
+          <span class="course-faq__question-text">O curso possui atividades avaliativas?</span>
+        </summary>
+        <div class="course-faq__panel">
+          <div class="course-faq__panel-inner">
+            <div class="course-faq__answer"><p>Sim! Todos os módulos contam com atividades avaliativas, que fazem parte do processo de aprendizagem e da composição da carga horária do curso.</p></div>
+          </div>
+        </div>
+      </details><details class="course-faq__item">
+        <summary class="course-faq__question">
+          <span class="course-faq__icon"><svg class="course-faq__chevron" aria-hidden="true" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span>
+          <span class="course-faq__question-text">Preciso fazer Trabalho de Conclusão de Curso (TCC)?</span>
+        </summary>
+        <div class="course-faq__panel">
+          <div class="course-faq__panel-inner">
+            <div class="course-faq__answer"><p>Não! Este curso não exige TCC. A certificação é obtida mediante o cumprimento da carga horária obrigatória do curso e aprovação nas atividades avaliativas previstas.</p></div>
+          </div>
+        </div>
+      </details><details class="course-faq__item">
+        <summary class="course-faq__question">
+          <span class="course-faq__icon"><svg class="course-faq__chevron" aria-hidden="true" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span>
+          <span class="course-faq__question-text">Onde acesso as aulas e materiais do curso?</span>
+        </summary>
+        <div class="course-faq__panel">
+          <div class="course-faq__panel-inner">
+            <div class="course-faq__answer"><p>Os alunos têm acesso a uma plataforma virtual de aprendizagem, onde ficam disponíveis os conteúdos complementares, atividades, materiais de apoio e as gravações das aulas.</p></div>
+          </div>
+        </div>
+      </details><details class="course-faq__item">
+        <summary class="course-faq__question">
+          <span class="course-faq__icon"><svg class="course-faq__chevron" aria-hidden="true" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span>
+          <span class="course-faq__question-text">O curso oferece materiais de apoio para estudo?</span>
+        </summary>
+        <div class="course-faq__panel">
+          <div class="course-faq__panel-inner">
+            <div class="course-faq__answer"><p>Sim! Além dos conteúdos disponibilizados na plataforma, os alunos também têm acesso a uma biblioteca virtual, com diversos títulos e materiais acadêmicos para apoiar os estudos ao longo da especialização.</p></div>
+          </div>
+        </div>
+      </details><details class="course-faq__item">
+        <summary class="course-faq__question">
+          <span class="course-faq__icon"><svg class="course-faq__chevron" aria-hidden="true" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg></span>
+          <span class="course-faq__question-text">O certificado tem validade nacional?</span>
+        </summary>
+        <div class="course-faq__panel">
+          <div class="course-faq__panel-inner">
+            <div class="course-faq__answer"><p>Sim! O curso é uma Pós-Graduação Lato Sensu, com certificado emitido pela Faculdade IDE, instituição de ensino superior credenciada, seguindo as normas do Ministério da Educação (MEC). Por isso, o certificado possui validade em todo o território nacional.</p></div>
+          </div>
+        </div>
+      </details></div>
+    </div>
+  </section>
 
       
     </div>

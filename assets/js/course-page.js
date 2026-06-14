@@ -1,30 +1,33 @@
-/** FAQ — ícones + animação suave */
-document.querySelectorAll(".course-faq-accordion .jet-toggle__control").forEach((control) => {
-  const item = control.closest(".jet-accordion__item");
-  const content = item?.querySelector(".jet-toggle__content");
-  if (!item || !content) return;
+/** FAQ — acessibilidade + accordion (uma pergunta aberta por vez) */
+document.querySelectorAll(".course-faq__list").forEach((list) => {
+  list.querySelectorAll(".course-faq__item").forEach((details) => {
+    const summary = details.querySelector("summary");
+    if (!summary) return;
 
-  content.hidden = false;
-
-  const toggle = () => {
-    const isOpen = item.classList.contains("active-toggle");
-    item.classList.toggle("active-toggle", !isOpen);
-    control.setAttribute("aria-expanded", !isOpen ? "true" : "false");
-  };
-
-  control.addEventListener("click", toggle);
-  control.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      toggle();
-    }
+    const sync = () => summary.setAttribute("aria-expanded", details.open ? "true" : "false");
+    sync();
+    details.addEventListener("toggle", sync);
   });
+
+  list.addEventListener(
+    "toggle",
+    (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLDetailsElement) || !target.open) return;
+      list.querySelectorAll(".course-faq__item[open]").forEach((item) => {
+        if (item !== target) item.open = false;
+      });
+    },
+    true,
+  );
 });
 
-/** Flip-box no hover/focus (touch: click) */
-document.querySelectorAll(".elementor-flip-box").forEach((box) => {
-  box.addEventListener("click", () => box.classList.toggle("elementor-flip-box--flipped"));
-});
+/** Flip-box dos professores — clique só em dispositivos sem hover (touch) */
+if (window.matchMedia("(hover: none)").matches) {
+  document.querySelectorAll(".professores .elementor-flip-box").forEach((box) => {
+    box.addEventListener("click", () => box.classList.toggle("elementor-flip-box--flipped"));
+  });
+}
 
 /** Mini-currículo — sincroniza aria-expanded no summary */
 document.querySelectorAll(".coord-mini-cv").forEach((details) => {
