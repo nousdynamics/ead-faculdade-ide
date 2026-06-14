@@ -1,0 +1,99 @@
+[
+  {
+    "id": "aleitamento-materno-banco-leite-humano",
+    "slug": "aleitamento-materno-banco-leite-humano",
+    "publicado": true,
+    "titulo": "Aleitamento Materno e Banco de Leite Humano",
+    "subtitulo": "Especialize-se na promoção e gestão do aleitamento materno com excelência | 100% EAD.",
+    "imagem_capa": "assets/img/Aleitamento-Materno-e-Banco-de-Leite-Humano-Online.jpg",
+    "nivel_formacao_id": "pos-graduacao",
+    "area_id": "enfermagem",
+    "status_curso_id": "inscricoes-abertas",
+    "coordenacao_ids": ["richardes-caula"],
+    "professor_ids": ["camila-pereira", "elise-dias", "geisa-barreto", "jeverton-santos"],
+    "depoimento_texto_ids": ["michelle-santos"],
+    "depoimento_video_ids": [],
+    "depoimento_imagem_ids": [],
+    "hero": {
+      "texto_botao": "Inscreva-se",
+      "link_botao": "https://inscricao.faculdadeide.edu.br/?idps=300&curso=665"
+    },
+    "informacoes": {
+      "carga_horaria": "360 horas",
+      "duracao": "12 meses",
+      "inicio_previsto": "11 e 12 de Julho de 2026",
+      "modalidade": "100% EAD — Aula ao vivo",
+      "vagas": "",
+      "aulas": "Aula ao vivo",
+      "ultimas_vagas": false,
+      "confirmado": false,
+      "pre_inscricao": false,
+      "video": ""
+    },
+    "sobre": {
+      "tag": "Conheça o curso",
+      "paragrafos": [
+        "A Pós-Graduação em Aleitamento Materno e Banco de Leite Humano forma profissionais capazes de promover, proteger e apoiar a amamentação com base científica e prática humanizada, atuando desde o manejo clínico até a gestão de bancos de leite humano.",
+        "Com aulas ao vivo, corpo docente de referência nacional e internacional e metodologia voltada para a atuação real no SUS e na saúde suplementar, o curso prepara você para os desafios da saúde materno-infantil."
+      ]
+    },
+    "modulos": [
+      { "titulo": "Módulo 1", "itens": ["Fundamentos do aleitamento materno e banco de leite humano;", "Manejo clínico da amamentação e aleitamento materno I;"] },
+      { "titulo": "Módulo 2", "itens": ["Aleitamento em situações especiais, coleta e doação de leite humano;", "Condições anatômicas e fisiológicas orais do recém-nascido sob a perspectiva da odontologia;"] },
+      { "titulo": "Módulo 3", "itens": ["Ética, biossegurança e prática profissional;", "Farmacologia e toxicologia aplicada ao aleitamento materno;"] },
+      { "titulo": "Módulo 4", "itens": ["Manejo clínico da amamentação e aleitamento materno II;", "Aspectos nutricionais, psicológicos e socioculturais no aleitamento materno e amamentação;"] },
+      { "titulo": "Módulo 5", "itens": ["Aspectos fisiológicos e fisiopatológicos do recém-nascido e agravantes no aleitamento materno e amamentação;", "Genética, Bioinformática e Amamentação;"] },
+      { "titulo": "Módulo 6", "itens": ["Processamento e controle de qualidade do leite humano;", "Distribuição e uso terapêutico do leite humano;"] }
+    ],
+    "matriz_curricular": "",
+    "destaques": "",
+    "objetivos": "",
+    "publico_alvo": [
+      { "imagem": "", "titulo": "", "texto": "Deseja se especializar em aleitamento materno e banco de leite humano." },
+      { "imagem": "", "titulo": "", "texto": "Busca capacitação para orientar, apoiar e promover a amamentação de forma segura e humanizada." },
+      { "imagem": "", "titulo": "", "texto": "Tem interesse em atuar na gestão, coleta e controle de qualidade em bancos de leite humano." },
+      { "imagem": "", "titulo": "", "texto": "Deseja ampliar sua atuação na saúde materno-infantil com base científica e práticas atualizadas." }
+    ],
+    "secao_complementar": {
+      "imagem": "",
+      "nota_dimensoes": "2560x360px para Desktop e 1080x470px para Mobile"
+    },
+    "investimento": {
+      "matricula_html": "",
+      "parcelas_html": "",
+      "texto_botao": "Adquira",
+      "link_botao": "https://inscricao.faculdadeide.edu.br/?idps=300&curso=665",
+      "oferta_label": "Oferta de lançamento",
+      "oferta_valor": "24x de R$ 277,08",
+      "taxa_inscricao": "Taxa de Inscrição R$ 197,00",
+      "beneficios": [
+        "Formação em uma instituição referência na área da saúde.",
+        "Plataforma digital moderna, intuitiva e interativa para potencializar seu aprendizado.",
+        "Corpo docente experiente e atuante no mercado.",
+        "Metodologia atualizada, alinhada às exigências profissionais.",
+        "Certificação reconhecida que fortalece sua atuação profissional e credibilidade no mercado.",
+        "Metodologia com foco na atuação profissional real, preparando para os desafios do SUS e da saúde suplementar."
+      ]
+    },
+    "faq": [
+      { "pergunta": "Como funcionam as aulas na modalidade EAD?", "resposta": "As aulas acontecem ao vivo, por meio da plataforma Zoom, permitindo interação direta entre alunos e professores. Além dos encontros ao vivo, os alunos também têm acesso a conteúdos complementares na plataforma virtual de aprendizagem, com materiais de apoio e atividades." },
+      { "pergunta": "Preciso assistir as aulas ao vivo?", "resposta": "Recomendamos a participação ao vivo para aproveitar as discussões com o professor e os colegas. No entanto, todas as aulas ficam gravadas na plataforma, permitindo que o aluno assista posteriormente caso não possa participar no horário da transmissão." },
+      { "pergunta": "O curso possui atividades avaliativas?", "resposta": "Sim! Todos os módulos contam com atividades avaliativas, que fazem parte do processo de aprendizagem e da composição da carga horária do curso." },
+      { "pergunta": "Preciso fazer Trabalho de Conclusão de Curso (TCC)?", "resposta": "Não! Este curso não exige TCC. A certificação é obtida mediante o cumprimento da carga horária obrigatória do curso e aprovação nas atividades avaliativas previstas." },
+      { "pergunta": "Onde acesso as aulas e materiais do curso?", "resposta": "Os alunos têm acesso a uma plataforma virtual de aprendizagem, onde ficam disponíveis os conteúdos complementares, atividades, materiais de apoio e as gravações das aulas." },
+      { "pergunta": "O curso oferece materiais de apoio para estudo?", "resposta": "Sim! Além dos conteúdos disponibilizados na plataforma, os alunos também têm acesso a uma biblioteca virtual, com diversos títulos e materiais acadêmicos para apoiar os estudos ao longo da especialização." },
+      { "pergunta": "O certificado tem validade nacional?", "resposta": "Sim! O curso é uma Pós-Graduação Lato Sensu, com certificado emitido pela Faculdade IDE, instituição de ensino superior credenciada, seguindo as normas do Ministério da Educação (MEC). Por isso, o certificado possui validade em todo o território nacional." }
+    ],
+    "seo": {
+      "title": "Aleitamento Materno e Banco de Leite Humano - Ead Faculdade IDE",
+      "description": "Pós-graduação 100% EAD em Aleitamento Materno e Banco de Leite Humano — Faculdade IDE. Inscrições abertas.",
+      "og_title": "Aleitamento Materno e Banco de Leite Humano - Ead Faculdade IDE",
+      "og_description": "Pós-graduação 100% EAD em Aleitamento Materno e Banco de Leite Humano — Faculdade IDE.",
+      "focus_keyword": "aleitamento materno banco de leite humano",
+      "keywords": ["pós-graduação", "aleitamento materno", "banco de leite humano", "EAD", "Faculdade IDE"],
+      "canonical": "/pos-graduacao/aleitamento-materno-banco-leite-humano",
+      "schema_type": "Course"
+    },
+    "atualizado_em": "2026-06-13T00:00:00.000Z"
+  }
+]

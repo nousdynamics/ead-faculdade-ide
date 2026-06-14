@@ -1,0 +1,5 @@
+[
+  { "id": "inscricoes-abertas", "nome": "Inscrições Abertas", "slug": "inscricoes-abertas", "cor": "#13A6B4" },
+  { "id": "turma-confirmada", "nome": "Turma Confirmada", "slug": "turma-confirmada", "cor": "#2B325C" },
+  { "id": "inscricoes-encerradas", "nome": "Inscrições Encerradas", "slug": "inscricoes-encerradas", "cor": "#6b7280" }
+]

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel CMS — Faculdade IDE EAD</title>
+  <link rel="icon" href="../assets/img/FAV-ICON-3.svg">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+  <div class="login-screen" id="login-screen">
+    <div class="login-card">
+      <img src="../assets/img/LOGO-IDE-ONLINE-02.svg" alt="Faculdade IDE" width="140">
+      <h1>Painel CMS</h1>
+      <p>Acesso restrito à equipe de conteúdo</p>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-user">Usuário</label>
+          <input id="login-user" name="username" autocomplete="username" required>
+        </div>
+        <div class="form-group">
+          <label for="login-pass">Senha</label>
+          <input id="login-pass" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <p class="login-error" id="login-error" hidden></p>
+        <button type="submit" class="btn btn--primary login-submit">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="admin" id="app" hidden>
+    <aside class="admin__sidebar">
+      <div class="admin__brand">
+        <img src="../assets/img/LOGO-IDE-ONLINE-02.svg" alt="Faculdade IDE" width="120">
+        <span>Painel CMS</span>
+      </div>
+      <nav class="admin__nav" id="nav"></nav>
+      <div class="admin__sidebar-foot">
+        <a href="/" target="_blank" rel="noopener">Ver site ↗</a>
+      </div>
+    </aside>
+
+    <div class="admin__main">
+      <header class="admin__topbar">
+        <div>
+          <h1 id="page-title">Dashboard</h1>
+          <p id="page-subtitle">Gerencie cursos e conteúdos do site</p>
+        </div>
+        <div class="admin__topbar-actions">
+          <span class="admin__sync" id="sync-status">—</span>
+          <button type="button" class="btn btn--ghost" id="btn-export">Exportar JSON</button>
+          <button type="button" class="btn btn--ghost" id="btn-logout">Sair</button>
+        </div>
+      </header>
+      <main class="admin__content" id="content"></main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+[
+  {
+    "id": "richardes-caula",
+    "nome": "Esp. Richardes Caúla",
+    "foto": "assets/img/Richardes-Caula-scaled.png",
+    "cargo": "Enfermeiro; Especialista em Saúde da Mulher; MBA em Gestão dos Serviços de Saúde — Coordenação do curso.",
+    "mini_curriculo": [
+      "Enfermeiro",
+      "Especialista em Saúde da Mulher",
+      "MBA Gestão dos Serviços de Saúde com Ênfase em Segurança do Paciente",
+      "Especialista em Planejamento e Gestão",
+      "Certificação Green Belt Lean Six Sigma",
+      "CEO da RC Solutions",
+      "Coordenador da Câmara Técnica de Gestão em Enfermagem",
+      "Docente e Coordenador de Enfermagem na Faculdade IDE"
+    ],
+    "ativo": true
+  }
+]

@@ -1,0 +1,10 @@
+[
+  { "id": "educacao-fisica", "nome": "Educação Física", "slug": "educacao-fisica" },
+  { "id": "enfermagem", "nome": "Enfermagem", "slug": "enfermagem" },
+  { "id": "farmacia", "nome": "Farmácia", "slug": "farmacia" },
+  { "id": "fisioterapia", "nome": "Fisioterapia", "slug": "fisioterapia" },
+  { "id": "fonoaudiologia", "nome": "Fonoaudiologia", "slug": "fonoaudiologia" },
+  { "id": "medicina", "nome": "Medicina", "slug": "medicina" },
+  { "id": "multiprofissional", "nome": "Multiprofissional", "slug": "multiprofissional" },
+  { "id": "nutricao", "nome": "Nutrição", "slug": "nutricao" }
+]
