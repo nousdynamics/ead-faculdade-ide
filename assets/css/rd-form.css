@@ -154,7 +154,7 @@
 }
 
 #rd-form-mo0jfhob label.error {
-  color: #ffb4b4 !important;
+  color: var(--color-danger-soft) !important;
   font-size: 12px !important;
   font-weight: var(--fw-body) !important;
   text-shadow: none !important;
@@ -162,7 +162,7 @@
 
 /* Botão CTA */
 #rd-button-mo0jfhoe.bricks--component-button {
-  background: linear-gradient(135deg, #ffffff 0%, #f4f7fb 100%) !important;
+  background: linear-gradient(135deg, #ffffff 0%, var(--color-surface-2) 100%) !important;
   border: 1px solid rgba(255, 255, 255, 0.65) !important;
   border-radius: 12px !important;
   box-shadow:
@@ -186,7 +186,7 @@
 }
 
 #rd-button-mo0jfhoe.bricks--component-button:hover {
-  background: linear-gradient(135deg, var(--color-primary) 0%, #1e2444 100%) !important;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%) !important;
   border-color: rgba(255, 255, 255, 0.18) !important;
   box-shadow:
     0 14px 32px rgba(19, 30, 68, 0.35),

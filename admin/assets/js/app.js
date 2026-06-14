@@ -1,6 +1,6 @@
 import {
   initStore, getAll, getById, lookup, upsertItem, deleteItem,
-  uid, slugify, loadFromLocalStorage,
+  uid, slugify, getCoursePublicPath, loadFromLocalStorage,
 } from "./store.js";
 import { generateCourseSeo, scoreSeo, renderSeoPreview, escapeHtml, SEO_LIMITS } from "./seo.js";
 import { login, logout, verifySession, isAuthenticated, getUser, getEmail, fetchAccountProfile, updateAccount } from "./auth.js";
@@ -206,7 +206,7 @@ function renderDashboard() {
             <td class="col-meta">${escapeHtml(lookup("formation-levels", c.nivel_formacao_id))}</td>
             <td class="col-meta">${escapeHtml(lookup("areas", c.area_id))}</td>
             <td class="col-status">${statusBadge(c.status_curso_id)}</td>
-            <td class="col-actions"><div class="table-actions"><a href="#/courses/${c.id}" class="btn btn--ghost btn--sm">${icon("pencil", { size: 14 })} Editar</a></div></td>
+            <td class="col-actions"><div class="table-actions">${renderCoursePageLink(c, { compact: true })}<a href="#/courses/${c.id}" class="btn btn--ghost btn--sm">${icon("pencil", { size: 14 })} Editar</a></div></td>
           </tr>`).join("")}</tbody>
         </table>` : `<div class="empty">${icon("inbox", { size: 40, className: "icon empty__icon" })}<p>Nenhum curso cadastrado.</p><a href="#/courses/novo" class="btn btn--primary">${icon("plus", { size: 16 })} Criar primeiro curso</a></div>`}
       </div>
@@ -246,6 +246,33 @@ function renderCoursesList() {
         </table>
       </div>
     </div>`;
+}
+
+function renderCoursePageLink(course, { compact = false } = {}) {
+  const path = getCoursePublicPath(course);
+  if (!path) return "";
+
+  const label = compact ? "Ver" : "Ver página";
+  return `<a href="${escapeHtml(path)}" class="btn btn--ghost btn--sm" target="_blank" rel="noopener noreferrer" title="Abrir página pública do curso">${icon("external-link", { size: 14 })} ${label}</a>`;
+}
+
+function updateCourseViewPageLink(form) {
+  const link = $("#course-view-page", form);
+  if (!link) return;
+
+  const path = getCoursePublicPath({
+    slug: form.slug?.value.trim(),
+    id: form.dataset.courseId || "",
+    nivel_formacao_id: form.nivel_formacao_id?.value,
+    seo: { canonical: form.seo_canonical?.value.trim() },
+  });
+
+  if (path) {
+    link.href = path;
+    link.hidden = false;
+  } else {
+    link.hidden = true;
+  }
 }
 
 function getCourseDepoimentoIds(course) {
@@ -354,9 +381,11 @@ function renderCourseForm(course) {
   while (audience.length < 4) audience.push({});
 
   return `
-    <form id="course-form" class="course-form">
+    <form id="course-form" class="course-form" data-course-id="${escapeHtml(c.id || "")}">
       <div class="course-form__layout">
-        ${renderCourseFormNav()}
+        <div class="course-form__nav-wrap">
+          ${renderCourseFormNav()}
+        </div>
         <div class="course-form__main">
           ${coursePanel("cf-basics", "Informações básicas", "Identidade, URL e status de publicação do curso.", `
             <div class="form-grid">
@@ -490,8 +519,11 @@ function renderCourseForm(course) {
       </div>
 
       <div class="form-actions course-form__actions">
-        <a href="#/courses" class="btn btn--ghost">${icon("x", { size: 16 })} Cancelar</a>
-        <button type="submit" class="btn btn--primary">${icon("save", { size: 16 })} Salvar curso</button>
+        <a href="${escapeHtml(getCoursePublicPath(c) || "#")}" id="course-view-page" class="btn btn--ghost"${getCoursePublicPath(c) ? "" : " hidden"} target="_blank" rel="noopener noreferrer">${icon("external-link", { size: 16 })} Ver página</a>
+        <div class="course-form__actions-end">
+          <a href="#/courses" class="btn btn--ghost">${icon("x", { size: 16 })} Cancelar</a>
+          <button type="submit" class="btn btn--primary">${icon("save", { size: 16 })} Salvar curso</button>
+        </div>
       </div>
     </form>`;
 }
@@ -558,13 +590,19 @@ function bindCourseFormEvents(form) {
       const preview = $("#slug-preview");
       if (preview) preview.textContent = s || "slug-do-curso";
     }
+    updateCourseViewPageLink(form);
   });
 
   $("#slug", form)?.addEventListener("input", (e) => {
     e.target.dataset.auto = "false";
     const preview = $("#slug-preview");
     if (preview) preview.textContent = e.target.value || "slug-do-curso";
+    updateCourseViewPageLink(form);
   });
+
+  form.nivel_formacao_id?.addEventListener("change", () => updateCourseViewPageLink(form));
+  form.seo_canonical?.addEventListener("input", () => updateCourseViewPageLink(form));
+  updateCourseViewPageLink(form);
 
   $("#btn-auto-seo", form)?.addEventListener("click", () => {
     const partial = collectCourseForm(form);

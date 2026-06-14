@@ -20,6 +20,28 @@
   --color-footer-muted: #D3DBE1;
   --color-footer-rule: #D8D8D8;
 
+  /* ---- Semânticas de status ---- */
+  --color-success: #059669;  --color-success-soft: #d1fae5;
+  --color-danger:  #dc2626;  --color-danger-soft:  #fecaca;
+  --color-warning: #f59e0b;  --color-warning-soft: #fef3c7;
+
+  /* ---- Superfícies neutras ---- */
+  --color-surface:   #fafbfc;   /* fundo de painel/card claro */
+  --color-surface-2: #f3f4f6;   /* um nível mais escuro */
+  --color-app-bg:    #eef1f6;   /* fundo geral do app admin (era --admin-bg) */
+
+  /* ---- Texto / neutros ---- */
+  --color-text-body: #444;      /* corpo de parágrafo cinza (não-navy) */
+
+  /* ---- Variantes accent / primary ---- */
+  --color-accent-light:   #b8eef2;
+  --color-accent-bright:  #01e3f8;   /* par de gradiente (home) */
+  --color-primary-darker: #151a30;   /* profundidade sidebar admin */
+
+  /* ---- CTA laranja (marca) ---- */
+  --color-orange:       #F2791B;
+  --color-orange-light: #FBA94C;
+
   /* ---- Tipografia ---- */
   /* Títulos: Gotham, peso máx. 400 | Corpo/UI: Inter, peso 500 */
   --font-heading: "Gotham", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;

@@ -34,6 +34,23 @@ export function slugify(text) {
     .replace(/^-|-$/g, "");
 }
 
+/** Caminho público da página do curso (ex.: /pos-graduacao/meu-curso). */
+export function getCoursePublicPath(course) {
+  if (!course) return "";
+
+  const canonical = course.seo?.canonical?.trim();
+  if (canonical) {
+    return canonical.startsWith("/") ? canonical : `/${canonical}`;
+  }
+
+  const slug = course.slug?.trim() || course.id?.trim() || "";
+  if (!slug) return "";
+
+  const nivel = getById("formation-levels", course.nivel_formacao_id);
+  const prefix = nivel?.slug || "pos-graduacao";
+  return `/${prefix}/${slug}`;
+}
+
 import { authHeaders, clearSession } from "./auth.js";
 
 async function fetchJson(url, options = {}) {

@@ -5,10 +5,11 @@
 
 :root {
   --admin-sidebar-w: 260px;
-  --admin-bg: #eef1f6;
-  --admin-danger: #dc2626;
-  --admin-success: #059669;
-  --admin-sidebar-bg: linear-gradient(180deg, #2b325c 0%, #20264a 100%);
+  /* aliases p/ camada compartilhada (tokens.css) — preservam os usos existentes */
+  --admin-bg: var(--color-app-bg);
+  --admin-danger: var(--color-danger);
+  --admin-success: var(--color-success);
+  --admin-sidebar-bg: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
 }
 
 /* hidden deve vencer display:flex do painel */
@@ -44,7 +45,7 @@ body.admin-mode {
   background:
     radial-gradient(circle at 15% 20%, rgba(19, 166, 180, 0.35) 0%, transparent 45%),
     radial-gradient(circle at 85% 80%, rgba(19, 166, 180, 0.2) 0%, transparent 40%),
-    linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 55%, #151a30 100%);
+    linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 55%, var(--color-primary-darker) 100%);
 }
 
 .login-layout {
@@ -78,7 +79,7 @@ body.admin-mode {
   font-weight: var(--fw-body);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #b8eef2;
+  color: var(--color-accent-light);
 }
 
 .login-brand__title {
@@ -329,7 +330,7 @@ body.admin-mode {
 
 .admin__nav a.active .nav-icon {
   background: rgba(19, 166, 180, 0.28);
-  color: #b8eef2;
+  color: var(--color-accent-light);
 }
 
 .nav-logout {
@@ -353,7 +354,7 @@ body.admin-mode {
 
 .nav-logout:hover {
   background: rgba(220, 38, 38, 0.15);
-  color: #fecaca;
+  color: var(--color-danger-soft);
 }
 
 .nav-logout .nav-icon {
@@ -408,6 +409,7 @@ body.admin-mode {
   position: sticky;
   top: 0;
   z-index: 5;
+  --admin-sticky-top: 5.5rem;
 }
 
 .admin__topbar h1 {
@@ -426,7 +428,6 @@ body.admin-mode {
 .admin__content {
   padding: 1.5rem 2rem 3rem;
   flex: 1;
-  will-change: opacity, transform;
 }
 
 /* ---- Stats & panels ---- */
@@ -562,7 +563,7 @@ body.admin-mode {
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  background: #f8f9fb;
+  background: var(--color-surface);
   white-space: nowrap;
 }
 
@@ -571,7 +572,7 @@ body.admin-mode {
 }
 
 .data-table tbody tr:hover td {
-  background: #fafbfc;
+  background: var(--color-surface);
 }
 
 .data-table .col-name {
@@ -625,7 +626,7 @@ body.admin-mode {
 }
 
 .data-table--courses .col-actions {
-  width: 10%;
+  width: 14%;
 }
 
 .cell-name__title {
@@ -673,7 +674,7 @@ body.admin-mode {
 .data-table code {
   font-size: 0.8125rem;
   color: var(--color-primary);
-  background: #f3f4f6;
+  background: var(--color-surface-2);
   padding: 0.15rem 0.45rem;
   border-radius: var(--radius-sm);
 }
@@ -717,11 +718,11 @@ th {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  background: #fafbfc;
+  background: var(--color-surface);
 }
 
 tr:hover td {
-  background: #fafbfc;
+  background: var(--color-surface);
 }
 
 /* ---- Badges ---- */
@@ -739,8 +740,8 @@ tr:hover td {
 .badge--open { background: rgba(19, 166, 180, 0.15); color: var(--color-accent-dark); }
 .badge--confirmed { background: rgba(43, 50, 92, 0.12); color: var(--color-primary); }
 .badge--closed { background: rgba(107, 114, 128, 0.15); color: var(--color-muted); }
-.badge--draft { background: #fef3c7; color: #92400e; }
-.badge--live { background: #d1fae5; color: var(--admin-success); }
+.badge--draft { background: var(--color-warning-soft); color: #92400e; /* intencional: texto âmbar escuro, uso único */ }
+.badge--live { background: var(--color-success-soft); color: var(--admin-success); }
 
 /* ---- Admin buttons (override base pill for compact UI) ---- */
 .admin .btn {
@@ -771,7 +772,7 @@ tr:hover td {
 }
 
 .admin .btn--ghost:hover {
-  background: #f9fafb;
+  background: var(--color-surface);
 }
 
 .admin .btn--danger-outline {
@@ -915,12 +916,20 @@ tr:hover td {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
   gap: 1.25rem;
-  align-items: start;
+  align-items: stretch;
+}
+
+.course-form__nav-wrap {
+  min-height: 100%;
 }
 
 .course-form__nav {
   position: sticky;
-  top: 1rem;
+  top: calc(var(--admin-sticky-top, 5.5rem) + 0.75rem);
+  max-height: calc(100vh - var(--admin-sticky-top, 5.5rem) - 1.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  z-index: 4;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -929,6 +938,8 @@ tr:hover td {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(43, 50, 92, 0.25) transparent;
 }
 
 .course-form__nav-link {
@@ -950,7 +961,7 @@ tr:hover td {
 }
 
 .course-form__nav-link:hover {
-  background: #f3f4f6;
+  background: var(--color-surface-2);
 }
 
 .course-form__nav-link.is-active {
@@ -979,7 +990,7 @@ tr:hover td {
 
 .course-form__published {
   padding: 0.75rem 1rem;
-  background: #f8fafc;
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
 }
@@ -1025,7 +1036,7 @@ tr:hover td {
   padding: 1rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  background: #fafbfc;
+  background: var(--color-surface);
 }
 
 .audience-card__title {
@@ -1055,6 +1066,14 @@ tr:hover td {
   backdrop-filter: blur(8px);
   padding: 1rem 0;
   margin-top: 1.25rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.course-form__actions-end {
+  display: flex;
+  gap: 0.75rem;
+  margin-left: auto;
 }
 
 @media (max-width: 1100px) {
@@ -1064,6 +1083,8 @@ tr:hover td {
 
   .course-form__nav {
     position: static;
+    max-height: none;
+    overflow: visible;
     flex-direction: row;
     flex-wrap: wrap;
   }
@@ -1097,7 +1118,7 @@ tr:hover td {
   font-family: var(--font-heading);
   font-weight: var(--fw-title);
   font-size: 0.9rem;
-  background: #fafbfc;
+  background: var(--color-surface);
   list-style: none;
   display: flex;
   align-items: center;
@@ -1132,7 +1153,7 @@ tr:hover td {
   border: 1px dashed var(--color-border);
   border-radius: var(--radius-sm);
   padding: 0.75rem;
-  background: #fafbfc;
+  background: var(--color-surface);
 }
 
 .repeater-item__head {
@@ -1293,7 +1314,7 @@ tr:hover td {
   border-radius: 12px;
   overflow: hidden;
   border: 1px dashed var(--color-border);
-  background: #fafbfc;
+  background: var(--color-surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1480,7 +1501,7 @@ tr:hover td {
   background:
     radial-gradient(circle at 20% 15%, rgba(19, 166, 180, 0.35) 0%, transparent 42%),
     radial-gradient(circle at 80% 85%, rgba(19, 166, 180, 0.22) 0%, transparent 38%),
-    linear-gradient(160deg, var(--color-primary) 0%, var(--color-primary-dark) 55%, #151a30 100%);
+    linear-gradient(160deg, var(--color-primary) 0%, var(--color-primary-dark) 55%, var(--color-primary-darker) 100%);
   transition: opacity 0.5s ease;
 }
 
@@ -1577,10 +1598,12 @@ tr:hover td {
 /* Transição entre páginas */
 .admin__content.page-leave {
   animation: page-leave 0.18s ease forwards;
+  will-change: opacity, transform;
 }
 
 .admin__content.page-enter {
   animation: page-enter 0.36s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, transform;
 }
 
 @keyframes page-leave {

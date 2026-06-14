@@ -91,7 +91,7 @@ strong { font-weight: 600; }
 .btn--outline:hover { background: var(--color-primary); color: var(--color-white); }
 .btn--white { background: var(--color-white); color: var(--color-primary); }
 .btn--white:hover { background: var(--color-primary); color: var(--color-white); transform: translateY(-2px); }
-.btn--orange { background: linear-gradient(135deg, #FBA94C, #F2791B); color: var(--color-white); box-shadow: 0 6px 16px rgba(242,121,27,.35); }
+.btn--orange { background: linear-gradient(135deg, var(--color-orange-light), var(--color-orange)); color: var(--color-white); box-shadow: 0 6px 16px rgba(242,121,27,.35); }
 .btn--orange:hover { filter: brightness(1.05); transform: translateY(-2px); }
 
 @media (max-width: 1024px) { .section { padding-block: var(--space-xl); } }

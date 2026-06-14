@@ -44,7 +44,7 @@
 }
 
 .site-nav__menu a {
-  color: #2B325C;
+  color: var(--color-primary);
   font-size: 0.8em;
   font-weight: var(--fw-body);
   line-height: 0.8em;
@@ -227,7 +227,7 @@
   color: #fff;
 }
 .lead-form--on-dark input::placeholder { color: rgba(255,255,255,.75); }
-.lead-form--on-dark .form-msg.is-success { color: #aef0f5; }
+.lead-form--on-dark .form-msg.is-success { color: var(--color-accent-light); }
 
 /* botão-seta circular (newsletter) */
 .btn-arrow {
@@ -494,7 +494,7 @@
 
 .site-footer__rule {
   height: 1px;
-  background: #d8d8d8;
+  background: var(--color-footer-rule);
   margin-top: 56px;
 }
 
