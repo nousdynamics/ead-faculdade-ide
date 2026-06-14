@@ -5,6 +5,7 @@ import {
 import { generateCourseSeo, scoreSeo, renderSeoPreview, escapeHtml, SEO_LIMITS } from "./seo.js";
 import { login, logout, verifySession, isAuthenticated, getUser, getEmail, fetchAccountProfile, updateAccount } from "./auth.js";
 import { icon, navIcon, statIcon } from "./icons.js";
+import { bindImageUpload, mediaUrl } from "./upload.js";
 
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
@@ -490,22 +491,50 @@ function emptyCourse() {
   };
 }
 
+function renderImageUploadField({ name = "foto", value = "", label = "Foto", folder = "uploads", dimensions = "" }) {
+  const preview = value
+    ? `<img src="${mediaUrl(value)}" alt="">`
+    : `<div class="image-upload__placeholder">Nenhuma imagem</div>`;
+  const aspect = dimensions === "350×350 px" ? "square" : dimensions ? "portrait" : "";
+
+  return `
+    <div class="form-group form-group--full image-upload${aspect ? ` image-upload--${aspect}` : ""}" data-image-upload data-folder="${folder}">
+      <label>${label}</label>
+      <input type="hidden" name="${name}" value="${escapeHtml(value)}">
+      <div class="image-upload__preview">${preview}</div>
+      <label class="image-upload__btn btn btn--ghost btn--sm">
+        ${icon("image", { size: 16 })} Escolher imagem
+        <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="image-upload__input" hidden>
+      </label>
+      <small>JPG, PNG ou WebP. Máximo de 2 MB.${dimensions ? ` Tamanho recomendado: <strong>${dimensions}</strong>.` : ""}</small>
+      <p class="image-upload__status" hidden></p>
+    </div>`;
+}
+
 function renderEntityList(collection, title, formRenderer) {
   setPage(title, `Cadastro de ${title.toLowerCase()}`);
   const items = getAll(collection);
+  const isProfessors = collection === "professors";
+
   return `
     <div class="panel">
       <div class="panel__head"><h2>${title}</h2><button type="button" class="btn btn--primary btn--sm" id="btn-new-entity">${icon("plus", { size: 14 })} Adicionar</button></div>
       <div class="panel__body table-wrap">
-        <table><thead><tr><th>Nome</th><th>Status</th><th>Ações</th></tr></thead>
+        <table><thead><tr>
+          <th>Nome</th>
+          ${isProfessors ? "<th>Curso</th>" : ""}
+          <th>Status</th>
+          <th>Ações</th>
+        </tr></thead>
         <tbody>${items.map((item) => `<tr>
-          <td><strong>${escapeHtml(item.nome)}</strong></td>
+          <td><strong>${escapeHtml(item.nome)}</strong>${isProfessors && item.descricao ? `<br><small style="color:var(--color-muted)">${escapeHtml(item.descricao.slice(0, 80))}${item.descricao.length > 80 ? "…" : ""}</small>` : ""}</td>
+          ${isProfessors ? `<td>${escapeHtml(item.nome_curso || "—")}</td>` : ""}
           <td>${item.ativo !== false ? '<span class="badge badge--live">Ativo</span>' : '<span class="badge badge--draft">Inativo</span>'}</td>
           <td class="table-actions">
             <button type="button" class="btn btn--ghost btn--sm" data-edit-entity="${item.id}">${icon("pencil", { size: 14 })} Editar</button>
             <button type="button" class="btn btn--ghost btn--sm btn--danger-outline" data-delete-entity="${item.id}">${icon("trash", { size: 14 })} Excluir</button>
           </td>
-        </tr>`).join("") || `<tr><td colspan="3" class="empty">Nenhum registro.</td></tr>`}
+        </tr>`).join("") || `<tr><td colspan="${isProfessors ? 4 : 3}" class="empty">Nenhum registro.</td></tr>`}
         </tbody></table>
       </div>
     </div>
@@ -513,13 +542,33 @@ function renderEntityList(collection, title, formRenderer) {
 }
 
 function renderProfessorForm(item) {
-  const p = item || { id: uid("prof"), nome: "", foto: "", titulo: "", estado: "", ativo: true };
+  const p = item || {
+    id: uid("prof"),
+    nome: "",
+    foto: "",
+    titulo: "",
+    estado: "",
+    nome_curso: "",
+    descricao: "",
+    ativo: true,
+  };
+  const descLen = (p.descricao || "").length;
+
   return entityFormShell("Professores", p, `
     <div class="form-grid">
       <div class="form-group form-group--full"><label>Nome *</label><input name="nome" value="${escapeHtml(p.nome)}" required></div>
       <div class="form-group"><label>Título / Cargo</label><input name="titulo" value="${escapeHtml(p.titulo || "")}"></div>
       <div class="form-group"><label>Estado (UF)</label><input name="estado" value="${escapeHtml(p.estado || "")}"></div>
-      <div class="form-group form-group--full"><label>Foto (caminho)</label><input name="foto" value="${escapeHtml(p.foto || "")}"></div>
+      <div class="form-group form-group--full">
+        <label for="nome_curso">Nome do curso</label>
+        <input id="nome_curso" name="nome_curso" value="${escapeHtml(p.nome_curso || "")}" placeholder="Ex: Aleitamento Materno e Banco de Leite Humano">
+      </div>
+      ${renderImageUploadField({ value: p.foto || "", label: "Foto", folder: "professors", dimensions: "300×469 px" })}
+      <div class="form-group form-group--full">
+        <label for="descricao">Breve descrição</label>
+        <textarea id="descricao" name="descricao" rows="3" maxlength="120" data-char-counter="descricao-count">${escapeHtml(p.descricao || "")}</textarea>
+        <small><span id="descricao-count">${descLen}</span>/120 caracteres</small>
+      </div>
       <div class="form-group"><label class="form-check"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
     </div>`);
 }
@@ -530,7 +579,7 @@ function renderCoordForm(item) {
     <div class="form-grid">
       <div class="form-group form-group--full"><label>Nome *</label><input name="nome" value="${escapeHtml(p.nome)}" required></div>
       <div class="form-group form-group--full"><label>Cargo / Resumo</label><input name="cargo" value="${escapeHtml(p.cargo || "")}"></div>
-      <div class="form-group form-group--full"><label>Foto</label><input name="foto" value="${escapeHtml(p.foto || "")}"></div>
+      ${renderImageUploadField({ value: p.foto || "", label: "Foto", folder: "coordination", dimensions: "350×350 px" })}
       <div class="form-group form-group--full"><label>Mini-currículo (um item por linha)</label><textarea name="mini_curriculo" rows="5">${escapeHtml((p.mini_curriculo || []).join("\n"))}</textarea></div>
       <div class="form-group"><label class="form-check"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
     </div>`);
@@ -884,9 +933,22 @@ function bindEntityForm(collection) {
     $("#entity-form-panel")?.remove();
   });
 
-  $("#entity-form")?.addEventListener("submit", async (e) => {
+  const form = $("#entity-form");
+  $$("[data-image-upload]", form).forEach((wrap) => {
+    bindImageUpload(wrap, { folder: wrap.dataset.folder || "uploads" });
+  });
+
+  form?.querySelectorAll("[data-char-counter]").forEach((field) => {
+    const counter = document.getElementById(field.dataset.charCounter);
+    const update = () => {
+      if (counter) counter.textContent = String(field.value.length);
+    };
+    field.addEventListener("input", update);
+    update();
+  });
+
+  form?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const form = e.target;
     const id = form.dataset.entityId;
     const existing = getById(collection, id);
     const data = { ...(existing || {}), id };
@@ -895,10 +957,16 @@ function bindEntityForm(collection) {
     for (const [key, val] of fd.entries()) {
       if (key === "ativo") data.ativo = true;
       else if (key === "mini_curriculo") data[key] = val.split("\n").map((s) => s.trim()).filter(Boolean);
+      else if (key === "descricao") data[key] = String(val).slice(0, 120);
       else data[key] = val;
     }
     if (!fd.has("ativo")) data.ativo = false;
     if (!data.nome?.trim()) return toast("Nome obrigatório", "error");
+
+    const uploading = form.querySelector(".image-upload__status:not([hidden])");
+    if (uploading?.textContent?.includes("Enviando")) {
+      return toast("Aguarde o upload da imagem terminar.", "error");
+    }
 
     try {
       await upsertItem(collection, data);

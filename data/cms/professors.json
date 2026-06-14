@@ -5,6 +5,8 @@
     "foto": "assets/img/Camila-da-Silva-Pereira-2.jpeg",
     "titulo": "Docente Convidado",
     "estado": "PR",
+    "nome_curso": "",
+    "descricao": "",
     "ativo": true
   },
   {
@@ -13,6 +15,8 @@
     "foto": "assets/img/Elise-Angeline-Dias.jpeg",
     "titulo": "Docente Convidado",
     "estado": "MS",
+    "nome_curso": "",
+    "descricao": "",
     "ativo": true
   },
   {
@@ -21,6 +25,8 @@
     "foto": "assets/img/Geisa-Segundo.jpeg",
     "titulo": "Docente Convidado",
     "estado": "RJ",
+    "nome_curso": "",
+    "descricao": "",
     "ativo": true
   },
   {
@@ -29,6 +35,8 @@
     "foto": "assets/img/Jeverton-Santana-3.jpeg",
     "titulo": "Docente Convidado",
     "estado": "SE",
+    "nome_curso": "",
+    "descricao": "",
     "ativo": true
   }
 ]

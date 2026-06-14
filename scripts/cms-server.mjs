@@ -9,6 +9,7 @@ import {
   getAccountProfile,
   updateAccountProfile,
 } from "../api/lib/account.js";
+import { saveUploadedImage } from "../api/lib/upload.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -207,6 +208,24 @@ const server = createServer(async (req, res) => {
     const token = getBearerToken(req);
     if (token) sessions.delete(token);
     return send(res, 200, { ok: true });
+  }
+
+  if (url.pathname === "/api/upload" && req.method === "POST") {
+    const session = requireAuth(req, res);
+    if (!session) return;
+
+    try {
+      const body = await readBody(req);
+      const result = await saveUploadedImage({
+        filename: body.filename,
+        data: body.data,
+        contentType: body.contentType,
+        folder: body.folder || "uploads",
+      });
+      return send(res, 201, result);
+    } catch (err) {
+      return send(res, err.status || 500, { error: err.message });
+    }
   }
 
   const apiMatch = url.pathname.match(/^\/api\/cms\/([^/]+)(?:\/([^/]+))?$/);
