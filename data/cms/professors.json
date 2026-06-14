@@ -5,38 +5,8 @@
     "foto": "assets/img/Camila-da-Silva-Pereira-2.jpeg",
     "titulo": "Docente Convidado",
     "estado": "PR",
-    "nome_curso": "",
-    "descricao": "",
-    "ativo": true
-  },
-  {
-    "id": "elise-dias",
-    "nome": "Esp. Elise Angeline Indianne Rubi Dias (MS)",
-    "foto": "assets/img/Elise-Angeline-Dias.jpeg",
-    "titulo": "Docente Convidado",
-    "estado": "MS",
-    "nome_curso": "",
-    "descricao": "",
-    "ativo": true
-  },
-  {
-    "id": "geisa-barreto",
-    "nome": "Esp. Geisa Segundo da Silva Barreto (RJ)",
-    "foto": "assets/img/Geisa-Segundo.jpeg",
-    "titulo": "Docente Convidado",
-    "estado": "RJ",
-    "nome_curso": "",
-    "descricao": "",
-    "ativo": true
-  },
-  {
-    "id": "jeverton-santos",
-    "nome": "Esp. Jeverton de Santana Santos (SE)",
-    "foto": "assets/img/Jeverton-Santana-3.jpeg",
-    "titulo": "Docente Convidado",
-    "estado": "SE",
-    "nome_curso": "",
-    "descricao": "",
+    "nome_curso": "Aleitamento Materno",
+    "descricao": "Docente convidada para validação do painel CMS.",
     "ativo": true
   }
 ]

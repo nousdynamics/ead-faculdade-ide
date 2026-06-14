@@ -4,8 +4,14 @@
   "name": "ead-faculdade-ide",
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/handler?path=$1"
+    }
+  ],
   "functions": {
-    "api/[...path].js": {
+    "api/handler.js": {
       "maxDuration": 10
     }
   },
