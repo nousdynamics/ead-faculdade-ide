@@ -70,6 +70,7 @@ async function readLegacyTestimonialsFromRepo() {
           tipo: item.tipo || tipo,
           video_url: item.video_url || "",
           thumbnail: item.thumbnail || "",
+          foto: item.foto || item.thumbnail || "",
           imagem: item.imagem || "",
           legenda: item.legenda || "",
           profissao: item.profissao || "",

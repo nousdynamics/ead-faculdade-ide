@@ -1,15 +1,15 @@
-/** Motor de modelos de depoimento — preview e referência no painel admin. */
+/** Modelo único adaptativo — preview no painel admin. */
 
 export const TESTIMONIAL_SAMPLE = {
   nome: "Michelle dos Santos",
-  tipo: "texto",
   profissao: "Terapia Ocupacional",
   texto:
-    "Sobre as aulas, tem sido uma experiência incrível e enriquecedora até o momento. Com profissionais de alta qualidade e ótima didática, acho que o curso conta com uma grade de aulas bem completa. Tenho gostado bastante!",
-  legenda: "Depoimento em vídeo sobre a experiência no curso.",
-  video_url: "https://www.youtube.com/watch?v=XHOmBV4js_E",
+    "Sobre as aulas, tem sido uma experiência incrível e enriquecedora até o momento. Com profissionais de alta qualidade e ótima didática.",
+  legenda: "",
+  video_url: "",
+  foto: "",
+  imagem: "",
   thumbnail: "",
-  imagem: "/assets/img/Camila-da-Silva-Pereira-2.jpeg",
 };
 
 export const TEMPLATE_VARIABLES = {
@@ -17,32 +17,20 @@ export const TEMPLATE_VARIABLES = {
     { key: "titulo_secao", desc: "Título da seção (configurável no curso)" },
     { key: "itens", desc: "HTML de todos os depoimentos selecionados" },
   ],
-  item_texto: [
-    { key: "nome", desc: "Nome do aluno" },
-    { key: "profissao", desc: "Profissão ou formação" },
-    { key: "texto", desc: "Texto do depoimento" },
-    { key: "legenda", desc: "Legenda alternativa" },
-  ],
-  item_video: [
-    { key: "nome", desc: "Nome do aluno" },
-    { key: "profissao", desc: "Profissão ou formação" },
-    { key: "legenda", desc: "Legenda do vídeo" },
-    { key: "video_url", desc: "URL do YouTube" },
-    { key: "video_embed", desc: "Iframe pronto para embed" },
-    { key: "thumbnail", desc: "URL da thumbnail" },
-  ],
-  item_imagem: [
-    { key: "nome", desc: "Nome do aluno" },
-    { key: "legenda", desc: "Legenda da imagem" },
-    { key: "imagem", desc: "URL da imagem" },
+  item: [
+    { key: "nome", desc: "Nome do aluno (sempre exibido)" },
+    { key: "bloco_foto", desc: "Foto da pessoa — só aparece se cadastrada" },
+    { key: "bloco_video", desc: "Vídeo YouTube — só aparece com URL válida" },
+    { key: "bloco_imagem", desc: "Imagem do depoimento — só aparece se cadastrada" },
+    { key: "bloco_profissao", desc: "Profissão — só aparece se preenchida" },
+    { key: "bloco_texto", desc: "Texto do depoimento — só aparece se preenchido" },
+    { key: "bloco_legenda", desc: "Legenda — só aparece se preenchida" },
   ],
 };
 
 const DEFAULTS = {
   secao: "secao-depoimentos-elementor",
-  texto: "item-texto-elementor",
-  video: "item-video-padrao",
-  imagem: "item-imagem-padrao",
+  item: "item-depoimento-adaptativo",
 };
 
 export const STARTER_HTML = {
@@ -50,24 +38,23 @@ export const STARTER_HTML = {
   <h2>{{titulo_secao}}</h2>
   <div class="testimonial-section__items">{{itens}}</div>
 </div>`,
-  item: {
-    texto: `<div class="jet-listing-grid__item testimonial-item testimonial-item--texto">
-  <p class="testimonial-item__name">{{nome}}</p>
-  <p class="testimonial-item__role">{{profissao}}</p>
-  <p class="testimonial-item__text">{{texto}}</p>
+  item: `<div class="jet-listing-grid__item">
+  <article class="testimonial-card">
+    <div class="testimonial-card__layout">
+      {{bloco_foto}}
+      <div class="testimonial-card__content">
+        {{bloco_video}}
+        {{bloco_imagem}}
+        <header class="testimonial-card__header">
+          <h2 class="testimonial-card__name">{{nome}}</h2>
+          {{bloco_profissao}}
+        </header>
+        {{bloco_texto}}
+        {{bloco_legenda}}
+      </div>
+    </div>
+  </article>
 </div>`,
-    video: `<div class="jet-listing-grid__item testimonial-item testimonial-item--video">
-  <div class="testimonial-item__media">{{video_embed}}</div>
-  <p class="testimonial-item__name">{{nome}}</p>
-  <p class="testimonial-item__caption">{{legenda}}</p>
-</div>`,
-    imagem: `<div class="jet-listing-grid__item testimonial-item testimonial-item--imagem">
-  <figure class="testimonial-item__figure">
-    <img src="{{imagem}}" alt="{{nome}}" loading="lazy">
-    <figcaption><strong>{{nome}}</strong><span>{{legenda}}</span></figcaption>
-  </figure>
-</div>`,
-  },
 };
 
 function escapeHtml(value) {
@@ -104,10 +91,9 @@ function byTemplateId(templates, id) {
   return (templates || []).find((t) => t.id === id) || null;
 }
 
-export function variablesForTemplate(escopo, tipo) {
+export function variablesForTemplate(escopo) {
   if (escopo === "secao") return TEMPLATE_VARIABLES.secao.map((v) => v.key);
-  const map = { texto: "item_texto", video: "item_video", imagem: "item_imagem" };
-  return (TEMPLATE_VARIABLES[map[tipo]] || TEMPLATE_VARIABLES.item_texto).map((v) => v.key);
+  return TEMPLATE_VARIABLES.item.map((v) => v.key);
 }
 
 export function extractTemplateVariables(html) {
@@ -115,22 +101,62 @@ export function extractTemplateVariables(html) {
   return [...new Set([...String(html).matchAll(/\{\{(\w+)\}\}/g)].map((m) => m[1]))];
 }
 
-export function renderVariablesHelp(escopo, tipo) {
-  const list = escopo === "secao"
-    ? TEMPLATE_VARIABLES.secao
-    : TEMPLATE_VARIABLES[{ texto: "item_texto", video: "item_video", imagem: "item_imagem" }[tipo] || "item_texto"];
-
-  return list
-    .map((v) => `<li><code>{{${v.key}}}</code> — ${escapeHtml(v.desc)}</li>`)
-    .join("");
+export function renderVariablesHelp(escopo) {
+  const list = escopo === "secao" ? TEMPLATE_VARIABLES.secao : TEMPLATE_VARIABLES.item;
+  return list.map((v) => `<li><code>{{${v.key}}}</code> — ${escapeHtml(v.desc)}</li>`).join("");
 }
 
-function resolveItemTemplateId(cfg, tipo, templates) {
-  const key = `template_item_${tipo}_id`;
-  const fromCourse = cfg?.[key];
+function buildAdaptiveBlocks(dep, base, wrap) {
+  const nome = wrap(dep.nome);
+  const fotoSrc = dep.foto || dep.thumbnail || "";
+  const embed = youtubeEmbed(dep.video_url);
+
+  const bloco_foto = fotoSrc
+    ? `<div class="testimonial-card__avatar"><img src="${assetUrl(fotoSrc, base)}" alt="${nome}" loading="lazy" width="80" height="80"></div>`
+    : "";
+
+  const bloco_video = embed
+    ? `<div class="testimonial-card__video"><iframe class="testimonial-card__iframe" src="${embed}" title="Depoimento — ${nome}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>`
+    : "";
+
+  const bloco_imagem = dep.imagem
+    ? `<figure class="testimonial-card__figure"><img src="${assetUrl(dep.imagem, base)}" alt="${nome}" loading="lazy"></figure>`
+    : "";
+
+  const bloco_profissao = dep.profissao
+    ? `<p class="testimonial-card__role">${wrap(dep.profissao)}</p>`
+    : "";
+
+  const bloco_texto = dep.texto
+    ? `<div class="testimonial-card__text"><p>${wrap(dep.texto)}</p></div>`
+    : "";
+
+  const bloco_legenda = dep.legenda
+    ? `<p class="testimonial-card__caption">${wrap(dep.legenda)}</p>`
+    : "";
+
+  return { bloco_foto, bloco_video, bloco_imagem, bloco_profissao, bloco_texto, bloco_legenda };
+}
+
+export function buildTestimonialVars(dep, base = "../../") {
+  const wrap = escapeHtml;
+  const blocks = buildAdaptiveBlocks(dep, base, wrap);
+  return {
+    nome: wrap(dep.nome),
+    profissao: wrap(dep.profissao || ""),
+    texto: wrap(dep.texto || ""),
+    legenda: wrap(dep.legenda || ""),
+    video_url: wrap(dep.video_url || ""),
+    foto: assetUrl(dep.foto || dep.thumbnail || "", base),
+    imagem: assetUrl(dep.imagem || "", base),
+    ...blocks,
+  };
+}
+
+function resolveItemTemplateId(cfg, templates) {
+  const fromCourse = cfg?.template_item_id || cfg?.template_item_texto_id;
   if (fromCourse && byTemplateId(templates, fromCourse)) return fromCourse;
-  const fallback = DEFAULTS[tipo] || DEFAULTS.texto;
-  return byTemplateId(templates, fallback)?.id || fallback;
+  return DEFAULTS.item;
 }
 
 function resolveSectionTemplateId(cfg, templates) {
@@ -139,28 +165,8 @@ function resolveSectionTemplateId(cfg, templates) {
   return DEFAULTS.secao;
 }
 
-export function buildTestimonialVars(dep, base = "../../") {
-  const embed = youtubeEmbed(dep.video_url);
-  const thumb = dep.thumbnail || dep.imagem || "";
-
-  return {
-    nome: escapeHtml(dep.nome),
-    profissao: escapeHtml(dep.profissao || ""),
-    texto: escapeHtml(dep.texto || dep.legenda || ""),
-    legenda: escapeHtml(dep.legenda || dep.profissao || ""),
-    video_url: escapeHtml(dep.video_url || ""),
-    thumbnail: assetUrl(thumb, base),
-    imagem: assetUrl(dep.imagem, base),
-    video_embed: embed
-      ? `<iframe class="testimonial-item__video" src="${embed}" title="Depoimento — ${escapeHtml(dep.nome)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>`
-      : "",
-  };
-}
-
 function renderTestimonialItem(dep, templates, cfg, base) {
-  const tipo = dep.tipo || "texto";
-  const templateId = resolveItemTemplateId(cfg, tipo, templates);
-  const tpl = byTemplateId(templates, templateId);
+  const tpl = byTemplateId(templates, resolveItemTemplateId(cfg, templates));
   if (!tpl?.html) return "";
   return applyTemplate(tpl.html, buildTestimonialVars(dep, base));
 }
@@ -176,8 +182,7 @@ export function renderTestimonialsSectionPreview(course, testimonials, templates
 
   const cfg = course.depoimentos || {};
   const titulo = cfg.titulo_secao || "O que nossos alunos dizem";
-  const sectionId = resolveSectionTemplateId(cfg, templates);
-  const sectionTpl = byTemplateId(templates, sectionId);
+  const sectionTpl = byTemplateId(templates, resolveSectionTemplateId(cfg, templates));
   const itemsHtml = deps.map((dep) => renderTestimonialItem(dep, templates, cfg, base)).join("");
 
   if (!sectionTpl?.html) return itemsHtml;
@@ -191,7 +196,7 @@ export function renderTestimonialsSectionPreview(course, testimonials, templates
 export function previewTemplate(template, templates = [], sample = TESTIMONIAL_SAMPLE, base = "../../") {
   if (!template?.html) return "";
   if (template.escopo === "secao") {
-    const itemTpl = byTemplateId(templates, DEFAULTS.texto);
+    const itemTpl = byTemplateId(templates, DEFAULTS.item);
     const fakeItem = itemTpl?.html
       ? applyTemplate(itemTpl.html, buildTestimonialVars(sample, base))
       : "";
@@ -200,20 +205,23 @@ export function previewTemplate(template, templates = [], sample = TESTIMONIAL_S
       itens: fakeItem,
     });
   }
-  const sampleByTipo = { ...sample, tipo: template.tipo || "texto" };
-  return applyTemplate(template.html, buildTestimonialVars(sampleByTipo, base));
+  return applyTemplate(template.html, buildTestimonialVars(sample, base));
 }
 
-export function starterHtmlFor(escopo, tipo) {
-  if (escopo === "secao") return STARTER_HTML.secao;
-  return STARTER_HTML.item[tipo] || STARTER_HTML.item.texto;
+export function starterHtmlFor(escopo) {
+  return escopo === "secao" ? STARTER_HTML.secao : STARTER_HTML.item;
 }
 
 export function templateEscopoLabel(escopo) {
-  return escopo === "secao" ? "Seção" : "Item";
+  return escopo === "secao" ? "Seção" : "Depoimento";
 }
 
-export function templateTipoLabel(tipo) {
-  if (!tipo) return "—";
-  return { texto: "Texto", video: "Vídeo", imagem: "Imagem" }[tipo] || tipo;
+export function templateTipoLabel() {
+  return "Adaptativo";
+}
+
+export function inferTestimonialKind(item) {
+  if (item?.video_url?.trim()) return "video";
+  if (item?.imagem?.trim()) return "imagem";
+  return "texto";
 }

@@ -310,12 +310,9 @@ function testimonialTypeBadge(tipo) {
   return `<span class="badge ${cls}">${escapeHtml(testimonialTypeLabel(tipo))}</span>`;
 }
 
-function testimonialTemplateSelect(name, { escopo, tipo = null, value = "", label }) {
+function testimonialTemplateSelect(name, { escopo, value = "", label }) {
   const templates = getAll("testimonial-templates").filter((t) => t.ativo !== false);
-  const options = templates.filter((t) => {
-    if (escopo === "secao") return t.escopo === "secao";
-    return t.escopo === "item" && (!tipo || t.tipo === tipo);
-  });
+  const options = templates.filter((t) => t.escopo === escopo);
 
   return `
     <div class="form-group">
@@ -330,6 +327,7 @@ function templateUsedByCourse(course, templateId) {
   const d = course.depoimentos || {};
   return [
     d.template_secao_id,
+    d.template_item_id,
     d.template_item_texto_id,
     d.template_item_video_id,
     d.template_item_imagem_id,
@@ -344,9 +342,7 @@ function collectDepoimentosConfig(form) {
   return {
     titulo_secao: form.dep_titulo_secao?.value.trim() || "O que nossos alunos dizem",
     template_secao_id: form.dep_template_secao_id?.value || "secao-depoimentos-elementor",
-    template_item_texto_id: form.dep_template_item_texto_id?.value || "item-texto-elementor",
-    template_item_video_id: form.dep_template_item_video_id?.value || "item-video-padrao",
-    template_item_imagem_id: form.dep_template_item_imagem_id?.value || "item-imagem-padrao",
+    template_item_id: form.dep_template_item_id?.value || "item-depoimento-adaptativo",
   };
 }
 
@@ -379,10 +375,22 @@ function updateCourseDepoimentosPreview(form) {
 }
 
 function testimonialSummary(item) {
-  if (item.tipo === "video") return item.video_url || "Sem URL de vídeo";
-  if (item.tipo === "imagem") return item.legenda || item.imagem || "Sem imagem";
-  const text = item.texto || "";
-  return text ? `${text.slice(0, 72)}${text.length > 72 ? "…" : ""}` : "Sem texto";
+  const parts = [];
+  if (item.texto) parts.push("texto");
+  if (item.video_url) parts.push("vídeo");
+  if (item.foto || item.thumbnail) parts.push("foto");
+  if (item.imagem) parts.push("imagem");
+  if (item.profissao) parts.push(item.profissao);
+  return parts.length ? parts.join(" · ") : "Sem conteúdo preenchido";
+}
+
+function testimonialContentBadges(item) {
+  const badges = [];
+  if (item.texto) badges.push('<span class="badge badge--open">Texto</span>');
+  if (item.video_url) badges.push('<span class="badge badge--confirmed">Vídeo</span>');
+  if (item.foto || item.thumbnail) badges.push('<span class="badge badge--live">Foto</span>');
+  if (item.imagem) badges.push('<span class="badge badge--draft">Imagem</span>');
+  return badges.join(" ") || '<span class="badge badge--draft">—</span>';
 }
 
 function checkboxGroup(name, collection, selectedIds, label) {
@@ -394,7 +402,7 @@ function checkboxGroup(name, collection, selectedIds, label) {
         ${items.map((item) => `
           <label class="form-check">
             <input type="checkbox" name="${name}" value="${item.id}" ${selectedIds.includes(item.id) ? "checked" : ""}>
-            ${escapeHtml(item.nome)}${collection === "testimonials" ? ` <small class="form-check__meta">(${escapeHtml(testimonialTypeLabel(item.tipo))})</small>` : ""}
+            ${escapeHtml(item.nome)}${collection === "testimonials" ? ` <small class="form-check__meta">(${escapeHtml(testimonialSummary(item))})</small>` : ""}
           </label>`).join("")}
         ${!items.length ? "<small>Nenhum item cadastrado.</small>" : ""}
       </div>
@@ -520,8 +528,8 @@ function renderCourseForm(course) {
               ${checkboxGroup("professor_ids", "professors", c.professor_ids || [], "Professores")}
               ${checkboxGroup("depoimento_ids", "testimonials", getCourseDepoimentoIds(c), "Depoimentos")}
             </div>
-            <div class="form-divider"><span>Modelos de exibição</span></div>
-            <p class="form-hint">Escolha os modelos HTML usados na seção de depoimentos. Edite os modelos em <a href="#/testimonial-templates">Modelos de depoimento</a>.</p>
+            <div class="form-divider"><span>Modelo de exibição</span></div>
+            <p class="form-hint">Um único modelo adapta-se aos dados de cada depoimento: vídeo, foto, imagem e texto aparecem somente quando preenchidos. Edite o layout em <a href="#/testimonial-templates">Modelos de depoimento</a>.</p>
             <div class="form-grid">
               <div class="form-group form-group--full">
                 <label>Título da seção</label>
@@ -532,23 +540,10 @@ function renderCourseForm(course) {
                 value: c.depoimentos?.template_secao_id || "secao-depoimentos-elementor",
                 label: "Modelo da seção",
               })}
-              ${testimonialTemplateSelect("dep_template_item_texto_id", {
+              ${testimonialTemplateSelect("dep_template_item_id", {
                 escopo: "item",
-                tipo: "texto",
-                value: c.depoimentos?.template_item_texto_id || "item-texto-elementor",
-                label: "Modelo — depoimento em texto",
-              })}
-              ${testimonialTemplateSelect("dep_template_item_video_id", {
-                escopo: "item",
-                tipo: "video",
-                value: c.depoimentos?.template_item_video_id || "item-video-padrao",
-                label: "Modelo — depoimento em vídeo",
-              })}
-              ${testimonialTemplateSelect("dep_template_item_imagem_id", {
-                escopo: "item",
-                tipo: "imagem",
-                value: c.depoimentos?.template_item_imagem_id || "item-imagem-padrao",
-                label: "Modelo — depoimento em imagem",
+                value: c.depoimentos?.template_item_id || c.depoimentos?.template_item_texto_id || "item-depoimento-adaptativo",
+                label: "Modelo do depoimento",
               })}
             </div>
             <div class="form-divider"><span>Pré-visualização da seção</span></div>
@@ -763,9 +758,7 @@ function emptyCourse() {
     depoimentos: {
       titulo_secao: "O que nossos alunos dizem",
       template_secao_id: "secao-depoimentos-elementor",
-      template_item_texto_id: "item-texto-elementor",
-      template_item_video_id: "item-video-padrao",
-      template_item_imagem_id: "item-imagem-padrao",
+      template_item_id: "item-depoimento-adaptativo",
     },
     hero: {},
     informacoes: {},
@@ -881,7 +874,7 @@ function renderCoordForm(item) {
 }
 
 function renderTestimonialsList() {
-  setPage("Depoimentos", "Texto, vídeo e imagem em um só lugar");
+  setPage("Depoimentos", "Preencha só o que quiser exibir — o modelo adapta-se automaticamente");
   const items = getAll("testimonials");
 
   return `
@@ -889,7 +882,7 @@ function renderTestimonialsList() {
       <div class="panel__head">
         <h2>${icon("message-square-quote", { size: 18 })} Depoimentos</h2>
         <div class="panel__head-actions">
-          <a href="#/testimonial-templates" class="btn btn--ghost btn--sm">${icon("layout-grid", { size: 14 })} Modelos de exibição</a>
+          <a href="#/testimonial-templates" class="btn btn--ghost btn--sm">${icon("layout-grid", { size: 14 })} Modelo de exibição</a>
           <button type="button" class="btn btn--primary btn--sm" id="btn-new-entity">${icon("plus", { size: 14 })} Adicionar</button>
         </div>
       </div>
@@ -897,7 +890,7 @@ function renderTestimonialsList() {
         <table class="data-table data-table--entities">
           <thead><tr>
             <th class="col-name">Nome</th>
-            <th class="col-course">Tipo</th>
+            <th class="col-course">Conteúdo</th>
             <th class="col-status">Status</th>
             <th class="col-actions">Ações</th>
           </tr></thead>
@@ -906,7 +899,7 @@ function renderTestimonialsList() {
               <span class="cell-name__title">${escapeHtml(item.nome)}</span>
               <span class="cell-name__meta">${escapeHtml(testimonialSummary(item))}</span>
             </td>
-            <td class="col-course">${testimonialTypeBadge(item.tipo || "texto")}</td>
+            <td class="col-course">${testimonialContentBadges(item)}</td>
             <td class="col-status">${item.ativo !== false ? '<span class="badge badge--live">Ativo</span>' : '<span class="badge badge--draft">Inativo</span>'}</td>
             <td class="col-actions">
               <div class="table-actions">
@@ -926,44 +919,26 @@ function renderTestimonialForm(item) {
   const p = item || {
     id: uid("dep"),
     nome: "",
-    tipo: "texto",
     profissao: "",
     texto: "",
     video_url: "",
-    thumbnail: "",
+    foto: "",
     imagem: "",
     legenda: "",
     ativo: true,
   };
-  const tipo = p.tipo || "texto";
 
   return entityFormShell("Depoimento", p, `
+    <p class="form-hint">Preencha apenas os campos que deseja exibir. Campos vazios não aparecem na página.</p>
     <div class="form-grid">
       <div class="form-group form-group--full"><label>Nome *</label><input name="nome" value="${escapeHtml(p.nome)}" required></div>
-      <div class="form-group">
-        <label for="testimonial-tipo">Tipo *</label>
-        <select id="testimonial-tipo" name="tipo" required>
-          <option value="texto" ${tipo === "texto" ? "selected" : ""}>Texto</option>
-          <option value="video" ${tipo === "video" ? "selected" : ""}>Vídeo</option>
-          <option value="imagem" ${tipo === "imagem" ? "selected" : ""}>Imagem</option>
-        </select>
-      </div>
+      <div class="form-group"><label>Profissão / Curso</label><input name="profissao" value="${escapeHtml(p.profissao || "")}"></div>
       <div class="form-group"><label class="form-check"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
-
-      <div class="testimonial-fields testimonial-fields--texto" data-tipo-panel="texto" ${tipo !== "texto" ? "hidden" : ""}>
-        <div class="form-group"><label>Profissão / Curso</label><input name="profissao" value="${escapeHtml(p.profissao || "")}"></div>
-        <div class="form-group form-group--full"><label>Depoimento</label><textarea name="texto" rows="4">${escapeHtml(p.texto || "")}</textarea></div>
-      </div>
-
-      <div class="testimonial-fields testimonial-fields--video" data-tipo-panel="video" ${tipo !== "video" ? "hidden" : ""}>
-        <div class="form-group form-group--full"><label>URL do vídeo (YouTube)</label><input name="video_url" value="${escapeHtml(p.video_url || "")}" placeholder="https://www.youtube.com/watch?v=..."></div>
-        <div class="form-group form-group--full"><label>Thumbnail (URL)</label><input name="thumbnail" value="${escapeHtml(p.thumbnail || "")}"></div>
-      </div>
-
-      <div class="testimonial-fields testimonial-fields--imagem" data-tipo-panel="imagem" ${tipo !== "imagem" ? "hidden" : ""}>
-        ${renderImageUploadField({ name: "imagem", value: p.imagem || "", label: "Imagem", folder: "testimonials" })}
-        <div class="form-group form-group--full"><label>Legenda</label><input name="legenda" value="${escapeHtml(p.legenda || "")}"></div>
-      </div>
+      ${renderImageUploadField({ name: "foto", value: p.foto || p.thumbnail || "", label: "Foto da pessoa", folder: "testimonials" })}
+      <div class="form-group form-group--full"><label>URL do vídeo (YouTube)</label><input name="video_url" value="${escapeHtml(p.video_url || "")}" placeholder="https://www.youtube.com/watch?v=..."></div>
+      ${renderImageUploadField({ name: "imagem", value: p.imagem || "", label: "Imagem do depoimento", folder: "testimonials" })}
+      <div class="form-group form-group--full"><label>Texto do depoimento</label><textarea name="texto" rows="4">${escapeHtml(p.texto || "")}</textarea></div>
+      <div class="form-group form-group--full"><label>Legenda</label><input name="legenda" value="${escapeHtml(p.legenda || "")}" placeholder="Opcional — aparece se preenchida"></div>
     </div>`);
 }
 
@@ -982,14 +957,14 @@ function renderTestimonialTemplatesList() {
         </div>
       </div>
       <div class="panel__body">
-        <p class="form-hint">Alterações nos modelos republicam automaticamente as páginas de curso publicadas. Use variáveis como <code>{{nome}}</code>, <code>{{texto}}</code> e <code>{{itens}}</code>.</p>
+        <p class="form-hint">Modelo adaptativo: blocos como <code>{{bloco_video}}</code>, <code>{{bloco_foto}}</code> e <code>{{bloco_imagem}}</code> somem quando o depoimento não tem esses dados.</p>
       </div>
       <div class="panel__body panel__body--flush table-wrap">
         <table class="data-table data-table--entities">
           <thead><tr>
             <th class="col-name">Modelo</th>
             <th class="col-course">Escopo</th>
-            <th class="col-status">Tipo</th>
+            <th class="col-status">Comportamento</th>
             <th class="col-actions">Ações</th>
           </tr></thead>
           <tbody>${templates.map((item) => {
@@ -1000,7 +975,7 @@ function renderTestimonialTemplatesList() {
               <span class="cell-name__meta">${escapeHtml(item.descricao || item.id)}${usage ? ` · ${usage} curso(s)` : ""}</span>
             </td>
             <td class="col-course"><span class="badge badge--open">${escapeHtml(templateEscopoLabel(item.escopo))}</span></td>
-            <td class="col-status">${item.tipo ? testimonialTypeBadge(item.tipo) : '<span class="badge badge--draft">—</span>'}</td>
+            <td class="col-status">${item.escopo === "item" ? '<span class="badge badge--live">Adaptativo</span>' : '<span class="badge badge--draft">Wrapper</span>'}</td>
             <td class="col-actions">
               <div class="table-actions">
                 <button type="button" class="btn btn--ghost btn--sm" data-preview-template="${item.id}">${icon("layout", { size: 14 })} Visualizar</button>
@@ -1032,15 +1007,15 @@ function renderTestimonialTemplateForm(item, { isNew = false } = {}) {
     id: "",
     nome: "",
     escopo: "item",
-    tipo: "texto",
+    tipo: null,
     descricao: "",
-    html: starterHtmlFor("item", "texto"),
-    variaveis: variablesForTemplate("item", "texto"),
+    html: starterHtmlFor("item"),
+    variaveis: variablesForTemplate("item"),
     ativo: true,
   };
   const templates = getAll("testimonial-templates");
   const preview = previewTemplate(p, templates);
-  const varsHelp = renderVariablesHelp(p.escopo, p.tipo);
+  const varsHelp = renderVariablesHelp(p.escopo);
   const title = isNew ? "Novo modelo de depoimento" : `Editar modelo: ${p.nome || p.id}`;
 
   return `
@@ -1053,28 +1028,20 @@ function renderTestimonialTemplateForm(item, { isNew = false } = {}) {
             ${isNew ? `
               <div class="form-group form-group--full">
                 <label>Identificador (slug) *</label>
-                <input name="template_id" value="${escapeHtml(p.id || "")}" placeholder="ex: item-texto-minimal" required>
+                <input name="template_id" value="${escapeHtml(p.id || "")}" placeholder="ex: item-depoimento-custom" required>
                 <small>Usado internamente e nos cursos. Apenas letras minúsculas, números e hífens.</small>
               </div>
               <div class="form-group">
                 <label>Escopo *</label>
                 <select name="escopo" id="template-escopo">
                   <option value="secao" ${p.escopo === "secao" ? "selected" : ""}>Seção (wrapper)</option>
-                  <option value="item" ${p.escopo === "item" ? "selected" : ""}>Item (card de depoimento)</option>
-                </select>
-              </div>
-              <div class="form-group" id="template-tipo-wrap" ${p.escopo === "secao" ? "hidden" : ""}>
-                <label>Tipo do item *</label>
-                <select name="tipo" id="template-tipo">
-                  <option value="texto" ${p.tipo === "texto" ? "selected" : ""}>Texto</option>
-                  <option value="video" ${p.tipo === "video" ? "selected" : ""}>Vídeo</option>
-                  <option value="imagem" ${p.tipo === "imagem" ? "selected" : ""}>Imagem</option>
+                  <option value="item" ${p.escopo === "item" ? "selected" : ""}>Depoimento (card adaptativo)</option>
                 </select>
               </div>
             ` : `
               <div class="form-group form-group--full"><label>Descrição</label><input name="descricao" value="${escapeHtml(p.descricao || "")}"></div>
               <div class="form-group"><label>Escopo</label><input value="${escapeHtml(templateEscopoLabel(p.escopo))}" disabled></div>
-              <div class="form-group"><label>Tipo</label><input value="${escapeHtml(templateTipoLabel(p.tipo))}" disabled></div>
+              <div class="form-group"><label>Comportamento</label><input value="${escapeHtml(templateTipoLabel())}" disabled></div>
             `}
             ${isNew ? `<div class="form-group form-group--full"><label>Descrição</label><input name="descricao" value="${escapeHtml(p.descricao || "")}"></div>` : ""}
             <div class="form-group"><label class="form-check"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
@@ -1083,7 +1050,7 @@ function renderTestimonialTemplateForm(item, { isNew = false } = {}) {
               <textarea name="html" rows="14" class="template-editor__code" data-template-html>${escapeHtml(p.html || "")}</textarea>
             </div>
             <div class="form-group form-group--full template-vars-help">
-              <label>Referência de variáveis</label>
+              <label>Referência de variáveis (blocos vazios não aparecem na página)</label>
               <ul class="template-vars-list" id="template-vars-list">${varsHelp}</ul>
             </div>
           </div>
@@ -1098,21 +1065,6 @@ function renderTestimonialTemplateForm(item, { isNew = false } = {}) {
         </form>
       </div>
     </div>`;
-}
-
-function bindTestimonialTipoFields(form) {
-  const select = form?.querySelector("#testimonial-tipo");
-  if (!select) return;
-
-  const syncPanels = () => {
-    const tipo = select.value;
-    form.querySelectorAll("[data-tipo-panel]").forEach((panel) => {
-      panel.hidden = panel.dataset.tipoPanel !== tipo;
-    });
-  };
-
-  select.addEventListener("change", syncPanels);
-  syncPanels();
 }
 
 function entityFormShell(title, item, fieldsHtml) {
@@ -1265,6 +1217,11 @@ function collectCourseForm(form) {
   delete course.depoimento_texto_ids;
   delete course.depoimento_video_ids;
   delete course.depoimento_imagem_ids;
+  if (course.depoimentos) {
+    delete course.depoimentos.template_item_texto_id;
+    delete course.depoimentos.template_item_video_id;
+    delete course.depoimentos.template_item_imagem_id;
+  }
   return course;
 }
 
@@ -1446,21 +1403,18 @@ function bindTestimonialTemplateForm(original, { isNew = false } = {}) {
   const previewEl = $("#template-live-preview");
   const varsList = $("#template-vars-list");
   const escopoSelect = form.querySelector("#template-escopo");
-  const tipoSelect = form.querySelector("#template-tipo");
-  const tipoWrap = form.querySelector("#template-tipo-wrap");
   const idField = form.querySelector("[name='template_id']");
   const nomeField = form.querySelector("[name='nome']");
   const templates = getAll("testimonial-templates");
 
   const getDraft = () => {
     const escopo = escopoSelect?.value || original?.escopo || "item";
-    const tipo = escopo === "secao" ? null : (tipoSelect?.value || original?.tipo || "texto");
     return {
       ...(original || {}),
       id: idField?.value.trim() || original?.id || "",
       nome: nomeField?.value.trim() || original?.nome || "",
       escopo,
-      tipo,
+      tipo: null,
       html: htmlField?.value || "",
       ativo: form.ativo?.checked ?? true,
     };
@@ -1468,7 +1422,7 @@ function bindTestimonialTemplateForm(original, { isNew = false } = {}) {
 
   const syncVarsHelp = () => {
     const draft = getDraft();
-    if (varsList) varsList.innerHTML = renderVariablesHelp(draft.escopo, draft.tipo);
+    if (varsList) varsList.innerHTML = renderVariablesHelp(draft.escopo);
   };
 
   const updatePreview = () => {
@@ -1477,29 +1431,14 @@ function bindTestimonialTemplateForm(original, { isNew = false } = {}) {
     syncVarsHelp();
   };
 
-  const syncTipoVisibility = () => {
-    if (!tipoWrap || !escopoSelect) return;
-    tipoWrap.hidden = escopoSelect.value === "secao";
-  };
-
   const applyStarterIfEmpty = () => {
     if (!isNew || !htmlField || htmlField.value.trim()) return;
-    const draft = getDraft();
-    htmlField.value = starterHtmlFor(draft.escopo, draft.tipo || "texto");
+    htmlField.value = starterHtmlFor(getDraft().escopo);
   };
 
   escopoSelect?.addEventListener("change", () => {
-    syncTipoVisibility();
     if (isNew && htmlField && !htmlField.dataset.userEdited) {
-      const draft = getDraft();
-      htmlField.value = starterHtmlFor(draft.escopo, draft.tipo || "texto");
-    }
-    updatePreview();
-  });
-
-  tipoSelect?.addEventListener("change", () => {
-    if (isNew && htmlField && !htmlField.dataset.userEdited) {
-      htmlField.value = starterHtmlFor(getDraft().escopo, tipoSelect.value);
+      htmlField.value = starterHtmlFor(getDraft().escopo);
     }
     updatePreview();
   });
@@ -1519,7 +1458,6 @@ function bindTestimonialTemplateForm(original, { isNew = false } = {}) {
     updatePreview();
   });
 
-  syncTipoVisibility();
   applyStarterIfEmpty();
   updatePreview();
 
@@ -1537,7 +1475,7 @@ function bindTestimonialTemplateForm(original, { isNew = false } = {}) {
       nome: draft.nome,
       descricao: form.descricao?.value.trim() || "",
       escopo: draft.escopo,
-      tipo: draft.escopo === "secao" ? null : draft.tipo,
+      tipo: null,
       html: form.html.value,
       variaveis: extractTemplateVariables(form.html.value),
       ativo: form.ativo?.checked ?? true,
@@ -1620,10 +1558,6 @@ function bindEntityForm(collection) {
     update();
   });
 
-  if (collection === "testimonials") {
-    bindTestimonialTipoFields(form);
-  }
-
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const id = form.dataset.entityId;
@@ -1641,16 +1575,12 @@ function bindEntityForm(collection) {
     if (!data.nome?.trim()) return toast("Nome obrigatório", "error");
 
     if (collection === "testimonials") {
-      const tipo = data.tipo || "texto";
-      if (tipo === "texto" && !data.texto?.trim()) {
-        return toast("Informe o texto do depoimento", "error");
+      const hasContent = data.texto || data.video_url || data.imagem || data.foto || data.legenda || data.profissao;
+      if (!hasContent) {
+        return toast("Preencha ao menos um campo de conteúdo (texto, vídeo, foto ou imagem)", "error");
       }
-      if (tipo === "video" && !data.video_url?.trim()) {
-        return toast("Informe a URL do vídeo", "error");
-      }
-      if (tipo === "imagem" && !data.imagem?.trim()) {
-        return toast("Envie ou informe a imagem do depoimento", "error");
-      }
+      delete data.tipo;
+      delete data.thumbnail;
     }
 
     const uploading = form.querySelector(".image-upload__status:not([hidden])");
