@@ -2,3 +2,6 @@
 _capture/ref/
 _capture/shot-*.png
 _capture/*.png
+
+# Vercel (link local do projeto)
+.vercel

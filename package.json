@@ -1,0 +1,11 @@
+{
+  "name": "ead-faculdade-ide",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Clone estático da EAD Faculdade IDE (HTML/CSS/JS)",
+  "scripts": {
+    "dev": "npx --yes serve . -l 8080",
+    "deploy:preview": "vercel",
+    "deploy:prod": "vercel --prod"
+  }
+}

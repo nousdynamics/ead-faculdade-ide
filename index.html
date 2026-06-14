@@ -9,7 +9,7 @@
   <meta property="og:type" content="website">
   <link rel="icon" href="assets/img/FAV-ICON-3.svg" sizes="any">
 
-  <!-- TRACKING (reativar nas melhorias): GTM + Facebook Pixel. IDs em _capture/. -->
+  <!-- TRACKING (reativar nas melhorias): dns-prefetch p/ googletagmanager.com no original; sem GTM-ID estático no HTML capturado. -->
 
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/base.css">
@@ -21,7 +21,7 @@
   <!-- ================= HEADER ================= -->
   <header class="site-header" id="topo">
     <div class="container site-header__inner">
-      <a class="site-header__logo" href="index.html" aria-label="Faculdade IDE EAD — início">
+      <a class="site-header__logo" href="/" aria-label="Faculdade IDE EAD — início">
         <img src="assets/img/LOGO-IDE-ONLINE-02.svg" width="229" height="88" alt="Faculdade IDE EAD">
       </a>
       <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="primaryNav">
@@ -192,7 +192,7 @@
             <div class="course-card__body">
               <span class="course-card__tag">Pós-Graduação</span>
               <h3 class="course-card__title">Aleitamento Materno e Banco de Leite Humano</h3>
-              <a class="course-card__btn" href="pos-graduacao/aleitamento-materno-banco-leite-humano/index.html">Conhecer o curso <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              <a class="course-card__btn" href="/pos-graduacao/aleitamento-materno-banco-leite-humano">Conhecer o curso <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             </div>
           </article>
 
@@ -356,8 +356,6 @@
       <a class="dev-by" href="https://wa.me/5571991065853?text=Eu%20quero%20um%20site%20para%20minha%20empresa" target="_blank" rel="noopener">Desenvolvido por: <img src="assets/img/Nous-Dynamics-Favicon-01.svg" alt="Nous Dynamics"></a>
     </div>
   </footer>
-
-  <!-- ============ WHATSAPP FLUTUANTE ========== -->
 
   <script src="assets/js/menu.js" defer></script>
   <script src="assets/js/course-filter.js" defer></script>
