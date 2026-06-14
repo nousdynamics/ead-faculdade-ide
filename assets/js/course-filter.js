@@ -27,6 +27,10 @@
     });
 
     if (empty) empty.hidden = visible !== 0;
+
+    if (window.SiteMotion && typeof window.SiteMotion.refreshCourseGrid === "function") {
+      window.SiteMotion.refreshCourseGrid();
+    }
   }
 
   [selNivel, selArea, selStatus].forEach(function (el) {

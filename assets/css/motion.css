@@ -1,0 +1,127 @@
+/* ============================================================
+   Motion — transições de página, scroll reveal e micro-interações
+   ============================================================ */
+
+:root {
+  --motion-duration: 0.55s;
+  --motion-duration-fast: 0.32s;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-distance: 28px;
+}
+
+/* ---- Entrada da página ---- */
+html:not(.motion-reduced) body.site-layout:not(.is-motion-ready) {
+  opacity: 0;
+}
+
+html:not(.motion-reduced) body.site-layout.is-motion-ready {
+  opacity: 1;
+  transition: opacity var(--motion-duration-fast) var(--motion-ease);
+}
+
+html:not(.motion-reduced) body.site-layout.is-motion-entering > main,
+html:not(.motion-reduced) body.site-layout.is-motion-entering > #content {
+  animation: motion-page-enter var(--motion-duration) var(--motion-ease) both;
+}
+
+@keyframes motion-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---- Hero (above the fold) ---- */
+.motion-hero {
+  animation: motion-page-enter var(--motion-duration) var(--motion-ease) 0.06s both;
+}
+
+/* ---- Scroll reveal ---- */
+.motion-reveal {
+  opacity: 0;
+  transform: translateY(var(--motion-distance));
+  transition:
+    opacity var(--motion-duration) var(--motion-ease) var(--motion-delay, 0s),
+    transform var(--motion-duration) var(--motion-ease) var(--motion-delay, 0s);
+}
+
+.motion-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- Hover lift (cards) ---- */
+.motion-lift {
+  transition:
+    transform var(--motion-duration-fast) var(--motion-ease),
+    box-shadow var(--motion-duration-fast) var(--motion-ease),
+    border-color var(--motion-duration-fast) ease;
+}
+
+.motion-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* ---- Header ao rolar ---- */
+.site-header {
+  transition:
+    box-shadow var(--motion-duration-fast) ease,
+    border-color var(--motion-duration-fast) ease;
+}
+
+.site-header.is-scrolled {
+  box-shadow: 0 6px 28px rgba(43, 50, 92, 0.1);
+}
+
+/* ---- Links e botões ---- */
+a.site-header__cta,
+a.course-card__btn,
+.btn {
+  transition:
+    background-color var(--motion-duration-fast) ease,
+    color var(--motion-duration-fast) ease,
+    border-color var(--motion-duration-fast) ease,
+    transform var(--motion-duration-fast) var(--motion-ease),
+    box-shadow var(--motion-duration-fast) ease;
+}
+
+a.site-header__cta:active,
+a.course-card__btn:active,
+.btn:active {
+  transform: scale(0.98);
+}
+
+/* ---- Footer ---- */
+.site-footer__col.motion-reveal {
+  --motion-distance: 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration: 0.01ms;
+    --motion-duration-fast: 0.01ms;
+  }
+
+  body.site-layout {
+    opacity: 1 !important;
+  }
+
+  .motion-reveal,
+  .motion-hero,
+  body.site-layout.is-motion-entering > main,
+  body.site-layout.is-motion-entering > #content {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .motion-lift:hover {
+    transform: none;
+  }
+}

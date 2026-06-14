@@ -18,9 +18,11 @@ export function runContentAnimations(container) {
 
   container.classList.add("page-stagger");
   const items = [
-    ...container.querySelectorAll(".stats > .stat-card, .panel, .account-grid > .panel"),
+    ...container.querySelectorAll(
+      ".stats > .stat-card, .panel, .account-grid > .panel, .course-section, .course-form__section, .form-section, .template-preview-shell, .sidebar__nav a"
+    ),
     ...container.querySelectorAll(".data-table tbody tr"),
-  ].slice(0, 12);
+  ].slice(0, 16);
 
   items.forEach((el, index) => {
     el.style.setProperty("--stagger-index", String(index));

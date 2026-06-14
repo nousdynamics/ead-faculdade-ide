@@ -1,0 +1,72 @@
+/* Módulos do curso — grid 2 colunas, cards com borda e hover */
+
+.course-modules {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .course-modules {
+    grid-template-columns: 1fr;
+  }
+}
+
+.course-modules__card {
+  box-sizing: border-box;
+  border: 2px solid #fff;
+  border-radius: 12px;
+  padding: 24px 28px;
+  background: transparent;
+  color: #fff;
+  transition:
+    border-color 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.course-modules__card:hover {
+  border-color: #01e3f8;
+  box-shadow: 0 12px 32px rgba(1, 227, 248, 0.12);
+}
+
+.course-modules__card:focus-within {
+  border-color: #01e3f8;
+}
+
+.course-modules__title {
+  margin: 0 0 16px;
+  font-family: var(--font-body, "Gotham", sans-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.course-modules__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.course-modules__list li {
+  margin: 0 0 10px;
+  font-family: var(--font-body, "Gotham", sans-serif);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: #fff;
+}
+
+.course-modules__list li:last-child {
+  margin-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-modules__card {
+    transition: none;
+  }
+}

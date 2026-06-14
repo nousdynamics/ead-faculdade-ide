@@ -3,7 +3,7 @@
  * Referência: _capture/curso.html + assets/css/elementor/post-*.css
  */
 import { renderTestimonialsSection } from "./testimonial-templates.js";
-import { renderFooter, renderHeader, renderSiteLayoutScripts } from "./site-layout.js";
+import { renderFooter, renderHeader, renderSiteLayoutScripts, renderSiteMotionStyles } from "./site-layout.js";
 
 const SITE_URL = "https://ead.faculdadeide.edu.br";
 const WP_UPLOADS = `${SITE_URL}/wp-content/uploads`;
@@ -104,13 +104,28 @@ function renderJsonLd(course, faq) {
   return JSON.stringify({ "@context": "https://schema.org", "@graph": graph }, null, 2);
 }
 
-function renderJetAccordion(items, { dark = false, idStart = 1, faq = false } = {}) {
+function renderModulesGrid(modulos) {
+  return modulos
+    .map((mod) => {
+      const body = mod.itens?.length
+        ? `<ul class="course-modules__list">${mod.itens.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ul>`
+        : mod.resposta
+          ? `<p class="course-modules__text">${escapeHtml(mod.resposta)}</p>`
+          : "";
+      return `<article class="course-modules__card">
+        <h3 class="course-modules__title">${escapeHtml(mod.titulo || "Módulo")}</h3>
+        ${body}
+      </article>`;
+    })
+    .join("");
+}
+
+function renderJetAccordion(items, { idStart = 1, faq = false } = {}) {
   return items
     .map((item, i) => {
       const id = idStart + i;
       const effectClass = faq ? "jet-toggle-zoom-in-effect" : "jet-toggle-move-up-effect";
-      const icon =
-        faq || !(i === 0 && dark)
+      const icon = faq
           ? `<div class="jet-toggle__label-icon jet-toggle-icon-position-right"><span class="jet-toggle__icon icon-normal jet-tabs-icon">${CARET_DOWN}</span><span class="jet-toggle__icon icon-active jet-tabs-icon">${CARET_UP}</span></div>`
           : "";
       const body =
@@ -316,11 +331,13 @@ export function renderCoursePage(course, ctx) {
   <link rel="stylesheet" href="${base}assets/css/elementor/post-13.css">
   <link rel="stylesheet" href="${base}assets/css/elementor/post-1076.css">
   <link rel="stylesheet" href="${base}assets/css/elementor/post-1141.css">
+  <link rel="stylesheet" href="${base}assets/css/course-modules.css">
   <link rel="stylesheet" href="${base}assets/css/testimonials.css">
   <link rel="stylesheet" href="${base}assets/css/elementor/overrides.css">
   <link rel="stylesheet" href="${base}assets/css/tokens.css">
   <link rel="stylesheet" href="${base}assets/css/base.css">
   <link rel="stylesheet" href="${base}assets/css/components.css">
+  ${renderSiteMotionStyles({ base })}
 </head>
 <body class="site-layout elementor-default elementor-kit-5 elementor-page-13">
   ${renderHeader({ base, ctaHref: "#investimento" })}
@@ -425,11 +442,7 @@ export function renderCoursePage(course, ctx) {
               <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default">O que você vai aprender:</h2></div>
             </div>
             <div class="elementor-element elementor-element-e036d55 e-con-full e-flex e-con e-child">
-              <div class="elementor-element elementor-element-bc314b7 elementor-widget elementor-widget-jet-accordion">
-                <div class="elementor-widget-container">
-                  <div class="jet-accordion"><div class="jet-accordion__inner">${renderJetAccordion(modulos, { dark: true })}</div></div>
-                </div>
-              </div>
+              <div class="course-modules">${renderModulesGrid(modulos)}</div>
             </div>
           </div>
         </div>`

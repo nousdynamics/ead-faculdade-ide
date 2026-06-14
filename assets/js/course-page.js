@@ -1,28 +1,3 @@
-/** Accordion estilo Jet Tabs / Elementor — módulos (abertura instantânea) */
-document.querySelectorAll(".jet-toggle__control").forEach((control) => {
-  if (control.closest(".course-faq-accordion")) return;
-
-  const item = control.closest(".jet-accordion__item");
-  const content = item?.querySelector(".jet-toggle__content");
-  if (!item || !content) return;
-  content.hidden = true;
-
-  const toggle = () => {
-    const open = control.getAttribute("aria-expanded") === "true";
-    control.setAttribute("aria-expanded", open ? "false" : "true");
-    content.hidden = open;
-    item.classList.toggle("active-toggle", !open);
-  };
-
-  control.addEventListener("click", toggle);
-  control.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      toggle();
-    }
-  });
-});
-
 /** FAQ — ícones + animação suave */
 document.querySelectorAll(".course-faq-accordion .jet-toggle__control").forEach((control) => {
   const item = control.closest(".jet-accordion__item");

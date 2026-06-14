@@ -84,8 +84,13 @@ export function renderFooter({ base = "" } = {}) {
   </footer>`;
 }
 
+export function renderSiteMotionStyles({ base = "" } = {}) {
+  return `<link rel="stylesheet" href="${base}assets/css/motion.css">`;
+}
+
 export function renderSiteLayoutScripts({ base = "" } = {}) {
-  return `<script src="${base}assets/js/site-header-offset.js" defer></script>`;
+  return `<script src="${base}assets/js/site-header-offset.js" defer></script>
+  <script src="${base}assets/js/motion.js" defer></script>`;
 }
 
 export function render404Page({
@@ -107,6 +112,7 @@ export function render404Page({
   <link rel="stylesheet" href="${assetBase}assets/css/tokens.css">
   <link rel="stylesheet" href="${assetBase}assets/css/base.css">
   <link rel="stylesheet" href="${assetBase}assets/css/components.css">
+  ${renderSiteMotionStyles({ base: assetBase })}
   <style>
     .not-found {
       flex: 1 0 auto;
