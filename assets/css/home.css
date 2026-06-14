@@ -274,44 +274,184 @@
   }
 }
 
-/* ===================== CATÁLOGO ===================== */
-.catalog { background: #fff; padding-block: var(--space-2xl); }
-.catalog__head { text-align: center; max-width: 780px; margin: 0 auto 2.5rem; }
-.catalog__subtitle { color: var(--color-muted); font-size: 1.05rem; margin: .75rem 0 0; }
+/* ===================== CATÁLOGO (Pagina Home.json / post-66) ===================== */
+.catalog {
+  background: #fff;
+  border-top: 1px solid var(--color-secondary);
+  padding: 88px 0 72px;
+}
+
+.catalog__layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  max-width: 1300px;
+}
+
+.catalog__intro {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.catalog__banner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 341px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 56px 0 0;
+  border: 1px solid #dfdfdf;
+  border-radius: 38px;
+  overflow: hidden;
+}
+
+.catalog__slideshow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.catalog__slideshow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.96);
+  z-index: 1;
+}
+
+.catalog__slide {
+  position: absolute;
+  inset: 0;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0;
+  animation: catalog-slideshow 15s infinite;
+}
+
+.catalog__slide:nth-child(1) {
+  background-image: url("../img/Tomografia-Computadorizada-e-Ressonancia-Magnetica-01.webp");
+  animation-delay: 0s;
+}
+
+.catalog__slide:nth-child(2) {
+  background-image: url("../img/MBA-Gestao-da-Informatica-em-Saude-01.webp");
+  animation-delay: 5s;
+}
+
+.catalog__slide:nth-child(3) {
+  background-image: url("../img/ENSINO-DO-BALE-CLASSICO-01.webp");
+  animation-delay: 10s;
+}
+
+@keyframes catalog-slideshow {
+  0%, 26% { opacity: 1; }
+  33%, 100% { opacity: 0; }
+}
+
+.catalog__head {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-inline: 24px;
+}
+
+.catalog__title {
+  max-width: 877px;
+  margin: 0;
+  font-size: 3em;
+  font-weight: var(--fw-book);
+  line-height: 1.1;
+  color: var(--color-primary);
+  text-wrap: balance;
+}
+
+.catalog__subtitle {
+  max-width: 738px;
+  margin: 0;
+  font-size: 1em;
+  font-weight: var(--fw-book);
+  line-height: 1.2;
+  color: var(--color-primary);
+}
 
 .filters {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 1120px;
+  margin-top: -95px;
+  padding: 64px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
   background: #fff;
-  box-shadow: var(--shadow-md);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
-  margin-bottom: 3rem;
+  border-radius: 24px;
+  box-shadow: 0 4px 30px 16px rgba(0, 0, 0, 0.11);
 }
+
+.filters .field {
+  flex: 1 1 280px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
 .filters .field label {
   display: block;
-  font-size: .8rem;
-  font-weight: var(--fw-bold);
+  font-size: 0.9em;
+  font-weight: var(--fw-book);
+  line-height: 1;
   color: var(--color-primary);
-  margin-bottom: .4rem;
 }
+
 .filters select {
   width: 100%;
-  padding: .8rem 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  max-width: 400px;
+  padding: 13px;
+  font-size: 0.8em;
+  font-weight: var(--fw-book);
+  line-height: 0.9;
+  color: #616161;
+  border: 1px solid #e9e9e9;
+  border-radius: 49px;
   background: #fff;
-  color: var(--color-text);
   cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' stroke='%23616161' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
 }
-.filters select:focus { outline: none; border-color: var(--color-accent); }
+
+.filters select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
 
 .course-grid {
+  width: 100%;
+  padding: 32px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
 }
+
 .course-grid__empty {
   grid-column: 1 / -1;
   text-align: center;
@@ -319,12 +459,64 @@
   padding: 2rem 0;
 }
 
-@media (max-width: 1024px) {
-  .filters { grid-template-columns: 1fr; }
-  .course-grid { grid-template-columns: repeat(2, 1fr); }
+@media (prefers-reduced-motion: reduce) {
+  .catalog__slide {
+    animation: none;
+    opacity: 0;
+  }
+
+  .catalog__slide:first-child {
+    opacity: 1;
+  }
 }
-@media (max-width: 575px) {
-  .course-grid { grid-template-columns: 1fr; }
+
+@media (max-width: 1024px) {
+  .catalog {
+    padding: 64px 0;
+  }
+
+  .catalog__layout {
+    padding-inline: 32px;
+  }
+
+  .course-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .catalog__banner {
+    min-height: auto;
+    border-radius: 16px;
+    padding: 62px 24px 72px;
+  }
+
+  .catalog__title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .catalog__subtitle {
+    max-width: 287px;
+    font-size: 16px;
+    line-height: 21px;
+  }
+
+  .filters {
+    margin-top: -73px;
+    padding: 22px;
+    border-radius: 0;
+  }
+
+  .filters .field label {
+    font-size: 18px;
+    line-height: 26px;
+  }
+
+  .course-grid {
+    grid-template-columns: 1fr;
+    padding: 32px;
+  }
 }
 
 /* ===================== DEPOIMENTOS ===================== */
