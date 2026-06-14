@@ -416,7 +416,6 @@ export function renderCoursePage(course, ctx) {
   <link rel="stylesheet" href="${base}assets/css/elementor/post-13.css">
   <link rel="stylesheet" href="${base}assets/css/elementor/post-1076.css">
   <link rel="stylesheet" href="${base}assets/css/elementor/post-1141.css">
-  <link rel="stylesheet" href="${base}assets/css/course-modules.css">
   <link rel="stylesheet" href="${base}assets/css/testimonials.css">
   <link rel="stylesheet" href="${base}assets/css/course-faq.css">
   <link rel="stylesheet" href="${base}assets/css/course-investment.css">
@@ -424,6 +423,7 @@ export function renderCoursePage(course, ctx) {
   <link rel="stylesheet" href="${base}assets/css/tokens.css">
   <link rel="stylesheet" href="${base}assets/css/base.css">
   <link rel="stylesheet" href="${base}assets/css/components.css">
+  <link rel="stylesheet" href="${base}assets/css/course-modules.css">
   ${renderSiteMotionStyles({ base })}
 </head>
 <body class="site-layout elementor-default elementor-kit-5 elementor-page-13">

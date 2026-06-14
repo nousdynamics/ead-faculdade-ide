@@ -23,6 +23,12 @@
   text-wrap: balance;
 }
 
+/* Elementor kit força h2/h3 navy — prioridade explícita no fundo escuro */
+.elementor-kit-5 .course-modules-section__title,
+.elementor-kit-5 .course-modules-section h2.course-modules-section__title {
+  color: #fff;
+}
+
 .course-modules {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -86,6 +92,11 @@
   color: #fff;
 }
 
+.elementor-kit-5 .course-modules__title,
+.elementor-kit-5 .course-modules__card h3.course-modules__title {
+  color: #fff;
+}
+
 .course-modules__body {
   flex: 1;
 }
@@ -128,9 +139,9 @@
   width: 2rem;
   height: 2rem;
   border-radius: 999px;
-  border: 1px solid rgb(255 255 255 / 0.28);
-  background: rgb(255 255 255 / 0.1);
-  color: #fff;
+  border: 1px solid rgb(1 227 248 / 0.45);
+  background: rgb(1 227 248 / 0.14);
+  color: var(--color-accent-bright);
   font-family: var(--font-heading);
   font-size: 0.6875rem;
   font-weight: var(--fw-bold);
