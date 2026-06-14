@@ -39,7 +39,7 @@ export async function login(username, password) {
       body: JSON.stringify({ username, password }),
     });
   } catch {
-    throw new Error("Servidor CMS indisponível. Execute npm run cms no projeto para acessar o painel.");
+    throw new Error("API do CMS indisponível. Verifique o deploy na Vercel.");
   }
 
   const contentType = res.headers.get("content-type") || "";
@@ -49,7 +49,7 @@ export async function login(username, password) {
 
   if (!res.ok) {
     if (res.status === 404 || res.status === 405) {
-      throw new Error("Servidor CMS indisponível. Execute npm run cms no projeto para acessar o painel.");
+      throw new Error("API do CMS indisponível. Verifique o deploy na Vercel.");
     }
     throw new Error(data.error || "Usuário ou senha incorretos");
   }

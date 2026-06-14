@@ -874,10 +874,10 @@ async function startApp() {
   const result = await initStore();
   const sync = $("#sync-status");
   if (result.source === "api") {
-    sync.textContent = "● Conectado — alterações salvas em data/cms/";
+    sync.textContent = "● Conectado — alterações salvas na Vercel";
     sync.style.color = "var(--success)";
   } else {
-    sync.textContent = "○ Use npm run cms para editar com login";
+    sync.textContent = "○ Modo leitura — use npm run cms localmente para editar offline";
     sync.style.color = "var(--muted)";
   }
 
