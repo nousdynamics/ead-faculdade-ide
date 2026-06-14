@@ -1,0 +1,16 @@
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Black.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-BlackItalic.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Bold.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-BoldItalic.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Book.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-BookItalic.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Light.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-LightItalic.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Medium.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-MediumItalic.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Thin.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-ThinItalic.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Ultra.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-UltraItalic.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-XLight.ttf
+https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-XLightItalic.ttf

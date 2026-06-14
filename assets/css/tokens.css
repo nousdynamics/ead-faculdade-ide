@@ -1,0 +1,55 @@
+/* ============================================================
+   Design tokens — extraídos do original (Elementor kit post-13)
+   Faculdade IDE EAD
+   ============================================================ */
+:root {
+  /* ---- Cores (Elementor global kit) ---- */
+  --color-primary: #2B325C;   /* navy — títulos, texto, botões */
+  --color-accent:  #13A6B4;   /* teal — destaques, links, CTAs */
+  --color-secondary: #D3DBE1; /* cinza-azul claro — fundos suaves */
+  --color-text:    #2B325C;
+  --color-white:   #ffffff;
+  --color-bg:      #ffffff;
+
+  /* Derivadas / utilitárias */
+  --color-primary-dark: #20264a;
+  --color-accent-dark:  #0f8a96;
+  --color-muted: #6b7280;
+  --color-border: #e3e8ee;
+
+  /* ---- Tipografia ---- */
+  --font-primary: "Gotham", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                  "Helvetica Neue", Arial, sans-serif;
+  --fw-thin: 100;
+  --fw-light: 300;
+  --fw-book: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+  --fw-black: 800;
+  --fw-ultra: 900;
+
+  /* ---- Espaçamento ---- */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+
+  /* ---- Layout ---- */
+  --container-max: 1140px;
+  --container-pad: 1.25rem;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  /* ---- Sombra ---- */
+  --shadow-sm: 0 2px 8px rgba(43, 50, 92, 0.08);
+  --shadow-md: 0 8px 24px rgba(43, 50, 92, 0.12);
+
+  /* ---- Breakpoints (referência — usar nos @media) ----
+     --bp-mobile-sm: 479px
+     --bp-mobile:    767px
+     --bp-tablet:    1024px  */
+}
