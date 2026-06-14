@@ -240,3 +240,21 @@
     transition-duration: 0.01ms;
   }
 }
+
+/* Gotham em blocos Elementor (substitui Roboto / IBM Plex do export) */
+.elementor-13 :where(
+  .elementor-heading-title,
+  .elementor-image-box-title,
+  .elementor-image-box-description,
+  .elementor-icon-box-title,
+  .elementor-icon-box-description,
+  .jet-toggle__label-text,
+  .jet-toggle__content-inner,
+  .elementor-button
+) {
+  font-family: var(--font-heading, "Gotham", sans-serif);
+}
+
+#parcela :is(.elementor-heading-title, li, strong, em) {
+  font-family: var(--font-heading, "Gotham", sans-serif);
+}

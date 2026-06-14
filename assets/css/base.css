@@ -2,8 +2,6 @@
    Base — reset, fontes, tipografia, helpers globais
    ============================================================ */
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
-
 /* ---- Gotham (@font-face — espelho do Elementor kit post-5) ---- */
 @font-face { font-family:"Gotham"; font-style:normal; font-weight:100; font-display:swap; src:url("../fonts/Gotham-Thin.ttf") format("truetype"); }
 @font-face { font-family:"Gotham"; font-style:normal; font-weight:200; font-display:swap; src:url("../fonts/Gotham-XLight.ttf") format("truetype"); }
@@ -53,7 +51,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: var(--fw-title);
   line-height: 1.15;
-  color: var(--color-primary);
+  color: inherit;
 }
 h1 { font-size: clamp(2rem, 4vw, 3.25rem); }
 h2 { font-size: clamp(1.6rem, 3vw, 2.5rem); }
