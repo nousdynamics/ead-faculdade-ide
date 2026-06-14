@@ -357,17 +357,17 @@
   }
 }
 
-/* ===================== FOOTER (Rodapé.json) ===================== */
+/* ===================== FOOTER (post-222 / Rodapé.json) ===================== */
 .site-footer {
-  background: var(--color-footer-bg);
-  color: var(--color-white);
+  background: #fff;
+  color: var(--color-primary);
   padding: 64px 0 0;
   font-size: 14px;
   line-height: 1.43;
 }
 
 .site-footer a {
-  color: var(--color-white);
+  color: #000;
   transition: opacity .2s ease;
 }
 
@@ -391,7 +391,6 @@
 .site-footer__logo {
   width: 88px;
   height: auto;
-  filter: brightness(0) invert(1);
 }
 
 .site-footer__block {
@@ -403,7 +402,7 @@
 .site-footer__block--tight { gap: 8px; }
 
 .site-footer__block h3 {
-  color: var(--color-white);
+  color: var(--color-primary);
   font-size: 12px;
   font-weight: var(--fw-book);
   line-height: 1.5;
@@ -423,7 +422,7 @@
 
 .site-footer__block p {
   margin: 0;
-  color: var(--color-white);
+  color: #000;
   font-size: 14px;
   line-height: 1.43;
 }
@@ -433,9 +432,14 @@
   font-size: 14px;
 }
 
+.site-footer__phone a {
+  color: #000;
+}
+
 .site-footer__note {
   font-size: 14px;
   line-height: 1.43;
+  color: var(--color-primary);
   text-wrap: balance;
 }
 
@@ -454,6 +458,7 @@
 .site-footer__emec p {
   font-size: 14px;
   line-height: 1.43;
+  color: #fff;
   text-wrap: balance;
 }
 
@@ -487,7 +492,7 @@
 
 .site-footer__rule {
   height: 1px;
-  background: var(--color-footer-rule);
+  background: #d8d8d8;
   margin-top: 56px;
 }
 
@@ -502,7 +507,7 @@
 .site-footer__bottom p {
   max-width: 597px;
   margin: 0;
-  color: var(--color-footer-muted);
+  color: var(--color-primary);
   font-size: 14px;
   line-height: 1.43;
   text-wrap: balance;
@@ -512,7 +517,7 @@
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  color: var(--color-footer-muted);
+  color: var(--color-primary);
   font-size: 14px;
   line-height: 1.57;
   flex-shrink: 0;
