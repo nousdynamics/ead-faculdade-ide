@@ -38,7 +38,8 @@
 
   /* ---- Layout ---- */
   --container-max: 1230px;
-  --container-pad: 1.25rem;
+  --container-pad: 15px;
+  --form-width: 360px;
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 24px;

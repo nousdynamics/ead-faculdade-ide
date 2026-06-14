@@ -43,7 +43,7 @@ strong { font-weight: var(--fw-bold); }
 
 /* ---- Layout helpers ---- */
 .container {
-  width: 100%;
+  width: min(100%, var(--container-max));
   max-width: var(--container-max);
   margin-inline: auto;
   padding-inline: var(--container-pad);
