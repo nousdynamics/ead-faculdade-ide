@@ -6,6 +6,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/pos-graduacao/:slug",
+      "destination": "/api/handler?path=course-page/:slug"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/handler?path=$1"
     }

@@ -10,6 +10,7 @@ import {
   updateAccountProfile,
 } from "../api/lib/account.js";
 import { saveUploadedImage } from "../api/lib/image-storage.js";
+import { publishCoursePages } from "../api/lib/course-pages.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -113,6 +114,18 @@ async function writeCollection(name, data) {
   const file = join(CMS_DIR, COLLECTIONS[name]);
   await writeFile(file, JSON.stringify(data, null, 2) + "\n", "utf8");
   if (name === "courses") {
+    const ctx = {};
+    for (const key of Object.keys(COLLECTIONS)) {
+      ctx[key] = key === name ? data : await readCollection(key);
+    }
+    publishCoursePages(data, {
+      courses: data,
+      professors: ctx.professors,
+      coordination: ctx.coordination,
+      testimonials: ctx.testimonials,
+      statuses: ctx.statuses,
+    }).catch((err) => console.error("[course-pages]", err));
+
     spawn(process.execPath, [join(__dirname, "generate-sitemap.mjs")], {
       cwd: ROOT,
       stdio: "ignore",

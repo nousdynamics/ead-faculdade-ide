@@ -118,10 +118,10 @@ export function lookup(name, id, field = "nome") {
 export async function saveCollection(name, data) {
   cache[name] = data;
   if (apiAvailable) {
-    await fetchJson(`/api/cms/${name}`, { method: "PUT", body: JSON.stringify(data) });
-  } else {
-    localStorage.setItem(`cms-${name}`, JSON.stringify(data));
+    return fetchJson(`/api/cms/${name}`, { method: "PUT", body: JSON.stringify(data) });
   }
+  localStorage.setItem(`cms-${name}`, JSON.stringify(data));
+  return { ok: true };
 }
 
 export async function upsertItem(name, item) {
@@ -129,8 +129,8 @@ export async function upsertItem(name, item) {
   const idx = list.findIndex((x) => x.id === item.id);
   if (idx >= 0) list[idx] = item;
   else list.push(item);
-  await saveCollection(name, list);
-  return item;
+  const result = await saveCollection(name, list);
+  return { item, result };
 }
 
 export async function deleteItem(name, id) {

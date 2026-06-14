@@ -3,6 +3,7 @@ import { createToken, verifyCredentials, requireAuth } from "./auth.js";
 import { getAccountProfile, updateAccountProfile } from "./account.js";
 import { COLLECTIONS, readCollection, writeCollection, readAllCollections } from "./cms.js";
 import { saveUploadedImage } from "./image-storage.js";
+import { handleCoursePageRequest } from "./course-pages.js";
 
 export async function routeRequest(req, res, segments) {
   if (handleCors(req, res)) return;
@@ -15,6 +16,7 @@ export async function routeRequest(req, res, segments) {
     if (a === "auth" && b === "me" && !c) return handleAuthMe(req, res);
     if (a === "auth" && b === "account" && !c) return handleAuthAccount(req, res);
     if (a === "media" && b === "upload" && !c) return handleMediaUpload(req, res);
+    if (a === "course-page" && b && !c) return handleCoursePageRequest(req, res, b);
     if (a === "cms" && !b) return handleCmsAll(req, res);
     if (a === "cms" && b && !c) return handleCmsCollection(req, res, b);
     if (a === "cms" && b && c) return handleCmsItem(req, res, b, c);
@@ -130,16 +132,16 @@ async function handleCmsCollection(req, res, collection) {
     if (payload === undefined || payload === null) {
       return jsonResponse(res, 400, { error: "Corpo da requisição inválido" });
     }
-    await writeCollection(collection, payload);
-    return jsonResponse(res, 200, { ok: true });
+    const pages = await writeCollection(collection, payload);
+    return jsonResponse(res, 200, { ok: true, pages: pages || undefined });
   }
 
   if (req.method === "POST") {
     const payload = await readJsonBody(req);
     const data = await readCollection(collection);
     data.push(payload);
-    await writeCollection(collection, data);
-    return jsonResponse(res, 201, payload);
+    const pages = await writeCollection(collection, data);
+    return jsonResponse(res, 201, { item: payload, pages: pages || undefined });
   }
 
   return jsonResponse(res, 405, { error: "Método não permitido" });
@@ -166,8 +168,8 @@ async function handleCmsItem(req, res, collection, id) {
     const idx = data.findIndex((entry) => entry.id === id);
     if (idx === -1) return jsonResponse(res, 404, { error: "Item não encontrado" });
     data[idx] = { ...data[idx], ...payload, id };
-    await writeCollection(collection, data);
-    return jsonResponse(res, 200, data[idx]);
+    const pages = await writeCollection(collection, data);
+    return jsonResponse(res, 200, { item: data[idx], pages: pages || undefined });
   }
 
   if (req.method === "DELETE") {
@@ -176,8 +178,8 @@ async function handleCmsItem(req, res, collection, id) {
     if (filtered.length === data.length) {
       return jsonResponse(res, 404, { error: "Item não encontrado" });
     }
-    await writeCollection(collection, filtered);
-    return jsonResponse(res, 200, { ok: true });
+    const pages = await writeCollection(collection, filtered);
+    return jsonResponse(res, 200, { ok: true, pages: pages || undefined });
   }
 
   return jsonResponse(res, 405, { error: "Método não permitido" });

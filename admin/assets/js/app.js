@@ -1020,8 +1020,15 @@ function bindEvents() {
       e.preventDefault();
       try {
         const course = collectCourseForm(courseForm);
-        await upsertItem("courses", course);
-        toast("Curso salvo com sucesso!");
+        const { result } = await upsertItem("courses", course);
+        const page = result?.pages?.find((entry) => entry.slug === (course.slug || course.id) && entry.published);
+        if (page?.path) {
+          toast(`Curso salvo! Página publicada em ${page.path}`);
+        } else if (course.publicado === false) {
+          toast("Curso salvo como rascunho (página não publicada).");
+        } else {
+          toast("Curso salvo com sucesso!");
+        }
         location.hash = `#/courses/${course.id}`;
         await navigate();
       } catch (err) {

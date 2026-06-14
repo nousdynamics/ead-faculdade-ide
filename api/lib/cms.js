@@ -119,6 +119,11 @@ export async function writeCollection(name, data) {
   }
 
   await writeBlob(blobPathname(name), JSON.stringify(data, null, 2) + "\n");
+
+  if (name === "courses") {
+    const { publishCoursePages } = await import("./course-pages.js");
+    return publishCoursePages(data);
+  }
 }
 
 export async function readAllCollections() {
