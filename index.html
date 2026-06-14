@@ -283,29 +283,30 @@
 
     <!-- =============== NEWSLETTER ============== -->
     <section class="newsletter">
-      <div class="container newsletter__inner">
-        <div class="newsletter__brand">
-          <img src="assets/img/LOGO-IDE-ONLINE-02.svg" alt="Faculdade IDE EAD">
-        </div>
+      <div class="container newsletter__wrap">
         <div class="newsletter__card">
-          <h2 class="newsletter__title">Receba nossa newsletter</h2>
-          <p class="newsletter__sub">Cadastre seu e-mail para receber informativos e novidades sobre a faculdade e sobre os cursos.</p>
-          <form class="lead-form" data-stub>
-            <div class="newsletter__row">
+          <div class="newsletter__media">
+            <img src="assets/img/Novidades-1.webp" alt="" loading="lazy">
+          </div>
+          <div class="newsletter__content">
+            <img class="newsletter__logo" src="assets/img/LOGO-IDE-ONLINE-02.svg" width="98" height="38" alt="Faculdade IDE EAD">
+            <h2 class="newsletter__title">Receba nossa newsletter</h2>
+            <p class="newsletter__sub">Cadastre seu e-mail para receber informativos e novidades sobre a faculdade e sobre os cursos.</p>
+            <form class="newsletter-form lead-form" data-stub>
               <div class="field">
-                <label for="nl-nome">Nome</label>
-                <input id="nl-nome" type="text" name="nome" placeholder="Seu nome e sobrenome" required>
+                <label for="nl-nome">NOME</label>
+                <input id="nl-nome" type="text" name="nome" placeholder="Seu nome e sobrenome">
               </div>
               <div class="field">
-                <label for="nl-email">E-mail</label>
+                <label for="nl-email">E-MAIL <span class="newsletter-form__required" aria-hidden="true">*</span></label>
                 <input id="nl-email" type="email" name="email" placeholder="Seu melhor e-mail" required>
               </div>
-              <button type="submit" class="btn-arrow" aria-label="Cadastrar">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              <button type="submit" class="newsletter-form__submit" aria-label="Cadastrar">
+                <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M18.256 23.077 17.313 22.117 22.764 16.667H6.667v-1.334h16.097l-5.451-5.45.943-.96 7.077 7.077-7.078 7.077Z" fill="#fff"/></svg>
               </button>
-            </div>
-            <p class="form-msg" role="status" aria-live="polite"></p>
-          </form>
+              <p class="form-msg" role="status" aria-live="polite"></p>
+            </form>
+          </div>
         </div>
       </div>
     </section>

@@ -596,35 +596,186 @@
 .reviews-nav--next { right: -14px; }
 .reviews-nav svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
 
-/* ===================== NEWSLETTER ===================== */
-.newsletter { background: var(--color-accent); }
-.newsletter__inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 2.5rem;
+/* ===================== NEWSLETTER (post-66) ===================== */
+.newsletter {
+  background: radial-gradient(100% 256% at 100% 0%, #01e3f8 0%, #13a6b4 100%);
+  padding: 120px 0;
 }
-.newsletter__brand { display: flex; align-items: center; justify-content: center; padding: 3rem 1rem; }
-.newsletter__brand img { width: min(260px, 70%); filter: brightness(0) invert(1); opacity: .95; }
+
+.newsletter__wrap {
+  display: flex;
+  justify-content: center;
+}
+
 .newsletter__card {
-  background: #fff;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  padding: 2.5rem;
-  margin: 2.5rem 0;
+  display: flex;
+  width: 100%;
+  max-width: 1089px;
+  box-shadow: 20px 20px 60px #00000039;
+  overflow: hidden;
 }
-.newsletter__sub { color: var(--color-muted); margin: .5rem 0 1.5rem; }
-.newsletter__card .lead-form { flex-direction: column; }
-.newsletter__row { display: flex; gap: 1rem; align-items: flex-end; }
-.newsletter__row .field { flex: 1; }
+
+.newsletter__media {
+  flex: 1 1 50%;
+  min-height: 371px;
+  background: radial-gradient(100% 256% at 100% 0%, #01e3f8 0%, #13a6b4 100%);
+}
+
+.newsletter__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 371px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.newsletter__content {
+  flex: 1 1 50%;
+  background: #fff;
+  padding: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.newsletter__logo {
+  width: 98px;
+  height: auto;
+}
+
+.newsletter__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: var(--fw-book);
+  line-height: 36px;
+  color: var(--color-primary);
+  text-wrap: balance;
+}
+
+.newsletter__sub {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--fw-book);
+  line-height: 24px;
+  color: var(--color-primary);
+  text-wrap: balance;
+}
+
+.newsletter-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.newsletter-form .field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.newsletter-form label {
+  display: block;
+  margin-bottom: 11px;
+  font-size: 14px;
+  font-weight: var(--fw-book);
+  line-height: 20px;
+  color: var(--color-primary);
+  text-transform: uppercase;
+}
+
+.newsletter-form__required {
+  color: #e53935;
+}
+
+.newsletter-form input {
+  width: 100%;
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: var(--fw-book);
+  line-height: 20px;
+  color: var(--color-primary);
+  background: #fff;
+  border: none;
+  border-bottom: 1px solid var(--color-secondary);
+  border-radius: 0;
+}
+
+.newsletter-form input:focus {
+  outline: none;
+  border-bottom-color: var(--color-accent);
+}
+
+.newsletter-form input::placeholder {
+  color: #616161;
+}
+
+.newsletter-form__submit {
+  width: 54px;
+  height: 54px;
+  margin-top: 4px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform .2s ease, background-color .2s ease;
+}
+
+.newsletter-form__submit:hover {
+  transform: scale(1.03);
+  background: var(--color-primary-dark);
+}
+
+.newsletter-form__submit svg {
+  width: 32px;
+  height: 32px;
+}
+
+.newsletter-form .form-msg {
+  margin-top: 12px;
+}
+
+@media (max-width: 767px) {
+  .newsletter {
+    padding: 32px;
+  }
+
+  .newsletter__card {
+    flex-direction: column;
+  }
+
+  .newsletter__media,
+  .newsletter__media img {
+    min-height: 371px;
+  }
+
+  .newsletter__content {
+    padding: 32px;
+  }
+
+  .newsletter__logo {
+    width: 67px;
+  }
+
+  .newsletter__title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .newsletter__sub {
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
 
 @media (max-width: 767px) {
   .testimonials__layout { grid-template-columns: 1fr; }
   .review-card { flex-basis: 82%; }
   .reviews-nav--prev { left: 0; }
   .reviews-nav--next { right: 0; }
-  .newsletter__inner { grid-template-columns: 1fr; gap: 0; }
-  .newsletter__brand { padding: 2.5rem 1rem 0; }
-  .newsletter__card { margin: 1.5rem 0 2.5rem; padding: 1.75rem; }
-  .newsletter__row { flex-direction: column; align-items: stretch; gap: .9rem; }
 }
