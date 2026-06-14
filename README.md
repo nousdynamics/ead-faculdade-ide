@@ -75,7 +75,8 @@ npm run deploy:prod
 
 | Feature | Status |
 |---|---|
-| Formulários de lead / newsletter | `form-stub.js` — captura submit e exibe mensagem; sem backend |
+| Formulário hero | RD Station (`rd-form-home.js` + `rd-form.css`) |
+| Formulários newsletter | `form-stub.js` — captura submit e exibe mensagem; sem backend |
 | Depoimentos Google (TrustIndex) | Cards estáticos + carrossel em `testimonials.js` |
 | Inscrição no curso | Links para `inscricao.faculdadeide.edu.br` |
 | Tracking (GTM / Pixel) | Comentário no `<head>`; reativar nas melhorias |

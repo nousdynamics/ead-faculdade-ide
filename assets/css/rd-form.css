@@ -1,0 +1,147 @@
+/* ============================================================
+   RD Station — formulário hero (home)
+   Overrides alinhados ao original + embed fornecido
+   ============================================================ */
+
+#rd-section-mo0jfho4,
+#rd-row-mo0jfho9,
+#rd-column-mo0jfhoa,
+#rd-column-mo0jfhoa > div,
+#bricks-component-xm_F9ldqJ1j6VQWfv1um6A {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+#rd-form-mo0jfhob {
+  max-width: 558px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+#rd-form-mo0jfhob .bricks-form,
+#rd-form-mo0jfhob .bricks-form__fieldset,
+#rd-form-mo0jfhob .bricks-form__field,
+#rd-form-mo0jfhob .bricks-form__submit,
+#rd-form-mo0jfhob form {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+#rd-column-mo0jfhoa > div {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+#rd-form-mo0jfhob .bricks-form__label {
+  color: #084E3F !important;
+  font-family: "Open Sans", Arial, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  margin-bottom: 5px !important;
+}
+
+#rd-form-mo0jfhob,
+#rd-button-mo0jfhoe.bricks--component-button {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+#rd-form-mo0jfhob .bricks-form__input,
+#rd-form-mo0jfhob input[type="text"],
+#rd-form-mo0jfhob input[type="email"],
+#rd-form-mo0jfhob input[type="tel"],
+#rd-form-mo0jfhob select {
+  background-color: rgba(255, 255, 255, 0.75) !important;
+  border: 1.5px solid #c0c0c0 !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  color: #333333 !important;
+  font-family: "Open Sans", Arial, sans-serif !important;
+  font-size: 15px !important;
+  height: 48px !important;
+  padding: 0 16px !important;
+  width: 100% !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+#rd-form-mo0jfhob .bricks-form__input::placeholder,
+#rd-form-mo0jfhob input::placeholder {
+  color: #aaaaaa !important;
+  opacity: 1 !important;
+}
+
+#rd-form-mo0jfhob .bricks-form__input:focus,
+#rd-form-mo0jfhob input:focus,
+#rd-form-mo0jfhob select:focus {
+  border-color: #084E3F !important;
+  box-shadow: 0 0 0 3px rgba(8, 78, 63, 0.12) !important;
+  outline: none !important;
+  background-color: #ffffff !important;
+}
+
+#rd-form-mo0jfhob .bricks-form__field {
+  margin-bottom: 14px !important;
+}
+
+#rd-form-mo0jfhob .select2-container .select2-choice {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: none !important;
+  color: #333333 !important;
+  height: 46px !important;
+  line-height: 46px !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+
+#rd-form-mo0jfhob .bricks-form__static,
+#rd-form-mo0jfhob .bricks-form__static span,
+#rd-form-mo0jfhob .bricks-form__static a {
+  color: #888888 !important;
+  font-size: 12px !important;
+}
+
+#rd-text-mo0jfhof p,
+#rd-text-mo0jfhof p span {
+  color: #555555 !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+#rd-form-mo0jfhob label.error {
+  color: #c0392b !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+#rd-button-mo0jfhoe.bricks--component-button {
+  background-color: #13A6B4 !important;
+  background: #13A6B4 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 20px rgba(19, 166, 180, 0.3) !important;
+  color: #ffffff !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  height: 54px !important;
+  margin-top: 18px !important;
+  width: 100% !important;
+  max-width: 558px !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+}
+
+#rd-button-mo0jfhoe.bricks--component-button:hover {
+  background-color: #2b325c !important;
+  background: #2b325c !important;
+  transform: translateY(-1px) !important;
+}
+
+@media (max-width: 767px) {
+  #rd-form-mo0jfhob,
+  #rd-button-mo0jfhoe.bricks--component-button {
+    max-width: 100% !important;
+  }
+}

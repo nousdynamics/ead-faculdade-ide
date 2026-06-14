@@ -11,10 +11,15 @@
 
   <!-- TRACKING (reativar nas melhorias): dns-prefetch p/ googletagmanager.com no original; sem GTM-ID estático no HTML capturado. -->
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/components.css">
   <link rel="stylesheet" href="assets/css/home.css">
+  <link rel="stylesheet" href="assets/css/rd-form.css">
 </head>
 <body>
 
@@ -45,24 +50,43 @@
   <main>
     <!-- ================= HERO ================= -->
     <section class="hero" id="inscricao">
-      <div class="container hero__inner">
-        <h1 class="hero__title">Preencha o formulário e aproveite condições especiais de lançamento.</h1>
-        <form class="lead-form lead-form--on-dark" data-stub>
-          <div class="field">
-            <label for="hero-nome">Nome</label>
-            <input id="hero-nome" type="text" name="nome" placeholder="Seu nome e sobrenome" required>
+      <div class="hero__shell">
+        <div class="container hero__inner">
+          <div class="hero__content">
+            <h1 class="hero__title">Preencha o formulário e aproveite condições especiais de lançamento.</h1>
+            <div class="hero__form">
+              <div role="main" id="home-site-ead-3e90cfebb8378f18fbf8"></div>
+            </div>
           </div>
-          <div class="field">
-            <label for="hero-email">E-mail</label>
-            <input id="hero-email" type="email" name="email" placeholder="Seu melhor e-mail" required>
-          </div>
-          <div class="field">
-            <label for="hero-tel">Telefone</label>
-            <input id="hero-tel" type="tel" name="telefone" placeholder="Seu telefone / WhatsApp" required>
-          </div>
-          <button type="submit" class="btn btn--primary">Quero receber informações</button>
-          <p class="form-msg" role="status" aria-live="polite"></p>
-        </form>
+        </div>
+        <a class="hero__scroll" href="#prox" aria-label="Ir para a próxima seção">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M18.256 23.077 17.313 22.117 22.764 16.667H6.667v-1.334h16.097l-5.451-5.45.943-.96 7.077 7.077-7.078 7.077Z" fill="currentColor"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ============ PORQUE ESCOLHER ============ -->
+    <section class="benefits" id="prox" aria-label="Porque escolher a Faculdade IDE">
+      <div class="benefits__cell benefits__cell--white benefits__cell--title">
+        <h2 class="benefits__title">Porque escolher a Faculdade IDE?</h2>
+      </div>
+      <div class="benefits__cell benefits__cell--navy benefits__cell--feature benefits__cell--bg-praticas">
+        <div class="benefits__feature">
+          <img class="benefits__feature-icon" src="assets/img/ICON-HOME-SUP-SALA-DE-AULA-01.svg" alt="">
+          <p class="benefits__text">Aprenda e interaja com profissionais de referência nacional e internacional, com aulas ao vivo.</p>
+        </div>
+      </div>
+      <div class="benefits__cell benefits__cell--teal benefits__cell--feature benefits__cell--bg-disciplinas">
+        <div class="benefits__feature">
+          <img class="benefits__feature-icon" src="assets/img/ICON-HOME-SUP-QUALIDADE-03.svg" alt="">
+          <p class="benefits__text">Estude com quem se dedica há 18 anos à formação de profissionais da saúde.</p>
+        </div>
+      </div>
+      <div class="benefits__cell benefits__cell--gray benefits__cell--feature benefits__cell--bg-novidades">
+        <div class="benefits__feature">
+          <img class="benefits__feature-icon" src="assets/img/ICON-HOME-SUP-NUVEM-02.svg" alt="">
+          <p class="benefits__text">Estude online, quando e onde quiser. Aulas ao vivo, com gravações disponíveis mesmo após o término do curso.</p>
+        </div>
       </div>
     </section>
 
@@ -71,25 +95,6 @@
       <div class="container excelencia__inner">
         <h2 class="excelencia__title">Excelência no ensino IDE, agora também online.</h2>
         <a class="btn btn--white" href="https://ead.faculdadeide.edu.br/paginas-de-cursos/">Inscreva-se</a>
-      </div>
-    </section>
-
-    <!-- ============ PORQUE ESCOLHER ============ -->
-    <section class="benefits" aria-label="Porque escolher a Faculdade IDE">
-      <div class="benefits__cell benefits__cell--teal benefits__cell--title">
-        <h2 class="benefits__title">Porque escolher a Faculdade IDE?</h2>
-      </div>
-      <div class="benefits__cell benefits__cell--navy">
-        <span class="benefits__icon"><img src="assets/img/ICON-HOME-SUP-SALA-DE-AULA-01.svg" alt=""></span>
-        <p class="benefits__text">Aprenda e interaja com profissionais de referência nacional e internacional, com aulas ao vivo.</p>
-      </div>
-      <div class="benefits__cell benefits__cell--teal">
-        <span class="benefits__icon"><img src="assets/img/ICON-HOME-SUP-QUALIDADE-03.svg" alt=""></span>
-        <p class="benefits__text">Estude com quem se dedica há 18 anos à formação de profissionais da saúde.</p>
-      </div>
-      <div class="benefits__cell benefits__cell--navy">
-        <span class="benefits__icon"><img src="assets/img/ICON-HOME-SUP-NUVEM-02.svg" alt=""></span>
-        <p class="benefits__text">Estude online, quando e onde quiser. Aulas ao vivo, com gravações disponíveis mesmo após o término do curso.</p>
       </div>
     </section>
 
@@ -361,5 +366,7 @@
   <script src="assets/js/course-filter.js" defer></script>
   <script src="assets/js/form-stub.js" defer></script>
   <script src="assets/js/testimonials.js" defer></script>
+  <script src="https://d335luupugsy2.cloudfront.net/js/rdstation-forms/stable/rdstation-forms.min.js" defer></script>
+  <script src="assets/js/rd-form-home.js" defer></script>
 </body>
 </html>
