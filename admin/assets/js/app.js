@@ -10,6 +10,11 @@ import {
   previewTemplate,
   templateEscopoLabel,
   templateTipoLabel,
+  renderTestimonialsSectionPreview,
+  extractTemplateVariables,
+  variablesForTemplate,
+  renderVariablesHelp,
+  starterHtmlFor,
 } from "./testimonial-templates.js";
 import {
   enterAdminFromLogin,
@@ -321,6 +326,58 @@ function testimonialTemplateSelect(name, { escopo, tipo = null, value = "", labe
     </div>`;
 }
 
+function templateUsedByCourse(course, templateId) {
+  const d = course.depoimentos || {};
+  return [
+    d.template_secao_id,
+    d.template_item_texto_id,
+    d.template_item_video_id,
+    d.template_item_imagem_id,
+  ].includes(templateId);
+}
+
+function templateUsageCount(templateId) {
+  return getAll("courses").filter((c) => templateUsedByCourse(c, templateId)).length;
+}
+
+function collectDepoimentosConfig(form) {
+  return {
+    titulo_secao: form.dep_titulo_secao?.value.trim() || "O que nossos alunos dizem",
+    template_secao_id: form.dep_template_secao_id?.value || "secao-depoimentos-elementor",
+    template_item_texto_id: form.dep_template_item_texto_id?.value || "item-texto-elementor",
+    template_item_video_id: form.dep_template_item_video_id?.value || "item-video-padrao",
+    template_item_imagem_id: form.dep_template_item_imagem_id?.value || "item-imagem-padrao",
+  };
+}
+
+function renderCourseDepoimentosPreview(course) {
+  const partial = {
+    depoimento_ids: getCourseDepoimentoIds(course),
+    depoimentos: course.depoimentos || emptyCourse().depoimentos,
+  };
+  return renderTestimonialsSectionPreview(
+    partial,
+    getAll("testimonials"),
+    getAll("testimonial-templates"),
+    "/",
+  ) || '<p class="empty-hint">Selecione depoimentos para visualizar a seção.</p>';
+}
+
+function updateCourseDepoimentosPreview(form) {
+  const preview = $("#course-depoimentos-preview", form);
+  if (!preview) return;
+  const partial = {
+    depoimento_ids: getCheckedIds(form, "depoimento_ids"),
+    depoimentos: collectDepoimentosConfig(form),
+  };
+  preview.innerHTML = renderTestimonialsSectionPreview(
+    partial,
+    getAll("testimonials"),
+    getAll("testimonial-templates"),
+    "/",
+  ) || '<p class="empty-hint">Selecione depoimentos para visualizar a seção.</p>';
+}
+
 function testimonialSummary(item) {
   if (item.tipo === "video") return item.video_url || "Sem URL de vídeo";
   if (item.tipo === "imagem") return item.legenda || item.imagem || "Sem imagem";
@@ -493,6 +550,11 @@ function renderCourseForm(course) {
                 value: c.depoimentos?.template_item_imagem_id || "item-imagem-padrao",
                 label: "Modelo — depoimento em imagem",
               })}
+            </div>
+            <div class="form-divider"><span>Pré-visualização da seção</span></div>
+            <p class="form-hint">Atualiza conforme você altera depoimentos, título ou modelos selecionados.</p>
+            <div class="template-preview-shell">
+              <div class="template-preview template-preview--course" id="course-depoimentos-preview">${renderCourseDepoimentosPreview(c)}</div>
             </div>
           `)}
 
@@ -675,6 +737,13 @@ function bindCourseFormEvents(form) {
     if (preview) preview.innerHTML = renderSeoPreview(generated);
     toast("SEO regenerado!");
   });
+
+  const depoimentosPanel = $("#cf-equipe", form);
+  if (depoimentosPanel) {
+    const refreshDepoimentos = () => updateCourseDepoimentosPreview(form);
+    depoimentosPanel.addEventListener("change", refreshDepoimentos);
+    depoimentosPanel.addEventListener("input", refreshDepoimentos);
+  }
 }
 
 function emptyCourse() {
@@ -907,10 +976,13 @@ function renderTestimonialTemplatesList() {
     <div class="panel">
       <div class="panel__head">
         <h2>${icon("layout-grid", { size: 18 })} Modelos de depoimento</h2>
-        <a href="#/testimonials" class="btn btn--ghost btn--sm">${icon("message-square-quote", { size: 14 })} Ver depoimentos</a>
+        <div class="panel__head-actions">
+          <a href="#/testimonials" class="btn btn--ghost btn--sm">${icon("message-square-quote", { size: 14 })} Depoimentos</a>
+          <button type="button" class="btn btn--primary btn--sm" id="btn-new-template">${icon("plus", { size: 14 })} Novo modelo</button>
+        </div>
       </div>
       <div class="panel__body">
-        <p class="form-hint">Cada modelo usa variáveis como <code>{{nome}}</code>, <code>{{texto}}</code>, <code>{{itens}}</code>. Os depoimentos cadastrados preenchem essas variáveis na página do curso.</p>
+        <p class="form-hint">Alterações nos modelos republicam automaticamente as páginas de curso publicadas. Use variáveis como <code>{{nome}}</code>, <code>{{texto}}</code> e <code>{{itens}}</code>.</p>
       </div>
       <div class="panel__body panel__body--flush table-wrap">
         <table class="data-table data-table--entities">
@@ -920,10 +992,12 @@ function renderTestimonialTemplatesList() {
             <th class="col-status">Tipo</th>
             <th class="col-actions">Ações</th>
           </tr></thead>
-          <tbody>${templates.map((item) => `<tr>
+          <tbody>${templates.map((item) => {
+            const usage = templateUsageCount(item.id);
+            return `<tr>
             <td class="col-name">
               <span class="cell-name__title">${escapeHtml(item.nome)}</span>
-              <span class="cell-name__meta">${escapeHtml(item.descricao || item.id)}</span>
+              <span class="cell-name__meta">${escapeHtml(item.descricao || item.id)}${usage ? ` · ${usage} curso(s)` : ""}</span>
             </td>
             <td class="col-course"><span class="badge badge--open">${escapeHtml(templateEscopoLabel(item.escopo))}</span></td>
             <td class="col-status">${item.tipo ? testimonialTypeBadge(item.tipo) : '<span class="badge badge--draft">—</span>'}</td>
@@ -931,6 +1005,8 @@ function renderTestimonialTemplatesList() {
               <div class="table-actions">
                 <button type="button" class="btn btn--ghost btn--sm" data-preview-template="${item.id}">${icon("layout", { size: 14 })} Visualizar</button>
                 <button type="button" class="btn btn--ghost btn--sm" data-edit-template="${item.id}">${icon("pencil", { size: 14 })} Editar</button>
+                <button type="button" class="btn btn--ghost btn--sm" data-duplicate-template="${item.id}">${icon("copy", { size: 14 })} Duplicar</button>
+                <button type="button" class="btn btn--ghost btn--sm btn--danger-outline" data-delete-template="${item.id}">${icon("trash", { size: 14 })} Excluir</button>
               </div>
             </td>
           </tr>
@@ -938,11 +1014,12 @@ function renderTestimonialTemplatesList() {
             <td colspan="4">
               <div class="template-preview-shell">
                 <p class="template-preview-shell__label">Pré-visualização (dados de exemplo)</p>
-                <div class="template-preview" data-preview-content="${item.id}">${previewTemplate(item, allTemplates)}</div>
+                <div class="template-preview">${previewTemplate(item, allTemplates)}</div>
                 <p class="template-vars">Variáveis: ${(item.variaveis || []).map((v) => `<code>{{${escapeHtml(v)}}}</code>`).join(" ") || "—"}</p>
               </div>
             </td>
-          </tr>`).join("") || `<tr><td colspan="4" class="empty">Nenhum modelo cadastrado.</td></tr>`}
+          </tr>`;
+          }).join("") || `<tr><td colspan="4" class="empty">Nenhum modelo cadastrado.</td></tr>`}
           </tbody>
         </table>
       </div>
@@ -950,35 +1027,64 @@ function renderTestimonialTemplatesList() {
     <div id="template-form-slot"></div>`;
 }
 
-function renderTestimonialTemplateForm(item) {
+function renderTestimonialTemplateForm(item, { isNew = false } = {}) {
   const p = item || {
-    id: uid("tpl"),
+    id: "",
     nome: "",
     escopo: "item",
     tipo: "texto",
     descricao: "",
-    html: "",
-    variaveis: [],
+    html: starterHtmlFor("item", "texto"),
+    variaveis: variablesForTemplate("item", "texto"),
     ativo: true,
   };
-  const preview = previewTemplate(p, getAll("testimonial-templates"));
-  const varsHint = (p.variaveis || []).map((v) => `{{${v}}}`).join(", ");
+  const templates = getAll("testimonial-templates");
+  const preview = previewTemplate(p, templates);
+  const varsHelp = renderVariablesHelp(p.escopo, p.tipo);
+  const title = isNew ? "Novo modelo de depoimento" : `Editar modelo: ${p.nome || p.id}`;
 
   return `
     <div class="panel" id="template-form-panel">
-      <div class="panel__head"><h2>Editar modelo: ${escapeHtml(p.nome || p.id)}</h2></div>
+      <div class="panel__head"><h2>${escapeHtml(title)}</h2></div>
       <div class="panel__body template-editor">
-        <form id="template-form" data-template-id="${escapeHtml(p.id)}">
+        <form id="template-form" data-template-id="${escapeHtml(p.id)}" data-is-new="${isNew ? "1" : ""}">
           <div class="form-grid">
-            <div class="form-group form-group--full"><label>Nome</label><input name="nome" value="${escapeHtml(p.nome || "")}" required></div>
-            <div class="form-group form-group--full"><label>Descrição</label><input name="descricao" value="${escapeHtml(p.descricao || "")}"></div>
-            <div class="form-group"><label>Escopo</label><input value="${escapeHtml(templateEscopoLabel(p.escopo))}" disabled></div>
-            <div class="form-group"><label>Tipo</label><input value="${escapeHtml(templateTipoLabel(p.tipo))}" disabled></div>
+            <div class="form-group form-group--full"><label>Nome *</label><input name="nome" value="${escapeHtml(p.nome || "")}" required></div>
+            ${isNew ? `
+              <div class="form-group form-group--full">
+                <label>Identificador (slug) *</label>
+                <input name="template_id" value="${escapeHtml(p.id || "")}" placeholder="ex: item-texto-minimal" required>
+                <small>Usado internamente e nos cursos. Apenas letras minúsculas, números e hífens.</small>
+              </div>
+              <div class="form-group">
+                <label>Escopo *</label>
+                <select name="escopo" id="template-escopo">
+                  <option value="secao" ${p.escopo === "secao" ? "selected" : ""}>Seção (wrapper)</option>
+                  <option value="item" ${p.escopo === "item" ? "selected" : ""}>Item (card de depoimento)</option>
+                </select>
+              </div>
+              <div class="form-group" id="template-tipo-wrap" ${p.escopo === "secao" ? "hidden" : ""}>
+                <label>Tipo do item *</label>
+                <select name="tipo" id="template-tipo">
+                  <option value="texto" ${p.tipo === "texto" ? "selected" : ""}>Texto</option>
+                  <option value="video" ${p.tipo === "video" ? "selected" : ""}>Vídeo</option>
+                  <option value="imagem" ${p.tipo === "imagem" ? "selected" : ""}>Imagem</option>
+                </select>
+              </div>
+            ` : `
+              <div class="form-group form-group--full"><label>Descrição</label><input name="descricao" value="${escapeHtml(p.descricao || "")}"></div>
+              <div class="form-group"><label>Escopo</label><input value="${escapeHtml(templateEscopoLabel(p.escopo))}" disabled></div>
+              <div class="form-group"><label>Tipo</label><input value="${escapeHtml(templateTipoLabel(p.tipo))}" disabled></div>
+            `}
+            ${isNew ? `<div class="form-group form-group--full"><label>Descrição</label><input name="descricao" value="${escapeHtml(p.descricao || "")}"></div>` : ""}
             <div class="form-group"><label class="form-check"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
             <div class="form-group form-group--full">
               <label>HTML do modelo</label>
               <textarea name="html" rows="14" class="template-editor__code" data-template-html>${escapeHtml(p.html || "")}</textarea>
-              <small>Variáveis disponíveis: ${varsHint || "—"}</small>
+            </div>
+            <div class="form-group form-group--full template-vars-help">
+              <label>Referência de variáveis</label>
+              <ul class="template-vars-list" id="template-vars-list">${varsHelp}</ul>
             </div>
           </div>
           <div class="template-preview-shell template-preview-shell--editor">
@@ -1101,13 +1207,7 @@ function collectCourseForm(form) {
     coordenacao_ids: getCheckedIds(form, "coordenacao_ids"),
     professor_ids: getCheckedIds(form, "professor_ids"),
     depoimento_ids: getCheckedIds(form, "depoimento_ids"),
-    depoimentos: {
-      titulo_secao: form.dep_titulo_secao?.value.trim() || "O que nossos alunos dizem",
-      template_secao_id: form.dep_template_secao_id?.value || "secao-depoimentos-elementor",
-      template_item_texto_id: form.dep_template_item_texto_id?.value || "item-texto-elementor",
-      template_item_video_id: form.dep_template_item_video_id?.value || "item-video-padrao",
-      template_item_imagem_id: form.dep_template_item_imagem_id?.value || "item-imagem-padrao",
-    },
+    depoimentos: collectDepoimentosConfig(form),
     hero: {
       texto_botao: form.hero_texto_botao?.value.trim(),
       link_botao: form.hero_link_botao?.value.trim(),
@@ -1277,6 +1377,13 @@ async function handleLogout() {
 function bindTestimonialTemplateEvents() {
   if (currentRoute !== "testimonial-templates") return;
 
+  $("#btn-new-template")?.addEventListener("click", () => {
+    const slot = $("#template-form-slot");
+    if (slot) slot.innerHTML = renderTestimonialTemplateForm(null, { isNew: true });
+    bindTestimonialTemplateForm(null, { isNew: true });
+    $("#template-form-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
   $$("[data-preview-template]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const row = document.querySelector(`[data-preview-row="${btn.dataset.previewTemplate}"]`);
@@ -1294,22 +1401,127 @@ function bindTestimonialTemplateEvents() {
       $("#template-form-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
+
+  $$("[data-duplicate-template]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const source = getById("testimonial-templates", btn.dataset.duplicateTemplate);
+      if (!source) return;
+      const copy = {
+        ...source,
+        id: `${source.id}-copia-${Date.now().toString(36).slice(-4)}`,
+        nome: `${source.nome} (cópia)`,
+      };
+      const slot = $("#template-form-slot");
+      if (slot) slot.innerHTML = renderTestimonialTemplateForm(copy, { isNew: true });
+      bindTestimonialTemplateForm(copy, { isNew: true });
+      $("#template-form-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+
+  $$("[data-delete-template]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.deleteTemplate;
+      const usage = templateUsageCount(id);
+      if (usage > 0) {
+        toast(`Este modelo está em uso por ${usage} curso(s). Troque nos cursos antes de excluir.`, "error");
+        return;
+      }
+      if (!confirm("Excluir este modelo permanentemente?")) return;
+      try {
+        await deleteItem("testimonial-templates", id);
+        toast("Modelo excluído.");
+        navigate();
+      } catch (err) {
+        toast(err.message, "error");
+      }
+    });
+  });
 }
 
-function bindTestimonialTemplateForm(original) {
+function bindTestimonialTemplateForm(original, { isNew = false } = {}) {
   const form = $("#template-form");
   if (!form) return;
 
   const htmlField = form.querySelector("[data-template-html]");
   const previewEl = $("#template-live-preview");
+  const varsList = $("#template-vars-list");
+  const escopoSelect = form.querySelector("#template-escopo");
+  const tipoSelect = form.querySelector("#template-tipo");
+  const tipoWrap = form.querySelector("#template-tipo-wrap");
+  const idField = form.querySelector("[name='template_id']");
+  const nomeField = form.querySelector("[name='nome']");
   const templates = getAll("testimonial-templates");
 
-  const updatePreview = () => {
-    const draft = { ...original, html: htmlField?.value || "" };
-    if (previewEl) previewEl.innerHTML = previewTemplate(draft, templates);
+  const getDraft = () => {
+    const escopo = escopoSelect?.value || original?.escopo || "item";
+    const tipo = escopo === "secao" ? null : (tipoSelect?.value || original?.tipo || "texto");
+    return {
+      ...(original || {}),
+      id: idField?.value.trim() || original?.id || "",
+      nome: nomeField?.value.trim() || original?.nome || "",
+      escopo,
+      tipo,
+      html: htmlField?.value || "",
+      ativo: form.ativo?.checked ?? true,
+    };
   };
 
-  htmlField?.addEventListener("input", updatePreview);
+  const syncVarsHelp = () => {
+    const draft = getDraft();
+    if (varsList) varsList.innerHTML = renderVariablesHelp(draft.escopo, draft.tipo);
+  };
+
+  const updatePreview = () => {
+    const draft = getDraft();
+    if (previewEl) previewEl.innerHTML = previewTemplate(draft, templates);
+    syncVarsHelp();
+  };
+
+  const syncTipoVisibility = () => {
+    if (!tipoWrap || !escopoSelect) return;
+    tipoWrap.hidden = escopoSelect.value === "secao";
+  };
+
+  const applyStarterIfEmpty = () => {
+    if (!isNew || !htmlField || htmlField.value.trim()) return;
+    const draft = getDraft();
+    htmlField.value = starterHtmlFor(draft.escopo, draft.tipo || "texto");
+  };
+
+  escopoSelect?.addEventListener("change", () => {
+    syncTipoVisibility();
+    if (isNew && htmlField && !htmlField.dataset.userEdited) {
+      const draft = getDraft();
+      htmlField.value = starterHtmlFor(draft.escopo, draft.tipo || "texto");
+    }
+    updatePreview();
+  });
+
+  tipoSelect?.addEventListener("change", () => {
+    if (isNew && htmlField && !htmlField.dataset.userEdited) {
+      htmlField.value = starterHtmlFor(getDraft().escopo, tipoSelect.value);
+    }
+    updatePreview();
+  });
+
+  nomeField?.addEventListener("input", () => {
+    if (isNew && idField && !idField.dataset.userEdited) {
+      idField.value = slugify(nomeField.value);
+    }
+  });
+
+  idField?.addEventListener("input", () => {
+    idField.dataset.userEdited = "1";
+  });
+
+  htmlField?.addEventListener("input", () => {
+    htmlField.dataset.userEdited = "1";
+    updatePreview();
+  });
+
+  syncTipoVisibility();
+  applyStarterIfEmpty();
+  updatePreview();
 
   $("#cancel-template")?.addEventListener("click", () => {
     const slot = $("#template-form-slot");
@@ -1318,20 +1530,32 @@ function bindTestimonialTemplateForm(original) {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    const draft = getDraft();
     const item = {
-      ...original,
-      nome: form.nome.value.trim(),
-      descricao: form.descricao.value.trim(),
+      ...(original || {}),
+      id: isNew ? slugify(draft.id || draft.nome) : (original?.id || draft.id),
+      nome: draft.nome,
+      descricao: form.descricao?.value.trim() || "",
+      escopo: draft.escopo,
+      tipo: draft.escopo === "secao" ? null : draft.tipo,
       html: form.html.value,
+      variaveis: extractTemplateVariables(form.html.value),
       ativo: form.ativo?.checked ?? true,
     };
-    if (!item.nome || !item.html) {
-      toast("Preencha nome e HTML do modelo", "error");
+
+    if (!item.nome || !item.html || !item.id) {
+      toast("Preencha nome, identificador e HTML do modelo", "error");
       return;
     }
+
+    if (isNew && getById("testimonial-templates", item.id)) {
+      toast("Já existe um modelo com este identificador", "error");
+      return;
+    }
+
     try {
       await upsertItem("testimonial-templates", item);
-      toast("Modelo salvo!");
+      toast(isNew ? "Modelo criado! Páginas de curso republicadas." : "Modelo salvo! Páginas de curso republicadas.");
       const slot = $("#template-form-slot");
       if (slot) slot.innerHTML = "";
       navigate();
@@ -1436,7 +1660,7 @@ function bindEntityForm(collection) {
 
     try {
       await upsertItem(collection, data);
-      toast("Salvo!");
+      toast(collection === "testimonials" ? "Depoimento salvo! Páginas de curso republicadas." : "Salvo!");
       $("#entity-form-panel")?.remove();
       navigate();
     } catch (err) {

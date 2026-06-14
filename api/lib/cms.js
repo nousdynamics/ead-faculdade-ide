@@ -121,9 +121,22 @@ export async function writeCollection(name, data) {
 
   await writeBlob(blobPathname(name), JSON.stringify(data, null, 2) + "\n");
 
+  const { publishCoursePages } = await import("./course-pages.js");
+
   if (name === "courses") {
-    const { publishCoursePages } = await import("./course-pages.js");
     return publishCoursePages(data);
+  }
+
+  if (name === "testimonials" || name === "testimonial-templates") {
+    const all = await readAllCollections();
+    return publishCoursePages(all.courses, {
+      courses: all.courses,
+      professors: all.professors,
+      coordination: all.coordination,
+      testimonials: all.testimonials,
+      testimonialTemplates: all["testimonial-templates"] || [],
+      statuses: all.statuses,
+    });
   }
 }
 

@@ -581,6 +581,30 @@ body.admin-mode {
   line-height: 1.45;
 }
 
+.template-vars-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.8125rem;
+  color: var(--color-muted, var(--muted));
+  line-height: 1.6;
+}
+
+.template-vars-list code {
+  font-size: 0.8125rem;
+}
+
+.empty-hint {
+  margin: 0;
+  color: var(--color-muted, var(--muted));
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.template-preview--course {
+  min-height: 120px;
+}
+
 .panel__body {
   padding: 1.25rem;
 }

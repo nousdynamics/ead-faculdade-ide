@@ -114,25 +114,30 @@ async function readCollection(name) {
 async function writeCollection(name, data) {
   const file = join(CMS_DIR, COLLECTIONS[name]);
   await writeFile(file, JSON.stringify(data, null, 2) + "\n", "utf8");
+
+  const ctx = {};
+  for (const key of Object.keys(COLLECTIONS)) {
+    ctx[key] = key === name ? data : await readCollection(key);
+  }
+  const pageCtx = {
+    courses: ctx.courses,
+    professors: ctx.professors,
+    coordination: ctx.coordination,
+    testimonials: ctx.testimonials,
+    testimonialTemplates: ctx["testimonial-templates"] || [],
+    statuses: ctx.statuses,
+  };
+
   if (name === "courses") {
-    const ctx = {};
-    for (const key of Object.keys(COLLECTIONS)) {
-      ctx[key] = key === name ? data : await readCollection(key);
-    }
-    publishCoursePages(data, {
-      courses: data,
-      professors: ctx.professors,
-      coordination: ctx.coordination,
-      testimonials: ctx.testimonials,
-      testimonialTemplates: ctx["testimonial-templates"] || [],
-      statuses: ctx.statuses,
-    }).catch((err) => console.error("[course-pages]", err));
+    publishCoursePages(data, { ...pageCtx, courses: data }).catch((err) => console.error("[course-pages]", err));
 
     spawn(process.execPath, [join(__dirname, "generate-sitemap.mjs")], {
       cwd: ROOT,
       stdio: "ignore",
       detached: true,
     }).unref();
+  } else if (name === "testimonials" || name === "testimonial-templates") {
+    publishCoursePages(ctx.courses, pageCtx).catch((err) => console.error("[course-pages]", err));
   }
 }
 

@@ -9,6 +9,46 @@ const DEFAULTS = {
   imagem: "item-imagem-padrao",
 };
 
+/** Catálogo de variáveis — referência única para admin e renderização. */
+export const TEMPLATE_VARIABLES = {
+  secao: [
+    { key: "titulo_secao", desc: "Título da seção (configurável no curso)" },
+    { key: "itens", desc: "HTML de todos os depoimentos selecionados" },
+  ],
+  item_texto: [
+    { key: "nome", desc: "Nome do aluno" },
+    { key: "profissao", desc: "Profissão ou formação" },
+    { key: "texto", desc: "Texto do depoimento" },
+    { key: "legenda", desc: "Legenda alternativa" },
+  ],
+  item_video: [
+    { key: "nome", desc: "Nome do aluno" },
+    { key: "profissao", desc: "Profissão ou formação" },
+    { key: "legenda", desc: "Legenda do vídeo" },
+    { key: "video_url", desc: "URL do YouTube" },
+    { key: "video_embed", desc: "Iframe pronto para embed" },
+    { key: "thumbnail", desc: "URL da thumbnail" },
+  ],
+  item_imagem: [
+    { key: "nome", desc: "Nome do aluno" },
+    { key: "legenda", desc: "Legenda da imagem" },
+    { key: "imagem", desc: "URL da imagem" },
+  ],
+};
+
+export function variablesForTemplate(escopo, tipo) {
+  if (escopo === "secao") return TEMPLATE_VARIABLES.secao.map((v) => v.key);
+  const map = { texto: "item_texto", video: "item_video", imagem: "item_imagem" };
+  return (TEMPLATE_VARIABLES[map[tipo]] || TEMPLATE_VARIABLES.item_texto).map((v) => v.key);
+}
+
+export function extractTemplateVariables(html) {
+  if (!html) return [];
+  return [...new Set([...String(html).matchAll(/\{\{(\w+)\}\}/g)].map((m) => m[1]))];
+}
+
+export { DEFAULTS };
+
 export const TESTIMONIAL_SAMPLE = {
   nome: "Michelle dos Santos",
   tipo: "texto",
@@ -135,4 +175,9 @@ export function previewTemplate(template, templates = [], sample = TESTIMONIAL_S
   }
   const sampleByTipo = { ...sample, tipo: template.tipo || "texto" };
   return applyTemplate(template.html, buildTestimonialVars(sampleByTipo, base));
+}
+
+/** Monta a seção completa (mesma lógica da página pública). */
+export function renderTestimonialsSectionPreview(course, ctx, base = "../../") {
+  return renderTestimonialsSection(course, ctx, base);
 }
