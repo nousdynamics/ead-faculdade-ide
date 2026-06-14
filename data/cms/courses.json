@@ -11,9 +11,7 @@
     "status_curso_id": "inscricoes-abertas",
     "coordenacao_ids": ["richardes-caula"],
     "professor_ids": ["camila-pereira"],
-    "depoimento_texto_ids": ["michelle-santos"],
-    "depoimento_video_ids": [],
-    "depoimento_imagem_ids": [],
+    "depoimento_ids": ["michelle-santos"],
     "hero": {
       "texto_botao": "Inscreva-se",
       "link_botao": "https://inscricao.faculdadeide.edu.br/?idps=300&curso=665"

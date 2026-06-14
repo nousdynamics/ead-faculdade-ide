@@ -6,12 +6,16 @@ export const COLLECTIONS = {
   courses: "courses.json",
   professors: "professors.json",
   coordination: "coordination.json",
-  "testimonials-text": "testimonials-text.json",
-  "testimonials-video": "testimonials-video.json",
-  "testimonials-image": "testimonials-image.json",
+  testimonials: "testimonials.json",
   areas: "areas.json",
   "formation-levels": "formation-levels.json",
   statuses: "statuses.json",
+};
+
+const LEGACY_TESTIMONIALS = {
+  "testimonials-text": "texto",
+  "testimonials-video": "video",
+  "testimonials-image": "imagem",
 };
 
 const BLOB_PREFIX = "cms/";
@@ -22,6 +26,10 @@ function blobPathname(name) {
 
 function repoPath(name) {
   return join(process.cwd(), "data", "cms", COLLECTIONS[name]);
+}
+
+function legacyRepoPath(legacyKey) {
+  return join(process.cwd(), "data", "cms", `${legacyKey}.json`);
 }
 
 async function readFromBlob(pathname) {
@@ -45,9 +53,53 @@ async function readFromRepo(name) {
   return JSON.parse(raw);
 }
 
+async function readLegacyTestimonialsFromRepo() {
+  const merged = [];
+
+  for (const [legacyKey, tipo] of Object.entries(LEGACY_TESTIMONIALS)) {
+    try {
+      const raw = await readFile(legacyRepoPath(legacyKey), "utf8");
+      const items = JSON.parse(raw);
+      if (!Array.isArray(items)) continue;
+
+      for (const item of items) {
+        merged.push({
+          ...item,
+          tipo: item.tipo || tipo,
+          video_url: item.video_url || "",
+          thumbnail: item.thumbnail || "",
+          imagem: item.imagem || "",
+          legenda: item.legenda || "",
+          profissao: item.profissao || "",
+          texto: item.texto || "",
+        });
+      }
+    } catch {
+      /* arquivo legado ausente */
+    }
+  }
+
+  return merged;
+}
+
+async function readTestimonialsCollection() {
+  const fromBlob = await readFromBlob(blobPathname("testimonials"));
+  if (fromBlob !== null) return fromBlob;
+
+  try {
+    return await readFromRepo("testimonials");
+  } catch {
+    return readLegacyTestimonialsFromRepo();
+  }
+}
+
 export async function readCollection(name) {
   if (!COLLECTIONS[name]) {
     throw Object.assign(new Error("Coleção não encontrada"), { status: 404 });
+  }
+
+  if (name === "testimonials") {
+    return readTestimonialsCollection();
   }
 
   const fromBlob = await readFromBlob(blobPathname(name));
