@@ -1,5 +1,6 @@
 import { handleCors, jsonResponse } from "../lib/http.js";
 import { requireAuth } from "../lib/auth.js";
+import { getAccountProfile } from "../lib/account.js";
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -11,5 +12,10 @@ export default async function handler(req, res) {
   const session = requireAuth(req, res, jsonResponse);
   if (!session) return;
 
-  return jsonResponse(res, 200, { user: session.user });
+  try {
+    const profile = await getAccountProfile(session.user);
+    return jsonResponse(res, 200, profile);
+  } catch (err) {
+    return jsonResponse(res, err.status || 500, { error: err.message });
+  }
 }

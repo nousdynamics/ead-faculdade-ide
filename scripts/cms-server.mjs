@@ -4,6 +4,11 @@ import { join, extname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { randomBytes, timingSafeEqual } from "node:crypto";
+import {
+  verifyAccountLogin,
+  getAccountProfile,
+  updateAccountProfile,
+} from "../api/lib/account.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -150,7 +155,8 @@ const server = createServer(async (req, res) => {
   if (url.pathname === "/api/auth/login" && req.method === "POST") {
     try {
       const { username, password } = await readBody(req);
-      if (!safeEqual(username, CMS_USER) || !safeEqual(password, CMS_PASSWORD)) {
+      const valid = await verifyAccountLogin(username, password);
+      if (!valid) {
         return send(res, 401, { error: "Usuário ou senha incorretos" });
       }
       const token = createSession(username);
@@ -160,16 +166,47 @@ const server = createServer(async (req, res) => {
     }
   }
 
-  if (url.pathname === "/api/auth/logout" && req.method === "POST") {
-    const token = getBearerToken(req);
-    if (token) sessions.delete(token);
-    return send(res, 200, { ok: true });
+  if (url.pathname === "/api/auth/account") {
+    const session = requireAuth(req, res);
+    if (!session) return;
+
+    try {
+      if (req.method === "GET") {
+        const profile = await getAccountProfile(session.user);
+        return send(res, 200, profile);
+      }
+
+      if (req.method === "PUT") {
+        const body = await readBody(req);
+        const profile = await updateAccountProfile(session.user, {
+          email: body.email,
+          currentPassword: body.currentPassword,
+          newPassword: body.newPassword,
+        });
+        return send(res, 200, profile);
+      }
+
+      return send(res, 405, { error: "Método não permitido" });
+    } catch (err) {
+      return send(res, err.status || 500, { error: err.message });
+    }
   }
 
   if (url.pathname === "/api/auth/me" && req.method === "GET") {
     const session = requireAuth(req, res);
     if (!session) return;
-    return send(res, 200, { user: session.user });
+    try {
+      const profile = await getAccountProfile(session.user);
+      return send(res, 200, profile);
+    } catch (err) {
+      return send(res, err.status || 500, { error: err.message });
+    }
+  }
+
+  if (url.pathname === "/api/auth/logout" && req.method === "POST") {
+    const token = getBearerToken(req);
+    if (token) sessions.delete(token);
+    return send(res, 200, { ok: true });
   }
 
   const apiMatch = url.pathname.match(/^\/api\/cms\/([^/]+)(?:\/([^/]+))?$/);

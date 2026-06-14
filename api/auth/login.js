@@ -10,8 +10,9 @@ export default async function handler(req, res) {
 
   try {
     const { username, password } = await readJsonBody(req);
+    const valid = await verifyCredentials(username, password);
 
-    if (!verifyCredentials(username, password)) {
+    if (!valid) {
       return jsonResponse(res, 401, { error: "Usuário ou senha incorretos" });
     }
 

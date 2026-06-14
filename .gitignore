@@ -5,3 +5,6 @@ _capture/*.png
 
 # Vercel (link local do projeto)
 .vercel
+
+# Conta CMS (hash de senha — gerado em runtime)
+data/cms/account.json

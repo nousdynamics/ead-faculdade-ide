@@ -1,5 +1,6 @@
 const TOKEN_KEY = "cms_session_token";
 const USER_KEY = "cms_session_user";
+const EMAIL_KEY = "cms_session_email";
 
 export function getToken() {
   return sessionStorage.getItem(TOKEN_KEY);
@@ -9,18 +10,24 @@ export function getUser() {
   return sessionStorage.getItem(USER_KEY);
 }
 
+export function getEmail() {
+  return sessionStorage.getItem(EMAIL_KEY) || "";
+}
+
 export function isAuthenticated() {
   return Boolean(getToken());
 }
 
-export function setSession(token, user) {
+export function setSession(token, user, email = "") {
   sessionStorage.setItem(TOKEN_KEY, token);
   sessionStorage.setItem(USER_KEY, user);
+  sessionStorage.setItem(EMAIL_KEY, email || "");
 }
 
 export function clearSession() {
   sessionStorage.removeItem(TOKEN_KEY);
   sessionStorage.removeItem(USER_KEY);
+  sessionStorage.removeItem(EMAIL_KEY);
 }
 
 export function authHeaders(extra = {}) {
@@ -55,6 +62,30 @@ export async function login(username, password) {
   }
 
   setSession(data.token, data.user);
+  try {
+    const profile = await fetchAccountProfile();
+    setSession(data.token, profile.user, profile.email);
+  } catch { /* perfil opcional no login */ }
+  return data;
+}
+
+export async function fetchAccountProfile() {
+  const res = await fetch("/api/auth/account", { headers: authHeaders() });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "Não foi possível carregar a conta");
+  setSession(getToken(), data.user, data.email);
+  return data;
+}
+
+export async function updateAccount(payload) {
+  const res = await fetch("/api/auth/account", {
+    method: "PUT",
+    headers: authHeaders({ "Content-Type": "application/json" }),
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "Não foi possível atualizar a conta");
+  setSession(getToken(), data.user, data.email);
   return data;
 }
 
@@ -71,7 +102,10 @@ export async function verifySession() {
       return false;
     }
     const data = await res.json();
-    if (data.user) sessionStorage.setItem(USER_KEY, data.user);
+    if (data.user) {
+      sessionStorage.setItem(USER_KEY, data.user);
+      sessionStorage.setItem(EMAIL_KEY, data.email || "");
+    }
     return true;
   } catch {
     clearSession();

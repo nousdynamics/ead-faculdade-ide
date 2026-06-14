@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { getBearerToken } from "./http.js";
+import { verifyAccountLogin } from "./account.js";
 
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -14,10 +15,8 @@ export function safeEqual(a, b) {
   return timingSafeEqual(bufA, bufB);
 }
 
-export function verifyCredentials(username, password) {
-  const expectedUser = process.env.CMS_USER || "yeaslest";
-  const expectedPass = process.env.CMS_PASSWORD || "lest1234567";
-  return safeEqual(username, expectedUser) && safeEqual(password, expectedPass);
+export async function verifyCredentials(username, password) {
+  return verifyAccountLogin(username, password);
 }
 
 function encodeBase64Url(value) {

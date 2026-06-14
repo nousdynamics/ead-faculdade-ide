@@ -1,27 +1,31 @@
 import {
   initStore, getAll, getById, lookup, upsertItem, deleteItem,
-  exportAll, uid, slugify, loadFromLocalStorage,
+  uid, slugify, loadFromLocalStorage,
 } from "./store.js";
 import { generateCourseSeo, scoreSeo, renderSeoPreview, escapeHtml, SEO_LIMITS } from "./seo.js";
-import { login, logout, verifySession, isAuthenticated, getUser } from "./auth.js";
+import { login, logout, verifySession, isAuthenticated, getUser, getEmail, fetchAccountProfile, updateAccount } from "./auth.js";
+import { icon, navIcon, statIcon } from "./icons.js";
 
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
 
 const NAV = [
   { group: "Principal" },
-  { route: "dashboard", label: "Dashboard", icon: "◫" },
-  { route: "courses", label: "Cursos", icon: "◈" },
+  { route: "dashboard", label: "Dashboard", icon: "layout-dashboard" },
+  { route: "courses", label: "Cursos", icon: "graduation-cap" },
   { group: "Conteúdo" },
-  { route: "professors", label: "Professores", icon: "◉" },
-  { route: "coordination", label: "Coordenação", icon: "◎" },
-  { route: "testimonials-text", label: "Depoimentos (texto)", icon: "❝" },
-  { route: "testimonials-video", label: "Depoimentos (vídeo)", icon: "▶" },
-  { route: "testimonials-image", label: "Depoimentos (imagem)", icon: "▣" },
+  { route: "professors", label: "Professores", icon: "users" },
+  { route: "coordination", label: "Coordenação", icon: "user-cog" },
+  { route: "testimonials-text", label: "Depoimentos (texto)", icon: "message-square-quote" },
+  { route: "testimonials-video", label: "Depoimentos (vídeo)", icon: "video" },
+  { route: "testimonials-image", label: "Depoimentos (imagem)", icon: "image" },
   { group: "Configurações" },
-  { route: "areas", label: "Áreas", icon: "◫" },
-  { route: "formation-levels", label: "Níveis de formação", icon: "◆" },
-  { route: "statuses", label: "Status do curso", icon: "●" },
+  { route: "areas", label: "Áreas", icon: "layout-grid" },
+  { route: "formation-levels", label: "Níveis de formação", icon: "layers" },
+  { route: "statuses", label: "Status do curso", icon: "circle-dot" },
+  { group: "Conta" },
+  { route: "account", label: "Configurações de conta", icon: "settings" },
+  { action: "logout", label: "Sair", icon: "log-out" },
 ];
 
 let currentRoute = "dashboard";
@@ -52,8 +56,11 @@ function statusBadge(statusId) {
 function renderNav() {
   $("#nav").innerHTML = NAV.map((item) => {
     if (item.group) return `<div class="nav-group">${item.group}</div>`;
+    if (item.action === "logout") {
+      return `<button type="button" class="nav-logout" data-action="logout"><span class="nav-icon">${navIcon(item.icon)}</span><span class="nav-label">${item.label}</span></button>`;
+    }
     const active = currentRoute === item.route || (item.route === "courses" && currentRoute.startsWith("course"));
-    return `<a href="#/${item.route}" class="${active ? "active" : ""}" data-route="${item.route}"><span>${item.icon}</span><span>${item.label}</span></a>`;
+    return `<a href="#/${item.route}" class="${active ? "active" : ""}" data-route="${item.route}"><span class="nav-icon">${navIcon(item.icon)}</span><span class="nav-label">${item.label}</span></a>`;
   }).join("");
 }
 
@@ -83,11 +90,75 @@ async function navigate() {
     else if (route === "areas") content.innerHTML = renderTaxonomy("areas", "Áreas", true);
     else if (route === "formation-levels") content.innerHTML = renderTaxonomy("formation-levels", "Níveis de formação", true);
     else if (route === "statuses") content.innerHTML = renderTaxonomy("statuses", "Status do curso", false);
+    else if (route === "account") {
+      let profile = { user: getUser(), email: getEmail() };
+      try {
+        profile = await fetchAccountProfile();
+      } catch { /* modo offline */ }
+      content.innerHTML = renderAccount(profile);
+    }
     else content.innerHTML = renderDashboard();
     bindEvents();
   } catch (err) {
     content.innerHTML = `<div class="panel"><div class="panel__body empty"><p>Erro ao carregar: ${escapeHtml(err.message)}</p></div></div>`;
   }
+}
+
+function renderAccount(profile) {
+  setPage("Configurações de conta", "Gerencie e-mail, senha e acesso ao painel");
+
+  return `
+    <div class="account-grid">
+      <div class="panel">
+        <div class="panel__head"><h2>${icon("mail", { size: 18 })} E-mail</h2></div>
+        <div class="panel__body">
+          <form id="account-email-form" class="account-form">
+            <div class="form-group">
+              <label for="account-user">Usuário</label>
+              <input id="account-user" value="${escapeHtml(profile.user || getUser())}" disabled>
+            </div>
+            <div class="form-group">
+              <label for="account-email">E-mail</label>
+              <input type="email" id="account-email" name="email" value="${escapeHtml(profile.email || "")}" placeholder="voce@faculdadeide.edu.br" autocomplete="email">
+              <small>Usado para contato e recuperação de acesso da equipe.</small>
+            </div>
+            <p class="account-form__error" id="account-email-error" hidden></p>
+            <button type="submit" class="btn btn--primary">${icon("save", { size: 16 })} Salvar e-mail</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head"><h2>${icon("key-round", { size: 18 })} Alterar senha</h2></div>
+        <div class="panel__body">
+          <form id="account-password-form" class="account-form">
+            <div class="form-group">
+              <label for="account-current-pass">Senha atual</label>
+              <input type="password" id="account-current-pass" name="currentPassword" autocomplete="current-password" required>
+            </div>
+            <div class="form-group">
+              <label for="account-new-pass">Nova senha</label>
+              <input type="password" id="account-new-pass" name="newPassword" minlength="8" autocomplete="new-password" required>
+              <small>Mínimo de 8 caracteres.</small>
+            </div>
+            <div class="form-group">
+              <label for="account-confirm-pass">Confirmar nova senha</label>
+              <input type="password" id="account-confirm-pass" name="confirmPassword" minlength="8" autocomplete="new-password" required>
+            </div>
+            <p class="account-form__error" id="account-password-error" hidden></p>
+            <button type="submit" class="btn btn--primary">${icon("save", { size: 16 })} Atualizar senha</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel panel--danger">
+        <div class="panel__head"><h2>${icon("log-out", { size: 18 })} Encerrar sessão</h2></div>
+        <div class="panel__body">
+          <p class="account-logout__text">Desconecte-se do painel CMS neste dispositivo.</p>
+          <button type="button" class="btn btn--ghost btn--danger-outline" id="btn-logout-account">${icon("log-out", { size: 16 })} Sair do painel</button>
+        </div>
+      </div>
+    </div>`;
 }
 
 function renderDashboard() {
@@ -98,13 +169,25 @@ function renderDashboard() {
 
   return `
     <div class="stats">
-      <div class="stat-card"><div class="stat-card__value">${courses.length}</div><div class="stat-card__label">Cursos cadastrados</div></div>
-      <div class="stat-card"><div class="stat-card__value">${published.length}</div><div class="stat-card__label">Publicados</div></div>
-      <div class="stat-card"><div class="stat-card__value">${open.length}</div><div class="stat-card__label">Inscrições abertas</div></div>
-      <div class="stat-card"><div class="stat-card__value">${getAll("professors").length}</div><div class="stat-card__label">Professores</div></div>
+      <div class="stat-card stat-card--courses">
+        <div class="stat-card__icon">${statIcon("graduation-cap")}</div>
+        <div><div class="stat-card__value">${courses.length}</div><div class="stat-card__label">Cursos cadastrados</div></div>
+      </div>
+      <div class="stat-card stat-card--published">
+        <div class="stat-card__icon">${statIcon("check-circle")}</div>
+        <div><div class="stat-card__value">${published.length}</div><div class="stat-card__label">Publicados</div></div>
+      </div>
+      <div class="stat-card stat-card--open">
+        <div class="stat-card__icon">${statIcon("globe-2")}</div>
+        <div><div class="stat-card__value">${open.length}</div><div class="stat-card__label">Inscrições abertas</div></div>
+      </div>
+      <div class="stat-card stat-card--professors">
+        <div class="stat-card__icon">${statIcon("users")}</div>
+        <div><div class="stat-card__value">${getAll("professors").length}</div><div class="stat-card__label">Professores</div></div>
+      </div>
     </div>
     <div class="panel">
-      <div class="panel__head"><h2>Últimos cursos</h2><a href="#/courses/novo" class="btn btn--primary btn--sm">+ Novo curso</a></div>
+      <div class="panel__head"><h2>${icon("book-open", { size: 18 })} Últimos cursos</h2><a href="#/courses/novo" class="btn btn--primary btn--sm">${icon("plus", { size: 16 })} Novo curso</a></div>
       <div class="panel__body table-wrap">
         ${courses.length ? `<table>
           <thead><tr><th>Curso</th><th>Nível</th><th>Área</th><th>Status</th><th></th></tr></thead>
@@ -113,9 +196,9 @@ function renderDashboard() {
             <td>${escapeHtml(lookup("formation-levels", c.nivel_formacao_id))}</td>
             <td>${escapeHtml(lookup("areas", c.area_id))}</td>
             <td>${statusBadge(c.status_curso_id)}</td>
-            <td><a href="#/courses/${c.id}" class="btn btn--ghost btn--sm">Editar</a></td>
+            <td><a href="#/courses/${c.id}" class="btn btn--ghost btn--sm">${icon("pencil", { size: 14 })} Editar</a></td>
           </tr>`).join("")}</tbody>
-        </table>` : `<div class="empty"><p>Nenhum curso cadastrado.</p><a href="#/courses/novo" class="btn btn--primary">Criar primeiro curso</a></div>`}
+        </table>` : `<div class="empty">${icon("inbox", { size: 40, className: "icon empty__icon" })}<p>Nenhum curso cadastrado.</p><a href="#/courses/novo" class="btn btn--primary">${icon("plus", { size: 16 })} Criar primeiro curso</a></div>`}
       </div>
     </div>`;
 }
@@ -126,8 +209,8 @@ function renderCoursesList() {
   return `
     <div class="panel">
       <div class="panel__head">
-        <h2>Todos os cursos (${courses.length})</h2>
-        <a href="#/courses/novo" class="btn btn--primary">+ Novo curso</a>
+        <h2>${icon("folder-open", { size: 18 })} Todos os cursos (${courses.length})</h2>
+        <a href="#/courses/novo" class="btn btn--primary">${icon("plus", { size: 16 })} Novo curso</a>
       </div>
       <div class="panel__body table-wrap">
         <table>
@@ -140,8 +223,8 @@ function renderCoursesList() {
               <td>${statusBadge(c.status_curso_id)}</td>
               <td>${c.publicado ? '<span class="badge badge--live">Sim</span>' : '<span class="badge badge--draft">Rascunho</span>'}</td>
               <td class="table-actions">
-                <a href="#/courses/${c.id}" class="btn btn--ghost btn--sm">Editar</a>
-                <button type="button" class="btn btn--ghost btn--sm" data-delete-course="${c.id}">Excluir</button>
+                <a href="#/courses/${c.id}" class="btn btn--ghost btn--sm">${icon("pencil", { size: 14 })} Editar</a>
+                <button type="button" class="btn btn--ghost btn--sm btn--danger-outline" data-delete-course="${c.id}">${icon("trash", { size: 14 })} Excluir</button>
               </td>
             </tr>`).join("") || `<tr><td colspan="6" class="empty">Nenhum curso.</td></tr>`}
           </tbody>
@@ -239,8 +322,8 @@ function renderCourseForm(course) {
       </div>
 
       <div class="form-actions">
-        <a href="#/courses" class="btn btn--ghost">Cancelar</a>
-        <button type="submit" class="btn btn--primary">Salvar curso</button>
+        <a href="#/courses" class="btn btn--ghost">${icon("x", { size: 16 })} Cancelar</a>
+        <button type="submit" class="btn btn--primary">${icon("save", { size: 16 })} Salvar curso</button>
       </div>
     </form>`;
 }
@@ -287,13 +370,13 @@ function renderModulesSection(c) {
     <div class="repeater" id="modulos-repeater">
       ${mods.map((m, idx) => moduleItemHtml(m, idx)).join("")}
     </div>
-    <button type="button" class="btn btn--ghost btn--sm" id="add-modulo">+ Adicionar módulo</button>
+    <button type="button" class="btn btn--ghost btn--sm" id="add-modulo">${icon("plus", { size: 14 })} Adicionar módulo</button>
   </div></details>`;
 }
 
 function moduleItemHtml(m, idx) {
   return `<div class="repeater-item" data-modulo-idx="${idx}">
-    <div class="repeater-item__head"><span>Módulo ${idx + 1}</span><button type="button" class="btn btn--ghost btn--sm" data-remove-modulo="${idx}">Remover</button></div>
+    <div class="repeater-item__head"><span>Módulo ${idx + 1}</span><button type="button" class="btn btn--ghost btn--sm btn--danger-outline" data-remove-modulo="${idx}">${icon("trash", { size: 14 })} Remover</button></div>
     <div class="form-group"><label>Título</label><input name="modulo_titulo_${idx}" value="${escapeHtml(m.titulo || "")}"></div>
     <div class="form-group"><label>Itens (um por linha)</label><textarea name="modulo_itens_${idx}" rows="3">${escapeHtml((m.itens || []).join("\n"))}</textarea></div>
   </div>`;
@@ -343,13 +426,13 @@ function renderFaqSection(c) {
     <div class="repeater" id="faq-repeater">
       ${faqs.map((f, idx) => faqItemHtml(f, idx)).join("")}
     </div>
-    <button type="button" class="btn btn--ghost btn--sm" id="add-faq">+ Adicionar pergunta</button>
+    <button type="button" class="btn btn--ghost btn--sm" id="add-faq">${icon("plus", { size: 14 })} Adicionar pergunta</button>
   </div></details>`;
 }
 
 function faqItemHtml(f, idx) {
   return `<div class="repeater-item" data-faq-idx="${idx}">
-    <div class="repeater-item__head"><span>Pergunta ${idx + 1}</span><button type="button" class="btn btn--ghost btn--sm" data-remove-faq="${idx}">Remover</button></div>
+    <div class="repeater-item__head"><span>Pergunta ${idx + 1}</span><button type="button" class="btn btn--ghost btn--sm btn--danger-outline" data-remove-faq="${idx}">${icon("trash", { size: 14 })} Remover</button></div>
     <div class="form-group"><label>Pergunta</label><input name="faq_pergunta_${idx}" value="${escapeHtml(f.pergunta || "")}"></div>
     <div class="form-group"><label>Resposta</label><textarea name="faq_resposta_${idx}" rows="2">${escapeHtml(f.resposta || "")}</textarea></div>
   </div>`;
@@ -362,7 +445,7 @@ function renderSeoSection(c, seo, seoResult) {
       <div>
         <strong>Otimização automática</strong>
         <p style="margin:.25rem 0;font-size:.85rem;color:var(--muted)">Campos gerados com base no título, nível e status. Edite manualmente se necessário.</p>
-        <button type="button" class="btn btn--ghost btn--sm" id="btn-auto-seo">Regenerar SEO</button>
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-auto-seo">${icon("sparkles", { size: 14 })} Regenerar SEO</button>
       </div>
     </div>
     <ul style="margin:0 0 1rem;padding-left:1.25rem;font-size:.85rem;">
@@ -412,15 +495,15 @@ function renderEntityList(collection, title, formRenderer) {
   const items = getAll(collection);
   return `
     <div class="panel">
-      <div class="panel__head"><h2>${title}</h2><button type="button" class="btn btn--primary btn--sm" id="btn-new-entity">+ Adicionar</button></div>
+      <div class="panel__head"><h2>${title}</h2><button type="button" class="btn btn--primary btn--sm" id="btn-new-entity">${icon("plus", { size: 14 })} Adicionar</button></div>
       <div class="panel__body table-wrap">
         <table><thead><tr><th>Nome</th><th>Status</th><th>Ações</th></tr></thead>
         <tbody>${items.map((item) => `<tr>
           <td><strong>${escapeHtml(item.nome)}</strong></td>
           <td>${item.ativo !== false ? '<span class="badge badge--live">Ativo</span>' : '<span class="badge badge--draft">Inativo</span>'}</td>
           <td class="table-actions">
-            <button type="button" class="btn btn--ghost btn--sm" data-edit-entity="${item.id}">Editar</button>
-            <button type="button" class="btn btn--ghost btn--sm" data-delete-entity="${item.id}">Excluir</button>
+            <button type="button" class="btn btn--ghost btn--sm" data-edit-entity="${item.id}">${icon("pencil", { size: 14 })} Editar</button>
+            <button type="button" class="btn btn--ghost btn--sm btn--danger-outline" data-delete-entity="${item.id}">${icon("trash", { size: 14 })} Excluir</button>
           </td>
         </tr>`).join("") || `<tr><td colspan="3" class="empty">Nenhum registro.</td></tr>`}
         </tbody></table>
@@ -494,8 +577,8 @@ function entityFormShell(title, item, fieldsHtml) {
         <form id="entity-form" data-entity-id="${item.id}">
           ${fieldsHtml}
           <div class="form-actions">
-            <button type="button" class="btn btn--ghost" id="cancel-entity">Cancelar</button>
-            <button type="submit" class="btn btn--primary">Salvar</button>
+            <button type="button" class="btn btn--ghost" id="cancel-entity">${icon("x", { size: 16 })} Cancelar</button>
+            <button type="submit" class="btn btn--primary">${icon("save", { size: 16 })} Salvar</button>
           </div>
         </form>
       </div>
@@ -515,8 +598,8 @@ function renderTaxonomy(collection, title, allowAdd) {
           <td><strong>${escapeHtml(item.nome)}</strong></td>
           <td><code>${escapeHtml(item.slug || item.id)}</code></td>
           ${allowAdd ? `<td class="table-actions">
-            <button type="button" class="btn btn--ghost btn--sm" data-edit-tax="${item.id}">Editar</button>
-            <button type="button" class="btn btn--ghost btn--sm" data-delete-tax="${item.id}">Excluir</button>
+            <button type="button" class="btn btn--ghost btn--sm" data-edit-tax="${item.id}">${icon("pencil", { size: 14 })} Editar</button>
+            <button type="button" class="btn btn--ghost btn--sm btn--danger-outline" data-delete-tax="${item.id}">${icon("trash", { size: 14 })} Excluir</button>
           </td>` : `<td>—</td>`}
         </tr>`).join("")}</tbody></table>
         ${allowAdd ? `
@@ -526,7 +609,7 @@ function renderTaxonomy(collection, title, allowAdd) {
               <div class="form-group"><label>Slug</label><input name="slug" placeholder="auto"></div>
             </div>
             <div class="form-actions" style="border:none;margin:0;padding-top:.75rem">
-              <button type="submit" class="btn btn--primary btn--sm">+ Adicionar nível</button>
+              <button type="submit" class="btn btn--primary btn--sm">${icon("plus", { size: 14 })} Adicionar nível</button>
             </div>
           </form>` : ""}
       </div>
@@ -700,6 +783,62 @@ function bindEvents() {
 
   bindEntityEvents();
   bindTaxonomyEvents();
+  bindAccountEvents();
+}
+
+function bindAccountEvents() {
+  if (currentRoute !== "account") return;
+
+  const emailForm = $("#account-email-form");
+  const emailError = $("#account-email-error");
+
+  emailForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    emailError.hidden = true;
+    try {
+      await updateAccount({ email: emailForm.email.value.trim() });
+      toast("E-mail salvo com sucesso!");
+    } catch (err) {
+      emailError.textContent = err.message;
+      emailError.hidden = false;
+    }
+  });
+
+  const passwordForm = $("#account-password-form");
+  const passwordError = $("#account-password-error");
+
+  passwordForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    passwordError.hidden = true;
+
+    const currentPassword = passwordForm.currentPassword.value;
+    const newPassword = passwordForm.newPassword.value;
+    const confirmPassword = passwordForm.confirmPassword.value;
+
+    if (newPassword !== confirmPassword) {
+      passwordError.textContent = "As senhas não coincidem.";
+      passwordError.hidden = false;
+      return;
+    }
+
+    try {
+      await updateAccount({ currentPassword, newPassword });
+      passwordForm.reset();
+      toast("Senha atualizada com sucesso!");
+    } catch (err) {
+      passwordError.textContent = err.message;
+      passwordError.hidden = false;
+    }
+  });
+
+  $("#btn-logout-account")?.addEventListener("click", handleLogout);
+}
+
+async function handleLogout() {
+  await logout();
+  showLogin();
+  $("#login-form")?.reset();
+  location.hash = "";
 }
 
 function bindEntityEvents() {
@@ -812,11 +951,6 @@ function showApp() {
   document.body.classList.add("admin-mode");
   $("#login-screen").hidden = true;
   $("#app").hidden = false;
-  const user = getUser();
-  if (user) {
-    const sub = $("#page-subtitle");
-    if (sub) sub.textContent = `Olá, ${user} — gerencie cursos e conteúdos do site`;
-  }
 }
 
 async function boot() {
@@ -841,10 +975,11 @@ async function boot() {
     }
   });
 
-  $("#btn-logout")?.addEventListener("click", async () => {
-    await logout();
-    showLogin();
-    loginForm?.reset();
+  $("#nav")?.addEventListener("click", async (e) => {
+    const logoutBtn = e.target.closest("[data-action='logout']");
+    if (!logoutBtn) return;
+    e.preventDefault();
+    await handleLogout();
   });
 
   window.addEventListener("cms:unauthorized", () => {
@@ -866,21 +1001,11 @@ let appStarted = false;
 async function startApp() {
   if (!appStarted) {
     appStarted = true;
-    $("#btn-export").addEventListener("click", exportAll);
     window.addEventListener("hashchange", navigate);
   }
 
   loadFromLocalStorage();
-  const result = await initStore();
-  const sync = $("#sync-status");
-  if (result.source === "api") {
-    sync.textContent = "● Conectado — alterações salvas na Vercel";
-    sync.style.color = "var(--success)";
-  } else {
-    sync.textContent = "○ Modo leitura — use npm run cms localmente para editar offline";
-    sync.style.color = "var(--muted)";
-  }
-
+  await initStore();
   navigate();
 }
 

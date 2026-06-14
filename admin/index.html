@@ -21,9 +21,9 @@
         <p class="login-brand__tag">Painel administrativo</p>
         <h2 class="login-brand__title">Gerencie cursos, professores e conteúdos do site EAD.</h2>
         <ul class="login-brand__list">
-          <li>Cursos e pós-graduações</li>
-          <li>Professores e coordenação</li>
-          <li>Depoimentos e SEO</li>
+          <li><svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>Cursos e pós-graduações</li>
+          <li><svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Professores e coordenação</li>
+          <li><svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>Depoimentos e SEO</li>
         </ul>
       </aside>
 
@@ -65,7 +65,10 @@
       </div>
       <nav class="admin__nav" id="nav"></nav>
       <div class="admin__sidebar-foot">
-        <a href="/" target="_blank" rel="noopener">Ver site ↗</a>
+        <a href="/" target="_blank" rel="noopener" class="sidebar-link-out">
+          <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+          <span class="sidebar-link-text">Ver site</span>
+        </a>
       </div>
     </aside>
 
@@ -74,11 +77,6 @@
         <div>
           <h1 id="page-title">Dashboard</h1>
           <p id="page-subtitle">Gerencie cursos e conteúdos do site</p>
-        </div>
-        <div class="admin__topbar-actions">
-          <span class="admin__sync" id="sync-status">—</span>
-          <button type="button" class="btn btn--ghost" id="btn-export">Exportar JSON</button>
-          <button type="button" class="btn btn--ghost" id="btn-logout">Sair</button>
         </div>
       </header>
       <main class="admin__content" id="content"></main>

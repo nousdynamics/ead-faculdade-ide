@@ -4,10 +4,11 @@
    ============================================================ */
 
 :root {
-  --admin-sidebar-w: 240px;
-  --admin-bg: #f4f6f9;
+  --admin-sidebar-w: 260px;
+  --admin-bg: #eef1f6;
   --admin-danger: #dc2626;
   --admin-success: #059669;
+  --admin-sidebar-bg: linear-gradient(180deg, #2b325c 0%, #20264a 100%);
 }
 
 /* hidden deve vencer display:flex do painel */
@@ -97,22 +98,22 @@ body.admin-mode {
 }
 
 .login-brand__list li {
-  position: relative;
-  padding-left: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
   font-size: 0.95rem;
   font-weight: var(--fw-body);
   color: rgba(255, 255, 255, 0.82);
 }
 
+.login-brand__list li .icon {
+  flex-shrink: 0;
+  color: var(--color-accent);
+  opacity: 0.95;
+}
+
 .login-brand__list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.55em;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-accent);
+  display: none;
 }
 
 .login-card {
@@ -228,6 +229,20 @@ body.admin-mode {
   color: var(--color-primary);
 }
 
+/* ---- Icons (Lucide) ---- */
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
 /* ---- Admin shell ---- */
 .admin {
   display: flex;
@@ -238,13 +253,14 @@ body.admin-mode {
 
 .admin__sidebar {
   width: var(--admin-sidebar-w);
-  background: var(--color-primary);
+  background: var(--admin-sidebar-bg);
   color: var(--color-white);
   display: flex;
   flex-direction: column;
   position: fixed;
   inset: 0 auto 0 0;
   z-index: 10;
+  box-shadow: 4px 0 24px rgba(32, 38, 74, 0.12);
 }
 
 .admin__brand {
@@ -275,31 +291,78 @@ body.admin-mode {
 .admin__nav a {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.65rem 1rem;
-  color: rgba(255, 255, 255, 0.75);
+  gap: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  margin: 0.15rem 0.65rem;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.78);
   font-size: 0.875rem;
   font-weight: var(--fw-body);
-  border-left: 3px solid transparent;
-  transition: background 0.15s, color 0.15s;
+  border-left: none;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
 }
 
 .admin__nav a:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--color-white);
 }
 
 .admin__nav a.active {
-  background: rgba(19, 166, 180, 0.15);
+  background: rgba(19, 166, 180, 0.2);
   color: var(--color-white);
-  border-left-color: var(--color-accent);
+  box-shadow: inset 0 0 0 1px rgba(19, 166, 180, 0.35);
+}
+
+.nav-icon {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.admin__nav a.active .nav-icon {
+  background: rgba(19, 166, 180, 0.28);
+  color: #b8eef2;
+}
+
+.nav-logout {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: calc(100% - 1.3rem);
+  margin: 0.15rem 0.65rem;
+  padding: 0.55rem 0.85rem;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255, 180, 180, 0.9);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: var(--fw-body);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-logout:hover {
+  background: rgba(220, 38, 38, 0.15);
+  color: #fecaca;
+}
+
+.nav-logout .nav-icon {
+  background: rgba(220, 38, 38, 0.12);
 }
 
 .admin__nav .nav-group {
-  padding: 0.75rem 1rem 0.25rem;
+  padding: 1rem 1.25rem 0.35rem;
   font-size: 0.65rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   opacity: 0.45;
   font-weight: var(--fw-body);
 }
@@ -310,9 +373,17 @@ body.admin-mode {
 }
 
 .admin__sidebar-foot a {
-  color: var(--color-accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgba(184, 238, 242, 0.95);
   font-size: 0.8rem;
   font-weight: var(--fw-body);
+  transition: color 0.15s;
+}
+
+.admin__sidebar-foot a:hover {
+  color: var(--color-white);
 }
 
 .admin__main {
@@ -324,9 +395,10 @@ body.admin-mode {
 }
 
 .admin__topbar {
-  background: var(--color-white);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--color-border);
-  padding: 1.25rem 2rem;
+  padding: 1.1rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -349,17 +421,6 @@ body.admin-mode {
   color: var(--color-muted);
 }
 
-.admin__topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.admin__sync {
-  font-size: 0.75rem;
-  color: var(--color-muted);
-}
-
 .admin__content {
   padding: 1.5rem 2rem 3rem;
   flex: 1;
@@ -374,18 +435,43 @@ body.admin-mode {
 }
 
 .stat-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
   background: var(--color-white);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   padding: 1.25rem;
   box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-card--courses .stat-card__icon { background: rgba(19, 166, 180, 0.12); color: var(--color-accent-dark); }
+.stat-card--published .stat-card__icon { background: rgba(5, 150, 105, 0.12); color: var(--admin-success); }
+.stat-card--open .stat-card__icon { background: rgba(43, 50, 92, 0.1); color: var(--color-primary); }
+.stat-card--professors .stat-card__icon { background: rgba(19, 166, 180, 0.08); color: var(--color-accent); }
 
 .stat-card__value {
   font-family: var(--font-heading);
-  font-size: 1.75rem;
+  font-size: 1.85rem;
   font-weight: var(--fw-title);
   color: var(--color-primary);
+  line-height: 1.1;
 }
 
 .stat-card__label {
@@ -397,9 +483,16 @@ body.admin-mode {
 .panel {
   background: var(--color-white);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+
+.panel__head h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .panel__head {
@@ -506,6 +599,16 @@ tr:hover td {
 
 .admin .btn--ghost:hover {
   background: #f9fafb;
+}
+
+.admin .btn--danger-outline {
+  color: var(--admin-danger);
+  border-color: rgba(220, 38, 38, 0.25);
+}
+
+.admin .btn--danger-outline:hover {
+  background: rgba(220, 38, 38, 0.06);
+  border-color: rgba(220, 38, 38, 0.35);
 }
 
 .admin .btn--danger {
@@ -766,13 +869,57 @@ tr:hover td {
 }
 
 .empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   padding: 3rem 1rem;
   color: var(--color-muted);
 }
 
+.empty__icon {
+  color: var(--color-border);
+  margin-bottom: 0.75rem;
+}
+
 .empty p {
   margin: 0.5rem 0 1rem;
+}
+
+.account-grid {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 720px;
+}
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.account-form__error {
+  color: var(--admin-danger);
+  font-size: 0.8rem;
+  margin: 0.25rem 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(220, 38, 38, 0.08);
+  border-radius: var(--radius-sm);
+}
+
+.account-logout__text {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.panel--danger {
+  border-color: rgba(220, 38, 38, 0.2);
+}
+
+.panel--danger .panel__head {
+  background: rgba(220, 38, 38, 0.04);
 }
 
 /* ---- Responsive ---- */
@@ -812,9 +959,30 @@ tr:hover td {
   }
 
   .admin__brand span,
-  .admin__nav a span:not(:first-child),
-  .admin__sidebar-foot {
+  .admin__nav .nav-label,
+  .sidebar-link-text {
     display: none;
+  }
+
+  .nav-logout {
+    width: calc(100% - 0.7rem);
+    justify-content: center;
+  }
+
+  .admin__sidebar-foot {
+    display: block;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+  }
+
+  .sidebar-link-out {
+    justify-content: center;
+  }
+
+  .admin__nav a {
+    justify-content: center;
+    padding-inline: 0.5rem;
+    margin-inline: 0.35rem;
   }
 
   .admin__brand {
