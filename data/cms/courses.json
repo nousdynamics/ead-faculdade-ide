@@ -26,7 +26,7 @@
       "ultimas_vagas": false,
       "confirmado": false,
       "pre_inscricao": false,
-      "video": ""
+      "video": "https://www.youtube.com/watch?v=XHOmBV4js_E"
     },
     "sobre": {
       "tag": "Conheça o curso",
@@ -36,12 +36,10 @@
       ]
     },
     "modulos": [
-      { "titulo": "Módulo 1", "itens": ["Fundamentos do aleitamento materno e banco de leite humano;", "Manejo clínico da amamentação e aleitamento materno I;"] },
-      { "titulo": "Módulo 2", "itens": ["Aleitamento em situações especiais, coleta e doação de leite humano;", "Condições anatômicas e fisiológicas orais do recém-nascido sob a perspectiva da odontologia;"] },
-      { "titulo": "Módulo 3", "itens": ["Ética, biossegurança e prática profissional;", "Farmacologia e toxicologia aplicada ao aleitamento materno;"] },
-      { "titulo": "Módulo 4", "itens": ["Manejo clínico da amamentação e aleitamento materno II;", "Aspectos nutricionais, psicológicos e socioculturais no aleitamento materno e amamentação;"] },
-      { "titulo": "Módulo 5", "itens": ["Aspectos fisiológicos e fisiopatológicos do recém-nascido e agravantes no aleitamento materno e amamentação;", "Genética, Bioinformática e Amamentação;"] },
-      { "titulo": "Módulo 6", "itens": ["Processamento e controle de qualidade do leite humano;", "Distribuição e uso terapêutico do leite humano;"] }
+      { "titulo": "MÓDULO 1", "itens": ["Fundamentos do aleitamento materno e banco de leite humano;", "Manejo clínico da amamentação e aleitamento materno I;", "Aleitamento em situações especiais, coleta e doação de leite humano;", "Condições anatômicas e fisiológicas orais do recém-nascido sob a perspectiva da odontologia;", "Ética, biossegurança e prática profissional."] },
+      { "titulo": "MÓDULO 2", "itens": ["Farmacologia e toxicologia aplicada ao aleitamento materno.", "Manejo clínico da amamentação e aleitamento materno II.", "Aspectos nutricionais, psicológicos e socioculturais no aleitamento materno e amamentação;", "Aspectos fisiológicos e fisiopatológicos do recém-nascido e agravantes no aleitamento materno e amamentação."] },
+      { "titulo": "MÓDULO 3", "itens": ["Genética, Bioinformática e Amamentação;", "Processamento e controle de qualidade do leite humano;", "Distribuição e uso terapêutico do leite humano;", "Funcionamento e estrutura dos bancos de leite humano."] },
+      { "titulo": "MÓDULO 4", "itens": ["Gestão e políticas públicas para bancos de leite humano;", "Empreendedorismo e gestão de negócios em consultoria materna;", "Utilização de tecnologias terapêuticas, patologias mamárias puerperais e no recém-nascido;", "Pesquisa clínica no aleitamento materno, amamentação e banco de leite humano;", "Aula globalizada: cases acerca do aleitamento materno, amamentação, puerpério da lactente e lactante, estudos sobre os Bancos de Leite Humano no Brasil."] }
     ],
     "matriz_curricular": "",
     "destaques": "",

@@ -1,0 +1,141 @@
+.elementor-kit-5{--e-global-color-primary:#2B325C;--e-global-color-secondary:#D3DBE1;--e-global-color-text:#2B325C;--e-global-color-accent:#13A6B4;--e-global-typography-primary-font-family:"Gotham";--e-global-typography-primary-font-weight:600;--e-global-typography-secondary-font-family:"Gotham";--e-global-typography-secondary-font-weight:400;--e-global-typography-text-font-family:"Gotham";--e-global-typography-text-font-weight:400;--e-global-typography-accent-font-family:"Gotham";--e-global-typography-accent-font-weight:500;color:var( --e-global-color-primary );font-family:"Gotham", Sans-serif;}.elementor-kit-5 e-page-transition{background-color:#FFBC7D;}.elementor-kit-5 a{color:var( --e-global-color-primary );font-family:"Gotham", Sans-serif;}.elementor-kit-5 h1{color:var( --e-global-color-primary );font-family:"Gotham", Sans-serif;}.elementor-kit-5 h2{color:var( --e-global-color-primary );font-family:"Gotham", Sans-serif;}.elementor-kit-5 h3{color:var( --e-global-color-primary );font-family:"Gotham", Sans-serif;}.elementor-kit-5 h4{color:var( --e-global-color-primary );font-family:"Gotham", Sans-serif;}.elementor-kit-5 h5{color:var( --e-global-color-primary );font-family:"Gotham", Sans-serif;}.elementor-kit-5 h6{color:var( --e-global-color-primary );font-family:"Gotham", Sans-serif;}.elementor-section.elementor-section-boxed > .elementor-container{max-width:1140px;}.e-con{--container-max-width:1140px;--container-default-padding-top:0px;--container-default-padding-right:0px;--container-default-padding-bottom:0px;--container-default-padding-left:0px;}.elementor-widget:not(:last-child){margin-block-end:0px;}.elementor-element{--widgets-spacing:0px 0px;--widgets-spacing-row:0px;--widgets-spacing-column:0px;}{}h1.entry-title{display:var(--page-title-display);}.site-header .site-branding{flex-direction:column;align-items:stretch;}.site-header{padding-inline-end:0px;padding-inline-start:0px;}.site-footer .site-branding{flex-direction:column;align-items:stretch;}@media(max-width:1024px){.elementor-section.elementor-section-boxed > .elementor-container{max-width:1024px;}.e-con{--container-max-width:1024px;}}@media(max-width:767px){.elementor-section.elementor-section-boxed > .elementor-container{max-width:767px;}.e-con{--container-max-width:767px;}}
+/* Start custom CSS */body::-webkit-scrollbar {  
+width: 10px;  
+}  
+  
+body::-webkit-scrollbar-track {  
+background: #ffffff;  
+}  
+  
+body::-webkit-scrollbar-thumb {  
+background-color: #2B325C;
+border-radius: 10px;  
+border: 2px solid #ffffff;  
+  
+}
+
+
+
+p, h1, h2, h3, h4, h5{
+	text-wrap: balance;
+}
+
+p{
+margin-bottom: 0px;
+}
+svg {  
+height: unset !important;  
+}/* End custom CSS */
+/* Start Custom Fonts CSS */@font-face {
+	font-family: 'Gotham';
+	font-style: normal;
+	font-weight: 100;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Thin.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: normal;
+	font-weight: 200;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-XLight.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: normal;
+	font-weight: 300;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Light.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: normal;
+	font-weight: 400;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Book.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: normal;
+	font-weight: 500;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Medium.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: normal;
+	font-weight: 600;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Bold.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: normal;
+	font-weight: 700;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Black.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: normal;
+	font-weight: 800;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-Ultra.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: italic;
+	font-weight: 100;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-ThinItalic.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: italic;
+	font-weight: 200;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-XLightItalic.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: italic;
+	font-weight: 300;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-LightItalic.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: italic;
+	font-weight: 400;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-BookItalic.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: italic;
+	font-weight: 500;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-MediumItalic.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: italic;
+	font-weight: 600;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-BoldItalic.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: italic;
+	font-weight: 700;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-BlackItalic.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Gotham';
+	font-style: italic;
+	font-weight: 800;
+	font-display: auto;
+	src: url('https://ead.faculdadeide.edu.br/wp-content/uploads/2024/08/Gotham-UltraItalic.ttf') format('truetype');
+}
+/* End Custom Fonts CSS */
