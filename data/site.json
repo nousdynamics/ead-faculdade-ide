@@ -1,0 +1,27 @@
+{
+  "name": "Ead Faculdade IDE",
+  "legalName": "Instituto de Desenvolvimento Educacional",
+  "url": "https://ead.faculdadeide.edu.br",
+  "logo": "/assets/img/LOGO-IDE-ONLINE-02.svg",
+  "favicon": "/assets/img/FAV-ICON-3.svg",
+  "locale": "pt_BR",
+  "language": "pt-BR",
+  "description": "Pós-graduação e graduação EAD com aulas ao vivo, corpo docente de referência e certificado reconhecido pelo MEC.",
+  "telephone": "+55-800-081-3256",
+  "telephoneLocal": "+55-81-3465-0002",
+  "address": {
+    "streetAddress": "Alferes José Pedro de Brito, 50",
+    "addressLocality": "Aracaju",
+    "addressRegion": "SE",
+    "postalCode": "49030-220",
+    "addressCountry": "BR"
+  },
+  "sameAs": [
+    "https://www.instagram.com/faculdadeide",
+    "https://www.facebook.com/faculdadeide",
+    "https://twitter.com/faculdadeide",
+    "https://www.faculdadeide.edu.br"
+  ],
+  "privacyPolicy": "https://ead.faculdadeide.edu.br/?page_id=3",
+  "termsOfUse": "https://ead.faculdadeide.edu.br/?page_id=773"
+}

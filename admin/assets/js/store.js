@@ -11,15 +11,15 @@ const COLLECTIONS = [
 ];
 
 const FILE_MAP = {
-  courses: "../data/cms/courses.json",
-  professors: "../data/cms/professors.json",
-  coordination: "../data/cms/coordination.json",
-  "testimonials-text": "../data/cms/testimonials-text.json",
-  "testimonials-video": "../data/cms/testimonials-video.json",
-  "testimonials-image": "../data/cms/testimonials-image.json",
-  areas: "../data/cms/areas.json",
-  "formation-levels": "../data/cms/formation-levels.json",
-  statuses: "../data/cms/statuses.json",
+  courses: "/data/cms/courses.json",
+  professors: "/data/cms/professors.json",
+  coordination: "/data/cms/coordination.json",
+  "testimonials-text": "/data/cms/testimonials-text.json",
+  "testimonials-video": "/data/cms/testimonials-video.json",
+  "testimonials-image": "/data/cms/testimonials-image.json",
+  areas: "/data/cms/areas.json",
+  "formation-levels": "/data/cms/formation-levels.json",
+  statuses: "/data/cms/statuses.json",
 };
 
 let cache = {};

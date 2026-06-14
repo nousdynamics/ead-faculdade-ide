@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 import { readFile, writeFile, stat } from "node:fs/promises";
 import { join, extname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawn } from "node:child_process";
 import { randomBytes, timingSafeEqual } from "node:crypto";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -107,6 +108,13 @@ async function readCollection(name) {
 async function writeCollection(name, data) {
   const file = join(CMS_DIR, COLLECTIONS[name]);
   await writeFile(file, JSON.stringify(data, null, 2) + "\n", "utf8");
+  if (name === "courses") {
+    spawn(process.execPath, [join(__dirname, "generate-sitemap.mjs")], {
+      cwd: ROOT,
+      stdio: "ignore",
+      detached: true,
+    }).unref();
+  }
 }
 
 async function serveStatic(req, res) {

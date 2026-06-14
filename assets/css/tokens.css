@@ -21,8 +21,16 @@
   --color-footer-rule: #D8D8D8;
 
   /* ---- Tipografia ---- */
-  --font-primary: "Gotham", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                  "Helvetica Neue", Arial, sans-serif;
+  /* Títulos: Gotham, peso máx. 400 | Corpo/UI: Inter, peso 500 */
+  --font-heading: "Gotham", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  --font-primary: var(--font-body);
+
+  --fw-title: 400;
+  --fw-body: 500;
+
+  /* Aliases legados */
   --fw-thin: 100;
   --fw-light: 300;
   --fw-book: 400;

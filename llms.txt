@@ -1,0 +1,25 @@
+# Ead Faculdade IDE
+
+> Plataforma de pós-graduação e cursos EAD da Faculdade IDE, instituição credenciada pelo MEC.
+
+## Páginas prioritárias
+
+- [Home — catálogo de cursos EAD](https://ead.faculdadeide.edu.br/)
+- [Pós-Graduação em Aleitamento Materno e Banco de Leite Humano](https://ead.faculdadeide.edu.br/pos-graduacao/aleitamento-materno-banco-leite-humano)
+
+## Institucional
+
+- [Faculdade IDE](https://www.faculdadeide.edu.br)
+- [Fale conosco](https://www.faculdadeide.edu.br/fale-conosco)
+- [Política de privacidade](https://ead.faculdadeide.edu.br/?page_id=3)
+- [Termos de uso](https://ead.faculdadeide.edu.br/?page_id=773)
+
+## Contato
+
+- Telefone: 0800 081 3256
+- Endereço: Alferes José Pedro de Brito, 50 — Farolândia, Aracaju/SE
+
+## Crawlers
+
+- Sitemap: https://ead.faculdadeide.edu.br/sitemap.xml
+- Área administrativa (`/admin/`) não deve ser indexada.

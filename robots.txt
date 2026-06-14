@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /data/
+Disallow: /api/
+Disallow: /scripts/
+
+User-agent: GPTBot
+Allow: /
+Disallow: /admin/
+Disallow: /data/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin/
+
+Sitemap: https://ead.faculdadeide.edu.br/sitemap.xml

@@ -2,7 +2,7 @@ import {
   initStore, getAll, getById, lookup, upsertItem, deleteItem,
   exportAll, uid, slugify, loadFromLocalStorage,
 } from "./store.js";
-import { generateCourseSeo, scoreSeo, renderSeoPreview, escapeHtml } from "./seo.js";
+import { generateCourseSeo, scoreSeo, renderSeoPreview, escapeHtml, SEO_LIMITS } from "./seo.js";
 import { login, logout, verifySession, isAuthenticated, getUser } from "./auth.js";
 
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
@@ -369,8 +369,8 @@ function renderSeoSection(c, seo, seoResult) {
       ${seoResult.checks.map((ch) => `<li style="color:${ch.ok ? "var(--success)" : "var(--muted)"}">${escapeHtml(ch.text)}</li>`).join("")}
     </ul>
     <div class="form-grid">
-      <div class="form-group form-group--full"><label>Meta Title</label><input name="seo_title" value="${escapeHtml(seo.title || "")}" maxlength="60"><small><span id="seo-title-len">${(seo.title || "").length}</span>/60</small></div>
-      <div class="form-group form-group--full"><label>Meta Description</label><textarea name="seo_description" maxlength="160" rows="2">${escapeHtml(seo.description || "")}</textarea><small><span id="seo-desc-len">${(seo.description || "").length}</span>/160</small></div>
+      <div class="form-group form-group--full"><label>Meta Title</label><input name="seo_title" value="${escapeHtml(seo.title || "")}" maxlength="60"><small>${SEO_LIMITS.titleMin}–${SEO_LIMITS.titleMax} caracteres · <span id="seo-title-len">${(seo.title || "").length}</span>/60</small></div>
+      <div class="form-group form-group--full"><label>Meta Description</label><textarea name="seo_description" maxlength="160" rows="2">${escapeHtml(seo.description || "")}</textarea><small>${SEO_LIMITS.descriptionMin}–${SEO_LIMITS.descriptionMax} caracteres · <span id="seo-desc-len">${(seo.description || "").length}</span>/160</small></div>
       <div class="form-group"><label>Focus Keyword</label><input name="seo_focus" value="${escapeHtml(seo.focus_keyword || "")}"></div>
       <div class="form-group"><label>Keywords (vírgula)</label><input name="seo_keywords" value="${escapeHtml((seo.keywords || []).join(", "))}"></div>
       <div class="form-group form-group--full"><label>URL Canônica</label><input name="seo_canonical" value="${escapeHtml(seo.canonical || "")}"></div>
@@ -816,6 +816,10 @@ function showApp() {
 }
 
 async function boot() {
+  if (location.search) {
+    history.replaceState(null, "", location.pathname);
+  }
+
   const loginForm = $("#login-form");
   const loginError = $("#login-error");
 

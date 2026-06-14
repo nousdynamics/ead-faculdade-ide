@@ -13,7 +13,7 @@
 .course-hero__tag {
   display: inline-block;
   font-size: .78rem;
-  font-weight: var(--fw-bold);
+  font-weight: var(--fw-body);
   color: var(--color-accent);
   border: 1px solid var(--color-accent);
   border-radius: var(--radius-pill);
@@ -23,11 +23,13 @@
   margin-bottom: 1.25rem;
 }
 .course-hero__title {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-title);
   font-size: clamp(1.9rem, 3.2vw, 2.8rem);
   margin-bottom: 1rem;
 }
-.course-hero__subtitle { color: var(--color-muted); font-size: 1.1rem; margin-bottom: 1.5rem; max-width: 46ch; }
-.course-hero__meta { color: var(--color-primary); font-weight: var(--fw-medium); font-size: .95rem; margin-bottom: 1.75rem; }
+.course-hero__subtitle { color: var(--color-muted); font-size: 1.1rem; margin-bottom: 1.5rem; max-width: 46ch; font-weight: var(--fw-body); }
+.course-hero__meta { color: var(--color-primary); font-weight: var(--fw-body); font-size: .95rem; margin-bottom: 1.75rem; }
 .course-hero__media { position: relative; }
 .course-hero__media img { width: 100%; border-radius: var(--radius-lg); object-fit: cover; }
 .course-hero__badge {
@@ -36,7 +38,7 @@
   background: #2e9e5b;
   color: #fff;
   font-size: .75rem;
-  font-weight: var(--fw-bold);
+  font-weight: var(--fw-body);
   text-transform: uppercase;
   letter-spacing: .04em;
   padding: .4rem 1rem;
@@ -57,7 +59,7 @@
   text-align: center;
   padding: 1.1rem 1rem;
   font-size: .82rem;
-  font-weight: var(--fw-bold);
+  font-weight: var(--fw-body);
   text-transform: uppercase;
   letter-spacing: .03em;
 }
@@ -72,11 +74,11 @@
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-pill);
   padding: .5rem 1.4rem;
-  font-weight: var(--fw-medium);
+  font-weight: var(--fw-body);
   color: var(--color-primary);
   margin-bottom: 1.5rem;
 }
-.course-about__text p { color: #444; margin-bottom: 1rem; }
+.course-about__text p { color: #444; margin-bottom: 1rem; font-weight: var(--fw-body); }
 .coord-card {
   background: #fff;
   border: 1px solid var(--color-border);
@@ -86,14 +88,14 @@
   text-align: center;
 }
 .coord-card__photo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem; }
-.coord-card__name { font-weight: var(--fw-bold); color: var(--color-primary); font-size: 1.1rem; }
-.coord-card__role { color: var(--color-muted); font-size: .85rem; margin-top: .5rem; }
+.coord-card__name { font-family: var(--font-heading); font-weight: var(--fw-title); color: var(--color-primary); font-size: 1.1rem; }
+.coord-card__role { color: var(--color-muted); font-size: .85rem; margin-top: .5rem; font-weight: var(--fw-body); }
 .coord-card__cv { margin-top: 1rem; text-align: left; }
 .coord-card__cv > summary {
   list-style: none;
   cursor: pointer;
   color: var(--color-accent);
-  font-weight: var(--fw-medium);
+  font-weight: var(--fw-body);
   font-size: .9rem;
   text-align: center;
 }
@@ -116,7 +118,8 @@
   list-style: none;
   cursor: pointer;
   padding: 1rem 1.25rem;
-  font-weight: var(--fw-bold);
+  font-family: var(--font-heading);
+  font-weight: var(--fw-title);
   color: var(--color-primary);
   display: flex;
   align-items: center;
@@ -181,7 +184,8 @@
   inset: auto 0 0 0;
   background: linear-gradient(transparent, rgba(43,50,92,.92));
   color: #fff;
-  font-weight: var(--fw-bold);
+  font-family: var(--font-body);
+  font-weight: var(--fw-body);
   font-size: .85rem;
   text-align: center;
   padding: 2.5rem .75rem .9rem;
@@ -199,7 +203,7 @@
   box-shadow: var(--shadow-sm);
   padding: 2rem;
 }
-.course-quote__name { font-weight: var(--fw-bold); color: var(--color-primary); }
+.course-quote__name { font-family: var(--font-heading); font-weight: var(--fw-title); color: var(--color-primary); }
 .course-quote__role { color: var(--color-accent); font-size: .85rem; margin-bottom: 1rem; }
 .course-quote__text { color: #555; line-height: 1.6; }
 
@@ -218,7 +222,7 @@
   text-align: center;
 }
 .price-card__label { font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; opacity: .85; }
-.price-card__value { font-size: 2.4rem; font-weight: var(--fw-black); color: #fff; margin: .5rem 0; }
+.price-card__value { font-family: var(--font-heading); font-size: 2.4rem; font-weight: var(--fw-title); color: #fff; margin: .5rem 0; }
 .price-card__fee { opacity: .9; margin-bottom: 1.5rem; }
 .price-card .btn { width: 100%; }
 .price-card__links { margin-top: 1.25rem; font-size: .85rem; }

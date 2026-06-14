@@ -1,14 +1,31 @@
+/**
+ * Helpers SEO — Faculdade IDE EAD
+ * Usado pelo painel CMS; referência alinhada à skill seo-profissional.
+ */
+export const SEO_LIMITS = {
+  titleMin: 30,
+  titleMax: 60,
+  descriptionMin: 140,
+  descriptionMax: 160,
+};
+
+export function absoluteUrl(path, base = "https://ead.faculdadeide.edu.br") {
+  if (!path) return base;
+  if (/^https?:\/\//.test(path)) return path;
+  return `${base.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
+}
+
 export function generateCourseSeo(course, nivelNome, areaNome, statusNome) {
   const titulo = course.titulo || "Curso";
   const nivel = nivelNome || "Pós-Graduação";
   const modalidade = course.informacoes?.modalidade || "100% EAD";
   const inicio = course.informacoes?.inicio_previsto;
 
-  const title = `${titulo} - Ead Faculdade IDE`.slice(0, 60);
-  let description = `${nivel} ${modalidade} em ${titulo} — Faculdade IDE.`;
+  const title = `${titulo} | Pós-Graduação EAD — Faculdade IDE`.slice(0, SEO_LIMITS.titleMax);
+  let description = `${nivel} ${modalidade} em ${titulo}. Certificado reconhecido pelo MEC, aulas ao vivo e corpo docente especializado.`;
   if (statusNome) description += ` ${statusNome}.`;
-  if (inicio) description += ` Início previsto: ${inicio}.`;
-  description = description.slice(0, 160);
+  if (inicio) description += ` Início: ${inicio}.`;
+  description = description.slice(0, SEO_LIMITS.descriptionMax);
 
   const focus = slugifyKeyword(titulo);
   const keywords = [
@@ -26,7 +43,7 @@ export function generateCourseSeo(course, nivelNome, areaNome, statusNome) {
     og_description: description,
     focus_keyword: focus,
     keywords: [...new Set(keywords)],
-    canonical: `/pos-graduacao/${course.slug || slugifyKeyword(titulo)}`,
+    canonical: `/pos-graduacao/${course.slug || slugifyKeyword(titulo).replace(/\s+/g, "-")}`,
     schema_type: "Course",
   };
 }
@@ -44,20 +61,22 @@ function slugifyKeyword(text) {
 export function scoreSeo(seo, course) {
   let score = 0;
   const checks = [];
+  const titleLen = (seo.title || "").length;
+  const descLen = (seo.description || "").length;
 
-  if (seo.title && seo.title.length >= 30 && seo.title.length <= 60) {
+  if (titleLen >= SEO_LIMITS.titleMin && titleLen <= SEO_LIMITS.titleMax) {
     score += 20;
-    checks.push({ ok: true, text: "Título com tamanho ideal (30–60 caracteres)" });
+    checks.push({ ok: true, text: `Título ideal (${SEO_LIMITS.titleMin}–${SEO_LIMITS.titleMax} caracteres)` });
   } else {
-    checks.push({ ok: false, text: "Título fora do ideal (30–60 caracteres)" });
+    checks.push({ ok: false, text: `Título fora do ideal (${SEO_LIMITS.titleMin}–${SEO_LIMITS.titleMax} caracteres)` });
   }
 
-  if (seo.description && seo.description.length >= 120 && seo.description.length <= 160) {
+  if (descLen >= SEO_LIMITS.descriptionMin && descLen <= SEO_LIMITS.descriptionMax) {
     score += 20;
     checks.push({ ok: true, text: "Meta description com tamanho ideal" });
-  } else if (seo.description && seo.description.length > 0) {
+  } else if (descLen > 0) {
     score += 10;
-    checks.push({ ok: false, text: "Meta description fora do ideal (120–160 caracteres)" });
+    checks.push({ ok: false, text: `Meta description fora do ideal (${SEO_LIMITS.descriptionMin}–${SEO_LIMITS.descriptionMax} caracteres)` });
   } else {
     checks.push({ ok: false, text: "Meta description vazia" });
   }
@@ -91,8 +110,8 @@ export function scoreSeo(seo, course) {
   return { score: Math.min(100, score), checks };
 }
 
-export function renderSeoPreview(seo, baseUrl = "https://ead-faculdade-ide.vercel.app") {
-  const url = `${baseUrl}${seo.canonical || ""}`;
+export function renderSeoPreview(seo, baseUrl = "https://ead.faculdadeide.edu.br") {
+  const url = absoluteUrl(seo.canonical || "", baseUrl);
   return `
     <div class="seo-preview">
       <p class="seo-preview__title">${escapeHtml(seo.title || "Título da página")}</p>
