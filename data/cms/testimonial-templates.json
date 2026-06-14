@@ -11,12 +11,12 @@
   },
   {
     "id": "item-depoimento-adaptativo",
-    "nome": "Depoimento adaptativo (único)",
+    "nome": "Depoimento Elementor 1567 (adaptativo)",
     "escopo": "item",
     "tipo": null,
-    "descricao": "Um único modelo: exibe vídeo, foto, imagem e texto conforme os dados cadastrados. Blocos vazios somem automaticamente.",
+    "descricao": "Layout original Elementor post-1567. Vídeo, foto, imagem e textos aparecem só quando preenchidos.",
     "ativo": true,
-    "html": "<div class=\"jet-listing-grid__item\">\n  <article class=\"testimonial-card\">\n    <div class=\"testimonial-card__layout\">\n      {{bloco_foto}}\n      <div class=\"testimonial-card__content\">\n        {{bloco_video}}\n        {{bloco_imagem}}\n        <header class=\"testimonial-card__header\">\n          <h2 class=\"testimonial-card__name\">{{nome}}</h2>\n          {{bloco_profissao}}\n        </header>\n        {{bloco_texto}}\n        {{bloco_legenda}}\n      </div>\n    </div>\n  </article>\n</div>",
+    "html": "<div class=\"jet-listing-grid__item\">\n  <div data-elementor-type=\"jet-listing-items\" data-elementor-id=\"1567\" class=\"elementor elementor-1567\">\n    <div class=\"elementor-element elementor-element-6b816b8 e-con-full e-flex e-con e-parent\">\n      {{bloco_foto}}\n      {{bloco_video}}\n      {{bloco_imagem}}\n      <div class=\"elementor-element elementor-element-83bd929 e-con-full e-flex e-con e-child\">\n        <div class=\"elementor-element elementor-element-2558536 elementor-widget elementor-widget-heading\">\n          <div class=\"elementor-widget-container\">\n            <h2 class=\"elementor-heading-title elementor-size-default\">{{nome}}</h2>\n          </div>\n        </div>\n        {{bloco_profissao}}\n      </div>\n      {{bloco_texto}}\n      {{bloco_legenda}}\n    </div>\n  </div>\n</div>",
     "variaveis": [
       "nome",
       "bloco_foto",

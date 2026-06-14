@@ -98,27 +98,51 @@ function buildAdaptiveBlocks(dep, base, wrap) {
   const embed = youtubeEmbed(dep.video_url);
 
   const bloco_foto = fotoSrc
-    ? `<div class="testimonial-card__avatar"><img src="${assetUrl(fotoSrc, base)}" alt="${nome}" loading="lazy" width="80" height="80"></div>`
+    ? `<div class="elementor-element elementor-element-dep-foto testimonial-dep__avatar elementor-widget elementor-widget-image">
+      <div class="elementor-widget-container">
+        <img src="${assetUrl(fotoSrc, base)}" alt="${nome}" loading="lazy" width="72" height="72">
+      </div>
+    </div>`
     : "";
 
   const bloco_video = embed
-    ? `<div class="testimonial-card__video"><iframe class="testimonial-card__iframe" src="${embed}" title="Depoimento — ${nome}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>`
+    ? `<div class="elementor-element elementor-element-dep-video testimonial-dep__video elementor-widget elementor-widget-video">
+      <div class="elementor-widget-container">
+        <iframe class="testimonial-dep__iframe" src="${embed}" title="Depoimento — ${nome}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>`
     : "";
 
   const bloco_imagem = dep.imagem
-    ? `<figure class="testimonial-card__figure"><img src="${assetUrl(dep.imagem, base)}" alt="${nome}" loading="lazy"></figure>`
+    ? `<div class="elementor-element elementor-element-dep-imagem testimonial-dep__figure elementor-widget elementor-widget-image">
+      <div class="elementor-widget-container">
+        <img src="${assetUrl(dep.imagem, base)}" alt="${nome}" loading="lazy">
+      </div>
+    </div>`
     : "";
 
   const bloco_profissao = dep.profissao
-    ? `<p class="testimonial-card__role">${wrap(dep.profissao)}</p>`
+    ? `<div class="elementor-element elementor-element-c9a8ffe elementor-widget elementor-widget-heading">
+      <div class="elementor-widget-container">
+        <h2 class="elementor-heading-title elementor-size-default">${wrap(dep.profissao)}</h2>
+      </div>
+    </div>`
     : "";
 
   const bloco_texto = dep.texto
-    ? `<div class="testimonial-card__text"><p>${wrap(dep.texto)}</p></div>`
+    ? `<div class="elementor-element elementor-element-980275a elementor-widget elementor-widget-heading">
+      <div class="elementor-widget-container">
+        <h2 class="elementor-heading-title elementor-size-default">${wrap(dep.texto)}</h2>
+      </div>
+    </div>`
     : "";
 
   const bloco_legenda = dep.legenda
-    ? `<p class="testimonial-card__caption">${wrap(dep.legenda)}</p>`
+    ? `<div class="elementor-element elementor-element-dep-legenda elementor-widget elementor-widget-heading">
+      <div class="elementor-widget-container">
+        <p class="elementor-heading-title elementor-size-default testimonial-dep__legenda">${wrap(dep.legenda)}</p>
+      </div>
+    </div>`
     : "";
 
   return { bloco_foto, bloco_video, bloco_imagem, bloco_profissao, bloco_texto, bloco_legenda };
