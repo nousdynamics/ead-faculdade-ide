@@ -127,6 +127,9 @@ async function handleCmsCollection(req, res, collection) {
 
   if (req.method === "PUT") {
     const payload = await readJsonBody(req);
+    if (payload === undefined || payload === null) {
+      return jsonResponse(res, 400, { error: "Corpo da requisição inválido" });
+    }
     await writeCollection(collection, payload);
     return jsonResponse(res, 200, { ok: true });
   }

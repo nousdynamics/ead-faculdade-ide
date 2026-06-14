@@ -2,7 +2,8 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { randomBytes, scrypt, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
-import { list, put } from "@vercel/blob";
+import { list } from "@vercel/blob";
+import { writeBlob } from "./blob-storage.js";
 
 const scryptAsync = promisify(scrypt);
 
@@ -80,13 +81,8 @@ export async function readAccount() {
 async function persistAccount(account) {
   const payload = JSON.stringify(account, null, 2) + "\n";
 
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    await put(BLOB_PATH, payload, {
-      access: "public",
-      addRandomSuffix: false,
-      allowOverwrite: true,
-      contentType: "application/json",
-    });
+  if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) {
+    await writeBlob(BLOB_PATH, payload);
     return;
   }
 

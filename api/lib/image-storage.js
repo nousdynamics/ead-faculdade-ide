@@ -1,6 +1,6 @@
 import { writeFile, mkdir } from "node:fs/promises";
 import { join, extname } from "node:path";
-import { put } from "@vercel/blob";
+import { writeBlob } from "./blob-storage.js";
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
@@ -49,13 +49,13 @@ export async function saveUploadedImage({ filename, data, contentType, folder = 
   const storedName = `${Date.now()}-${safeFilename(filename).replace(/\.[^.]+$/, "")}${ext}`;
   const blobPath = `${folder}/${storedName}`;
 
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    const blob = await put(blobPath, buffer, {
-      access: "public",
-      addRandomSuffix: false,
-      contentType,
-    });
-    return { url: blob.url, path: blob.url };
+  if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) {
+    const result = await writeBlob(blobPath, buffer, contentType);
+    const url = result?.url || result?.downloadUrl;
+    if (!url) {
+      throw Object.assign(new Error("Upload concluído, mas URL não retornada pelo Blob"), { status: 502 });
+    }
+    return { url, path: url };
   }
 
   const localDir = join(process.cwd(), "assets", "img", folder);

@@ -21,24 +21,30 @@ export function jsonResponse(res, status, body) {
 }
 
 export async function readJsonBody(req) {
-  if (req.body && typeof req.body === "object") {
-    return req.body;
-  }
-
-  if (typeof req.body === "string" && req.body.length) {
-    return JSON.parse(req.body);
+  if (req.body !== undefined && req.body !== null) {
+    if (Buffer.isBuffer(req.body)) {
+      const text = req.body.toString("utf8");
+      return text ? JSON.parse(text) : null;
+    }
+    if (typeof req.body === "object") {
+      return req.body;
+    }
+    if (typeof req.body === "string" && req.body.length) {
+      return JSON.parse(req.body);
+    }
   }
 
   return new Promise((resolve, reject) => {
-    let body = "";
+    const chunks = [];
     req.on("data", (chunk) => {
-      body += chunk;
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
     });
     req.on("end", () => {
       try {
+        const body = Buffer.concat(chunks).toString("utf8");
         resolve(body ? JSON.parse(body) : null);
       } catch (err) {
-        reject(err);
+        reject(Object.assign(new Error("JSON inválido no corpo da requisição"), { status: 400, cause: err }));
       }
     });
     req.on("error", reject);

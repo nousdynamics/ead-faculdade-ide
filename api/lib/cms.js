@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { list, put } from "@vercel/blob";
+import { list } from "@vercel/blob";
+import { writeBlob } from "./blob-storage.js";
 
 export const COLLECTIONS = {
   courses: "courses.json",
@@ -113,19 +114,11 @@ export async function writeCollection(name, data) {
     throw Object.assign(new Error("Coleção não encontrada"), { status: 404 });
   }
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    throw Object.assign(
-      new Error("Armazenamento não configurado. Adicione Vercel Blob ao projeto (Storage → Blob)."),
-      { status: 503 },
-    );
+  if (data === undefined || data === null) {
+    throw Object.assign(new Error("Corpo da requisição inválido"), { status: 400 });
   }
 
-  await put(blobPathname(name), JSON.stringify(data, null, 2) + "\n", {
-    access: "public",
-    addRandomSuffix: false,
-    allowOverwrite: true,
-    contentType: "application/json",
-  });
+  await writeBlob(blobPathname(name), JSON.stringify(data, null, 2) + "\n");
 }
 
 export async function readAllCollections() {

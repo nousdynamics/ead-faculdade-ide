@@ -8,3 +8,6 @@ _capture/*.png
 
 # Conta CMS (hash de senha — gerado em runtime)
 data/cms/account.json
+
+.vercel
+.env*

@@ -20,5 +20,13 @@ function getPathSegments(req) {
 }
 
 export default async function handler(req, res) {
-  return routeRequest(req, res, getPathSegments(req));
+  try {
+    return await routeRequest(req, res, getPathSegments(req));
+  } catch (err) {
+    console.error("[api/handler]", err);
+    if (res.headersSent) return;
+    const status = err?.status || 500;
+    res.status(status).setHeader("Content-Type", "application/json; charset=utf-8");
+    res.end(JSON.stringify({ error: err?.message || "Erro interno do servidor" }));
+  }
 }

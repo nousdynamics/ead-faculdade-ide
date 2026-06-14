@@ -45,8 +45,20 @@ async function fetchJson(url, options = {}) {
     throw new Error("Sessão expirada. Faça login novamente.");
   }
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || `Erro ${res.status}`);
+    let message = `Erro ${res.status}`;
+    const contentType = res.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      const err = await res.json().catch(() => ({}));
+      message = err.error || message;
+    } else {
+      const text = await res.text().catch(() => "");
+      if (text && !text.includes("FUNCTION_INVOCATION_FAILED")) {
+        message = text.slice(0, 200);
+      } else if (res.status === 503) {
+        message = "Armazenamento não configurado. Conecte Vercel Blob ao projeto.";
+      }
+    }
+    throw new Error(message);
   }
   return res.json();
 }
