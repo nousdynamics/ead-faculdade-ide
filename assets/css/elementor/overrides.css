@@ -167,6 +167,11 @@
 }
 
 /* Mini-currículo — ícone chevron + animação suave */
+.elementor-1076 .coord-mini-cv {
+  width: 100%;
+  text-align: center;
+}
+
 .elementor-1076 .coord-mini-cv > .e-n-accordion-item-title {
   list-style: none;
   display: inline-flex;
@@ -215,6 +220,7 @@
 .elementor-1076 .coord-mini-cv__panel {
   display: grid;
   grid-template-rows: 0fr;
+  width: 100%;
   transition: grid-template-rows 400ms ease;
 }
 
@@ -260,15 +266,15 @@
 }
 
 .course-complement-banner {
-  width: min(100%, var(--container-max, 1200px));
-  margin: clamp(1.5rem, 3vw, 2.5rem) auto 0;
-  padding-inline: var(--container-pad, 1.25rem);
-  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .course-complement-banner__img {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: var(--radius-md, 12px);
+  aspect-ratio: 2560 / 360;
+  object-fit: cover;
 }

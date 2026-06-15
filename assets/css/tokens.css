@@ -38,6 +38,7 @@
   /* ---- Variantes accent / primary ---- */
   --color-accent-light:   #b8eef2;
   --color-accent-bright:  #01e3f8;   /* par de gradiente (home) */
+  --color-accent-deep:    #0b7e8a;   /* teal escuro p/ preenchimento c/ texto branco — WCAG AA 4.8:1 */
   --color-primary-darker: #151a30;   /* profundidade sidebar admin */
 
   /* ---- CTA laranja (marca) ---- */

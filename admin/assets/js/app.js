@@ -5,7 +5,7 @@ import {
 import { generateCourseSeo, scoreSeo, renderSeoPreview, escapeHtml, SEO_LIMITS } from "./seo.js";
 import { login, logout, verifySession, isAuthenticated, getUser, getEmail, fetchAccountProfile, updateAccount } from "./auth.js";
 import { icon, navIcon, statIcon } from "./icons.js";
-import { bindImageUpload, bindPdfUpload, mediaUrl } from "./upload.js";
+import { bindImageUpload, bindPdfUpload, mediaUrl, renderImagePreview } from "./upload.js";
 import {
   previewTemplate,
   templateEscopoLabel,
@@ -510,6 +510,7 @@ function renderCourseFormNav() {
   const links = [
     ["cf-basics", "Informações básicas", "file-text"],
     ["cf-apresentacao", "Apresentação", "layout"],
+    ["cf-conheca", "Conheça o curso", "video"],
     ["cf-equipe", "Equipe e depoimentos", "users"],
     ["cf-grade", "Grade curricular", "list"],
     ["cf-publico", "Público-alvo", "target"],
@@ -579,7 +580,6 @@ function renderCourseForm(course) {
               <div class="form-group"><label>Modalidade</label><input name="info_modalidade" value="${escapeHtml(i.modalidade || "")}" placeholder="Ex: 100% EAD — Aula ao vivo"></div>
               <div class="form-group"><label>Vagas</label><input name="info_vagas" value="${escapeHtml(i.vagas || "")}" placeholder="Opcional"></div>
               <div class="form-group"><label>Formato das aulas</label><input name="info_aulas" value="${escapeHtml(i.aulas || "")}" placeholder="Ex: Aula ao vivo"></div>
-              <div class="form-group form-group--full"><label>Vídeo promocional (YouTube)</label><input name="info_video" value="${escapeHtml(i.video || "")}" placeholder="https://www.youtube.com/watch?v=..."></div>
               <div class="form-group form-group--full course-form__flags">
                 <label class="form-check form-check--switch"><input type="checkbox" name="info_ultimas_vagas" ${i.ultimas_vagas ? "checked" : ""}> Destacar “Últimas vagas”</label>
                 <label class="form-check form-check--switch"><input type="checkbox" name="info_confirmado" ${i.confirmado ? "checked" : ""}> Turma confirmada</label>
@@ -593,6 +593,16 @@ function renderCourseForm(course) {
             </div>
           `)}
 
+          ${coursePanel("cf-conheca", "Conheça o curso", "Vídeo exibido ao lado da coordenação pedagógica na página do curso.", `
+            <div class="form-grid">
+              <div class="form-group form-group--full">
+                <label for="info_video">Link do vídeo no YouTube</label>
+                <input id="info_video" name="info_video" type="url" value="${escapeHtml(i.video || "")}" placeholder="https://www.youtube.com/watch?v=... ou https://youtu.be/...">
+                <small>Cole a URL completa do YouTube. Deixe em branco para ocultar o player nesta seção.</small>
+              </div>
+            </div>
+          `)}
+
           ${coursePanel("cf-equipe", "Equipe e depoimentos", "Vincule coordenação, professores e depoimentos exibidos na página do curso.", `
             <div class="entity-pickers">
               ${checkboxGroupPaginated("coordenacao_ids", "coordination", c.coordenacao_ids || [], "Coordenação pedagógica")}
@@ -601,11 +611,13 @@ function renderCourseForm(course) {
             </div>
           `)}
 
-          ${coursePanel("cf-grade", "Grade curricular", "Módulos e disciplinas exibidos na página.", `
+          ${coursePanel("cf-grade", "Grade curricular", "Módulos, disciplinas e PDF do guia do curso.", `
             <div class="repeater" id="modulos-repeater">
               ${mods.length ? mods.map((m) => moduleItemHtml(m)).join("") : moduleItemHtml({ titulo: "Módulo 1", itens: [] })}
             </div>
             <button type="button" class="btn btn--ghost btn--sm" id="add-modulo">${icon("plus", { size: 14 })} Adicionar módulo</button>
+            <div class="form-divider"><span>Guia do curso (PDF)</span></div>
+            ${renderGuidePdfField({ value: c.guia?.pdf || c.guia_pdf || "" })}
           `)}
 
           ${coursePanel("cf-publico", "Público-alvo", "Quatro blocos “Esse curso é para quem…” e imagem complementar.", `
@@ -619,7 +631,7 @@ function renderCourseForm(course) {
                 </div>`).join("")}
             </div>
             <div class="form-divider"><span>Seção complementar</span></div>
-            ${renderImageUploadField({ name: "secao_complementar_imagem", value: c.secao_complementar?.imagem || "", label: "Banner complementar", folder: "courses", dimensions: "2560×360 px (desktop) · 1080×470 px (mobile)" })}
+            ${renderImageUploadField({ name: "secao_complementar_imagem", value: c.secao_complementar?.imagem || "", label: "Banner complementar", folder: "courses", dimensions: "2560×360 px" })}
           `)}
 
           ${coursePanel("cf-investimento", "Investimento", "Valores, benefícios e botão da seção de preço.", `
@@ -827,10 +839,32 @@ function emptyCourse() {
     modulos: [],
     publico_alvo: [{}, {}, {}, {}],
     secao_complementar: {},
+    guia: { pdf: "" },
     investimento: { beneficios: [] },
     faq: [],
     seo: {},
   };
+}
+
+function renderGuidePdfField({ value = "" }) {
+  const fileLabel = value ? value.split("/").pop() : "";
+  const preview = value
+    ? `<a href="${mediaUrl(value)}" target="_blank" rel="noopener">${escapeHtml(fileLabel)}</a>`
+    : `<span class="pdf-upload__empty">Nenhum PDF selecionado</span>`;
+
+  return `
+    <div class="form-group form-group--full pdf-upload" data-pdf-upload data-folder="courses">
+      <label>PDF do guia do curso</label>
+      <p class="course-section__desc">Enviado após o visitante preencher nome, e-mail e telefone no botão &quot;Baixar agora&quot; da página.</p>
+      <div class="pdf-upload__preview">${preview}</div>
+      <input type="text" name="guia_pdf" value="${escapeHtml(value)}" placeholder="URL do PDF ou caminho após upload">
+      <label class="pdf-upload__btn btn btn--ghost btn--sm">
+        ${icon("file-text", { size: 14 })} Enviar PDF
+        <input type="file" accept="application/pdf,.pdf" class="pdf-upload__input" hidden>
+      </label>
+      <small>PDF até 10 MB.</small>
+      <p class="pdf-upload__status image-upload__status" hidden></p>
+    </div>`;
 }
 
 function renderPdfUploadField({ value = "" }) {
@@ -855,9 +889,7 @@ function renderPdfUploadField({ value = "" }) {
 }
 
 function renderImageUploadField({ name = "foto", value = "", label = "Foto", folder = "uploads", dimensions = "" }) {
-  const preview = value
-    ? `<img src="${mediaUrl(value)}" alt="">`
-    : `<div class="image-upload__placeholder">Nenhuma imagem</div>`;
+  const preview = renderImagePreview(value);
   const aspect = dimensions === "350×350 px" ? "square" : dimensions ? "portrait" : "";
 
   return `
@@ -869,7 +901,7 @@ function renderImageUploadField({ name = "foto", value = "", label = "Foto", fol
         ${icon("image", { size: 16 })} Escolher imagem
         <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="image-upload__input" hidden>
       </label>
-      <small>JPG, PNG ou WebP. Máximo de 2 MB.${dimensions ? ` Tamanho recomendado: <strong>${dimensions}</strong>.` : ""}</small>
+      <small>JPG, PNG ou WebP. Máximo de 2 MB. Arraste e solte ou clique em Escolher imagem.${dimensions ? ` Tamanho recomendado: <strong>${dimensions}</strong>.` : ""}</small>
       <p class="image-upload__status" hidden></p>
     </div>`;
 }
@@ -1202,7 +1234,7 @@ function renderTaxonomy(collection, title, allowAdd) {
     <div class="panel">
       <div class="panel__head"><h2>${title}</h2></div>
       <div class="panel__body">
-        ${!allowAdd ? `<p style="font-size:.875rem;color:var(--muted);margin:0 0 1rem;">Os três status são fixos: Inscrições Abertas, Turma Confirmada e Inscrições Encerradas.</p>` : ""}
+        ${!allowAdd ? `<p style="font-size:.875rem;color:var(--color-muted);margin:0 0 1rem;">Os três status são fixos: Inscrições Abertas, Turma Confirmada e Inscrições Encerradas.</p>` : ""}
         <table><thead><tr><th>Nome</th><th>Slug</th>${allowAdd ? "<th>Ações</th>" : ""}</tr></thead>
         <tbody>${items.map((item) => `<tr>
           <td><strong>${escapeHtml(item.nome)}</strong></td>
@@ -1213,7 +1245,7 @@ function renderTaxonomy(collection, title, allowAdd) {
           </td>` : `<td>—</td>`}
         </tr>`).join("")}</tbody></table>
         ${allowAdd ? `
-          <form id="tax-form" style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border)">
+          <form id="tax-form" style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--color-border)">
             <div class="form-grid">
               <div class="form-group"><label>Nome</label><input name="nome" required placeholder="Ex: Graduação"></div>
               <div class="form-group"><label>Slug</label><input name="slug" placeholder="auto"></div>
@@ -1305,6 +1337,9 @@ function collectCourseForm(form) {
     secao_complementar: {
       imagem: form.secao_complementar_imagem?.value.trim() || "",
       nota_dimensoes: "2560x360px para Desktop e 1080x470px para Mobile",
+    },
+    guia: {
+      pdf: form.guia_pdf?.value.trim() || "",
     },
     investimento: {
       oferta_label: form.inv_oferta_label?.value.trim(),

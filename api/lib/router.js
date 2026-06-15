@@ -4,7 +4,7 @@ import { getAccountProfile, updateAccountProfile } from "./account.js";
 import { COLLECTIONS, readCollection, writeCollection, readAllCollections } from "./cms.js";
 import { saveUploadedMedia } from "./image-storage.js";
 import { handleCoursePageRequest } from "./course-pages.js";
-import { handleMediaFileRequest } from "./media-files.js";
+import { handleGuideLeadRequest } from "./guide-leads.js";
 
 export async function routeRequest(req, res, segments) {
   if (handleCors(req, res)) return;
@@ -24,6 +24,7 @@ export async function routeRequest(req, res, segments) {
         return jsonResponse(res, err.status || 404, { error: err.message || "Arquivo não encontrado" });
       }
     }
+    if (a === "guide-lead" && b && !c) return handleGuideLeadRequest(req, res, b);
     if (a === "course-page" && b && !c) return handleCoursePageRequest(req, res, b);
     if (a === "cms" && !b) return handleCmsAll(req, res);
     if (a === "cms" && b && !c) return handleCmsCollection(req, res, b);

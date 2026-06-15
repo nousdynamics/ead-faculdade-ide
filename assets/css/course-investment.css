@@ -334,8 +334,13 @@
 
 /* Popup — opções de parcelamento */
 .course-installments-modal {
-  width: min(100% - 2rem, 920px);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(calc(100vw - 2rem), 920px);
   max-height: calc(100vh - 2rem);
+  margin: 0;
   padding: 0;
   border: none;
   background: transparent;

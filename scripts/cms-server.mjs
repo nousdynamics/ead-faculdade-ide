@@ -11,6 +11,7 @@ import {
 } from "../api/lib/account.js";
 import { saveUploadedMedia } from "../api/lib/image-storage.js";
 import { handleMediaFileRequest } from "../api/lib/media-files.js";
+import { handleGuideLeadRequest, submitGuideLead } from "../api/lib/guide-leads.js";
 import { publishCoursePages } from "../api/lib/course-pages.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -255,6 +256,17 @@ const server = createServer(async (req, res) => {
       return send(res, err.status || 500, { error: err.message });
     }
     return;
+  }
+
+  const guideLeadMatch = url.pathname.match(/^\/api\/guide-lead\/([^/]+)$/);
+  if (guideLeadMatch && req.method === "POST") {
+    try {
+      const body = await readBody(req);
+      const result = await submitGuideLead(guideLeadMatch[1], body);
+      return send(res, result.status, result.body);
+    } catch (err) {
+      return send(res, err.status || 500, { error: err.message });
+    }
   }
 
   const apiMatch = url.pathname.match(/^\/api\/cms\/([^/]+)(?:\/([^/]+))?$/);
