@@ -13,6 +13,16 @@ export function sanitizeMediaPath(raw) {
 }
 
 /** URL pública estável servida pela API (funciona no admin e nas páginas de curso). */
+export function resolveSiteOrigin() {
+  const siteOrigin = process.env.SITE_ORIGIN?.trim();
+  if (siteOrigin) return siteOrigin.replace(/\/$/, "");
+
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+  if (vercelUrl) return `https://${vercelUrl.replace(/^https?:\/\//, "")}`;
+
+  return "";
+}
+
 export function toMediaUrl(path, { absolute = false } = {}) {
   if (!path) return "";
   if (/^https?:\/\//i.test(path)) return path;
@@ -22,9 +32,7 @@ export function toMediaUrl(path, { absolute = false } = {}) {
 
   const url = `/api/media/${normalized}`;
   if (absolute) {
-    const origin = process.env.SITE_ORIGIN || process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "";
+    const origin = resolveSiteOrigin();
     return origin ? `${origin}${url}` : url;
   }
   return url;
