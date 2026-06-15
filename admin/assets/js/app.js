@@ -511,7 +511,6 @@ function renderCourseFormNav() {
     ["cf-basics", "Informações básicas", "file-text"],
     ["cf-apresentacao", "Apresentação", "layout"],
     ["cf-equipe", "Equipe e depoimentos", "users"],
-    ["cf-conteudo", "Sobre o curso", "book-open"],
     ["cf-grade", "Grade curricular", "list"],
     ["cf-publico", "Público-alvo", "target"],
     ["cf-investimento", "Investimento", "credit-card"],
@@ -533,7 +532,6 @@ function renderCourseForm(course) {
   const seoResult = scoreSeo(seo, c);
   const h = c.hero || {};
   const i = c.informacoes || {};
-  const s = c.sobre || {};
   const inv = c.investimento || {};
   const parcelas = inv.opcoes_parcelamento || [];
   const mods = c.modulos || [];
@@ -600,17 +598,6 @@ function renderCourseForm(course) {
               ${checkboxGroupPaginated("coordenacao_ids", "coordination", c.coordenacao_ids || [], "Coordenação pedagógica")}
               ${checkboxGroupPaginated("professor_ids", "professors", c.professor_ids || [], "Professores")}
               ${checkboxGroupPaginated("depoimento_ids", "testimonials", getCourseDepoimentoIds(c), "Depoimentos")}
-            </div>
-          `)}
-
-          ${coursePanel("cf-conteudo", "Sobre o curso", "Textos institucionais, objetivos e destaques.", `
-            <div class="form-grid">
-              <div class="form-group"><label>Tag da seção</label><input name="sobre_tag" value="${escapeHtml(s.tag || "Conheça o curso")}"></div>
-              <div class="form-group form-group--full"><label>Parágrafo 1</label><textarea name="sobre_p1" rows="4" placeholder="Apresentação geral do curso">${escapeHtml(s.paragrafos?.[0] || "")}</textarea></div>
-              <div class="form-group form-group--full"><label>Parágrafo 2</label><textarea name="sobre_p2" rows="4" placeholder="Diferenciais e metodologia">${escapeHtml(s.paragrafos?.[1] || "")}</textarea></div>
-              <div class="form-group form-group--full"><label>Objetivos do curso</label><textarea name="objetivos" rows="4" placeholder="HTML permitido — lista o que o aluno vai aprender">${escapeHtml(c.objetivos || "")}</textarea></div>
-              <div class="form-group form-group--full"><label>Destaques do curso</label><textarea name="destaques" rows="4" placeholder="HTML permitido — bullets de diferenciais">${escapeHtml(c.destaques || "")}</textarea></div>
-              <div class="form-group form-group--full"><label>Matriz curricular (HTML)</label><textarea name="matriz_curricular" rows="5" placeholder="Tabela ou lista completa da matriz, se diferente dos módulos">${escapeHtml(c.matriz_curricular || "")}</textarea></div>
             </div>
           `)}
 
@@ -1309,13 +1296,10 @@ function collectCourseForm(form) {
       confirmado: form.info_confirmado?.checked || false,
       pre_inscricao: form.info_pre_inscricao?.checked || false,
     },
-    sobre: {
-      tag: form.sobre_tag?.value.trim(),
-      paragrafos: [form.sobre_p1?.value.trim(), form.sobre_p2?.value.trim()].filter(Boolean),
-    },
-    matriz_curricular: form.matriz_curricular?.value.trim(),
-    destaques: form.destaques?.value.trim(),
-    objetivos: form.objetivos?.value.trim(),
+    sobre: existing?.sobre || { paragrafos: [] },
+    matriz_curricular: existing?.matriz_curricular || "",
+    destaques: existing?.destaques || "",
+    objetivos: existing?.objetivos || "",
     modulos,
     publico_alvo,
     secao_complementar: {
