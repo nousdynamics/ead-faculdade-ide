@@ -11,7 +11,6 @@ const WP_UPLOADS = `${SITE_URL}/wp-content/uploads`;
 const CHECK_BULLET_URL = `${WP_UPLOADS}/2025/10/ICON-CHECKK-BOLLET-01.svg`;
 const DISCOUNTS_PDF = `${WP_UPLOADS}/2026/06/Tabela-de-Convenios-e-Descontos.pdf`;
 const SELO_VD_URL = `${WP_UPLOADS}/2024/08/SELO-VD-IDE-V2.svg`;
-const GUIDE_IMG = "assets/img/IMG-GUIA-DO-CURSO-01.webp";
 const BTN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M44 22C44 34.1503 34.1503 44 22 44C9.84974 44 0 34.1503 0 22C0 9.84974 9.84974 0 22 0C34.1503 0 44 9.84974 44 22Z" fill="white"></path><path d="M24.5977 16L31 22.4023L24.5977 28.8046" stroke="black" stroke-width="1.30605"></path><line x1="30.4833" y1="22.4209" x2="11.6674" y2="22.4209" stroke="black" stroke-width="1.30605"></line></svg>`;
 
 const MINI_CV_CHEVRON = `<svg class="coord-mini-cv__chevron" aria-hidden="true" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>`;
@@ -74,7 +73,7 @@ function renderGuideSection(course, base) {
         </button>
       </div>
       <div class="course-guide__media">
-        <img src="${assetUrl(GUIDE_IMG, base)}" alt="Guia do curso no celular" loading="lazy" width="206" height="420">
+        <img src="${base}assets/img/IMG-GUIA-DO-CURSO-01.webp" alt="Guia do curso no celular" loading="lazy" width="391" height="512">
       </div>
     </div>
   </section>`;
@@ -643,9 +642,7 @@ export function renderCoursePage(course, ctx) {
             : ""
         }
 
-        <div class="elementor-element elementor-element-47f27a3 e-con-full e-flex e-con e-child">
-          ${renderGuideSection(course, base)}
-        </div>
+        ${renderGuideSection(course, base)}
 
         ${
           audience.length

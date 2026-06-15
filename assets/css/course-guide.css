@@ -2,6 +2,8 @@
 .course-guide {
   position: relative;
   z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
   background: linear-gradient(90deg, #01e3f8 0%, #13a6b4 100%);
   color: #fff;
   overflow: visible;
@@ -70,12 +72,15 @@
 .course-guide__media {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
+  flex-shrink: 0;
 }
 
 .course-guide__media img {
-  width: min(100%, 206px);
-  margin: -6.75rem 0;
+  display: block;
+  width: min(100%, 391px);
+  height: auto;
+  margin: -7.0625rem 0 -3.875rem;
   position: relative;
   z-index: 3;
   pointer-events: none;
@@ -234,9 +239,14 @@
     max-width: none;
   }
 
+  .course-guide__media {
+    order: -1;
+    margin-bottom: 0.5rem;
+  }
+
   .course-guide__media img {
-    margin: 0;
-    width: min(100%, 160px);
+    width: min(100%, 214px);
+    margin: -2.3125rem 0 -3.4375rem;
   }
 }
 

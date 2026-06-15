@@ -737,16 +737,35 @@ function bindCourseFormEvents(form) {
 
   bindEntityPickers(form);
 
-  $$("[data-course-jump]", form).forEach((btn, index) => {
+  const navLinks = $$(".course-form__nav-link", form);
+  navLinks.forEach((btn, index) => {
     if (index === 0) btn.classList.add("is-active");
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       const target = document.getElementById(btn.dataset.courseJump);
       target?.scrollIntoView({ behavior: "smooth", block: "start" });
-      $$(".course-form__nav-link", form).forEach((link) => link.classList.remove("is-active"));
+      navLinks.forEach((link) => link.classList.remove("is-active"));
       btn.classList.add("is-active");
     });
   });
+
+  // Scroll-spy: highlight the section currently in view in the side-nav.
+  const sections = $$(".course-section", form);
+  if (sections.length && "IntersectionObserver" in window) {
+    const spy = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        navLinks.forEach((link) =>
+          link.classList.toggle("is-active", link.dataset.courseJump === visible.target.id),
+        );
+      },
+      { rootMargin: "-30% 0px -60% 0px", threshold: [0, 0.25, 0.5, 1] },
+    );
+    sections.forEach((s) => spy.observe(s));
+  }
 
   $("#add-modulo", form)?.addEventListener("click", () => {
     $("#modulos-repeater", form)?.insertAdjacentHTML("beforeend", moduleItemHtml({ titulo: "", itens: [] }));

@@ -1,7 +1,7 @@
 /* Módulos do curso — grade organizada sobre fundo escuro */
 
 .course-modules-section {
-  padding-block: var(--space-xl) calc(var(--space-xl) - 0.5rem);
+  padding-block: var(--space-xl) calc(var(--space-xl) + 6rem);
   color: #fff;
 }
 
@@ -44,7 +44,7 @@
   }
 
   .course-modules-section {
-    padding-block: var(--space-lg) var(--space-md);
+    padding-block: var(--space-lg) calc(var(--space-lg) + 4rem);
   }
 
   .course-modules-section__title {
