@@ -6,12 +6,14 @@
   var selNivel  = document.getElementById('f-nivel');
   var selArea   = document.getElementById('f-area');
   var selStatus = document.getElementById('f-status');
-  var cards = Array.prototype.slice.call(grid.querySelectorAll('.course-card'));
+  var cards = [];
   var empty = grid.querySelector('.course-grid__empty');
+  var bound = false;
 
   function norm(s) { return (s || '').trim().toLowerCase(); }
 
   function apply() {
+    cards = Array.prototype.slice.call(grid.querySelectorAll('.course-card'));
     var n = norm(selNivel && selNivel.value);
     var a = norm(selArea && selArea.value);
     var s = norm(selStatus && selStatus.value);
@@ -33,7 +35,18 @@
     }
   }
 
-  [selNivel, selArea, selStatus].forEach(function (el) {
-    if (el) el.addEventListener('change', apply);
-  });
+  function bindFilters() {
+    if (bound) return;
+    bound = true;
+    [selNivel, selArea, selStatus].forEach(function (el) {
+      if (el) el.addEventListener('change', apply);
+    });
+  }
+
+  function init() {
+    bindFilters();
+    apply();
+  }
+
+  grid.addEventListener('catalog:ready', init);
 })();

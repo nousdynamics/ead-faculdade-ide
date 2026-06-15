@@ -12,6 +12,7 @@
     "generate:courses": "node scripts/generate-course-pages.mjs",
     "generate:all": "node scripts/generate-course-pages.mjs --all && node scripts/generate-sitemap.mjs",
     "sync:blob": "node scripts/sync-blob-storage.mjs",
+    "migrate:blob-media": "node scripts/migrate-blob-media.mjs",
     "deploy:preview": "npx vercel",
     "deploy:prod": "npx vercel --prod"
   },

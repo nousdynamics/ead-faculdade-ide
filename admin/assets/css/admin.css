@@ -1095,7 +1095,7 @@ tr:hover td {
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.admin .form-group input,
+.admin .form-group input:not([type="checkbox"]):not([type="radio"]),
 .admin .form-group select {
   min-height: 2.6rem;
 }
@@ -1828,15 +1828,6 @@ tr:hover td {
 .image-upload--dragover .image-upload__placeholder {
   color: var(--color-primary);
   font-weight: 600;
-}
-
-.image-upload--portrait .image-upload__preview {
-  height: 249px;
-}
-
-.image-upload--square .image-upload__preview {
-  width: 160px;
-  height: 160px;
 }
 
 .image-upload small strong {

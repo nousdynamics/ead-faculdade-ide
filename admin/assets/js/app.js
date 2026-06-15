@@ -909,13 +909,19 @@ function renderPdfUploadField({ value = "" }) {
 
 function renderImageUploadField({ name = "foto", value = "", label = "Foto", folder = "uploads", dimensions = "" }) {
   const preview = renderImagePreview(value);
-  const aspect = dimensions === "350×350 px" ? "square" : dimensions ? "portrait" : "";
+  const ar = (dimensions.match(/(\d+)\s*[×x]\s*(\d+)/) || []).slice(1).map(Number);
+  let previewStyle = "";
+  if (ar.length === 2 && ar[0] && ar[1]) {
+    const ratio = ar[0] / ar[1];
+    const width = ratio >= 3 ? "100%" : ratio > 1.2 ? "280px" : "160px";
+    previewStyle = ` style="width:${width};height:auto;aspect-ratio:${ar[0]} / ${ar[1]}"`;
+  }
 
   return `
-    <div class="form-group form-group--full image-upload${aspect ? ` image-upload--${aspect}` : ""}" data-image-upload data-folder="${folder}">
+    <div class="form-group form-group--full image-upload" data-image-upload data-folder="${folder}">
       <label>${label}</label>
       <input type="hidden" name="${name}" value="${escapeHtml(value)}">
-      <div class="image-upload__preview">${preview}</div>
+      <div class="image-upload__preview"${previewStyle}>${preview}</div>
       <label class="image-upload__btn btn btn--ghost btn--sm">
         ${icon("image", { size: 16 })} Escolher imagem
         <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="image-upload__input" hidden>

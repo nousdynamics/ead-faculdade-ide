@@ -12,7 +12,7 @@
 
 .course-guide__inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 391px);
   gap: 2rem;
   align-items: center;
   padding-block: 2rem;

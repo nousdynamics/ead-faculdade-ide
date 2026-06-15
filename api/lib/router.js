@@ -3,8 +3,11 @@ import { createToken, verifyCredentials, requireAuth } from "./auth.js";
 import { getAccountProfile, updateAccountProfile } from "./account.js";
 import { COLLECTIONS, readCollection, writeCollection, readAllCollections } from "./cms.js";
 import { saveUploadedMedia } from "./image-storage.js";
+import { handleMediaFileRequest } from "./media-files.js";
 import { handleCoursePageRequest } from "./course-pages.js";
 import { handleGuideLeadRequest } from "./guide-leads.js";
+import { migrateBlobMedia } from "./migrate-blob-media.js";
+import { handleCatalogRequest } from "./catalog.js";
 
 export async function routeRequest(req, res, segments) {
   if (handleCors(req, res)) return;
@@ -24,7 +27,9 @@ export async function routeRequest(req, res, segments) {
         return jsonResponse(res, err.status || 404, { error: err.message || "Arquivo não encontrado" });
       }
     }
+    if (a === "catalog" && !b) return handleCatalogRequest(req, res);
     if (a === "guide-lead" && b && !c) return handleGuideLeadRequest(req, res, b);
+    if (a === "migrate-blob-media" && !b) return handleMigrateBlobMedia(req, res);
     if (a === "course-page" && b && !c) return handleCoursePageRequest(req, res, b);
     if (a === "cms" && !b) return handleCmsAll(req, res);
     if (a === "cms" && b && !c) return handleCmsCollection(req, res, b);
@@ -192,4 +197,18 @@ async function handleCmsItem(req, res, collection, id) {
   }
 
   return jsonResponse(res, 405, { error: "Método não permitido" });
+}
+
+async function handleMigrateBlobMedia(req, res) {
+  const session = requireAuth(req, res, jsonResponse);
+  if (!session) return;
+
+  if (req.method !== "POST") {
+    return jsonResponse(res, 405, { error: "Método não permitido" });
+  }
+
+  const body = await readJsonBody(req).catch(() => ({}));
+  const dryRun = body?.dryRun === true;
+  const report = await migrateBlobMedia({ apply: !dryRun });
+  return jsonResponse(res, 200, report);
 }

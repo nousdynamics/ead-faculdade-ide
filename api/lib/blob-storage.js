@@ -12,7 +12,11 @@ export function getPrivateBlobStoreId() {
 
 /** Store pública para imagens/PDFs (ead-faculdade-ide-blob-public). */
 export function getMediaBlobStoreId() {
-  return process.env.BLOB_MEDIA_STORE_ID?.trim() || "";
+  return (
+    process.env.BLOB_MEDIA_STORE_ID?.trim().replace(/^"|"$/g, "") ||
+    process.env.OFC_STORE_ID?.trim().replace(/^"|"$/g, "") ||
+    ""
+  );
 }
 
 function canUseBlobRuntime() {

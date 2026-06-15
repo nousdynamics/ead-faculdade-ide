@@ -13,6 +13,7 @@ import { saveUploadedMedia } from "../api/lib/image-storage.js";
 import { handleMediaFileRequest } from "../api/lib/media-files.js";
 import { handleGuideLeadRequest, submitGuideLead } from "../api/lib/guide-leads.js";
 import { publishCoursePages } from "../api/lib/course-pages.js";
+import { buildCatalogPayload } from "../api/lib/catalog.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -264,6 +265,15 @@ const server = createServer(async (req, res) => {
       const body = await readBody(req);
       const result = await submitGuideLead(guideLeadMatch[1], body);
       return send(res, result.status, result.body);
+    } catch (err) {
+      return send(res, err.status || 500, { error: err.message });
+    }
+  }
+
+  if (url.pathname === "/api/catalog" && req.method === "GET") {
+    try {
+      const payload = await buildCatalogPayload();
+      return send(res, 200, payload);
     } catch (err) {
       return send(res, err.status || 500, { error: err.message });
     }

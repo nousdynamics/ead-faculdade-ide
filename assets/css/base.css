@@ -60,6 +60,11 @@ p, li, label, td, th, blockquote { font-family: var(--font-body); font-weight: v
 p  { margin-bottom: 1rem; }
 strong { font-weight: 600; }
 
+/* text-wrap: balance em todo o projeto (site público + painel admin) */
+:where(h1, h2, h3, h4, h5, h6, p, li, blockquote, figcaption, dt, dd) {
+  text-wrap: balance;
+}
+
 /* ---- Layout helpers ---- */
 .container {
   width: min(100%, var(--container-max));
