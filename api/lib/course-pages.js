@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { list } from "@vercel/blob";
-import { hasBlobStorage, writeBlob } from "./blob-storage.js";
+import { hasBlobStorage, writeBlob, getBlobClientOptions } from "./blob-storage.js";
 import { readAllCollections } from "./cms.js";
 import { renderCoursePage } from "./render-course-page.js";
 import { render404Page } from "./site-layout.js";
@@ -83,7 +83,7 @@ async function readPageFromBlob(slug) {
 
   const pathname = `${PAGE_PREFIX}/${slug}.html`;
   try {
-    const { blobs } = await list({ prefix: pathname, limit: 5 });
+    const { blobs } = await list({ prefix: pathname, limit: 5, ...getBlobClientOptions() });
     const match = blobs.find((blob) => blob.pathname === pathname);
     if (!match) return null;
 

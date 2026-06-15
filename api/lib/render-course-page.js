@@ -4,6 +4,7 @@
  */
 import { renderTestimonialsSection } from "./testimonial-templates.js";
 import { renderFooter, renderHeader, renderSiteLayoutScripts, renderSiteMotionStyles } from "./site-layout.js";
+import { toMediaUrl, isMediaPath } from "./media-url.js";
 
 const SITE_URL = "https://ead.faculdadeide.edu.br";
 const WP_UPLOADS = `${SITE_URL}/wp-content/uploads`;
@@ -46,7 +47,9 @@ function formatPriceWithHighlight(value, { highlightClass = "course-investment__
 function assetUrl(path, base = "../../") {
   if (!path) return "";
   if (/^https?:\/\//.test(path)) return path;
-  return `${base}${path.replace(/^\//, "")}`;
+  const normalized = String(path).replace(/^\//, "");
+  if (isMediaPath(normalized)) return toMediaUrl(normalized);
+  return `${base}${normalized}`;
 }
 
 function renderComplementBanner(course, base) {

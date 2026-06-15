@@ -11,8 +11,9 @@
     "sitemap": "node scripts/generate-sitemap.mjs",
     "generate:courses": "node scripts/generate-course-pages.mjs",
     "generate:all": "node scripts/generate-course-pages.mjs --all && node scripts/generate-sitemap.mjs",
-    "deploy:preview": "vercel",
-    "deploy:prod": "vercel --prod"
+    "sync:blob": "node scripts/sync-blob-storage.mjs",
+    "deploy:preview": "npx vercel",
+    "deploy:prod": "npx vercel --prod"
   },
   "dependencies": {
     "@vercel/blob": "^2.4.0"

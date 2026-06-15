@@ -1,6 +1,7 @@
 import { writeFile, mkdir } from "node:fs/promises";
 import { join, extname } from "node:path";
-import { hasBlobStorage, writeBlob } from "./blob-storage.js";
+import { hasBlobStorage, writePublicBlob } from "./blob-storage.js";
+import { toMediaUrl } from "./media-url.js";
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const PDF_MAX_BYTES = 10 * 1024 * 1024;
@@ -38,15 +39,12 @@ function resolveExtension(filename, mimeType) {
 async function persistBuffer({ buffer, filename, contentType, folder, assetRoot, publicPrefix }) {
   const ext = resolveExtension(filename, contentType);
   const storedName = `${Date.now()}-${safeFilename(filename).replace(/\.[^.]+$/, "")}${ext}`;
-  const blobPath = `${folder}/${storedName}`;
+  const publicPath = `${publicPrefix}/${folder}/${storedName}`.replace(/\/+/g, "/");
 
   if (hasBlobStorage()) {
-    const result = await writeBlob(blobPath, buffer, contentType);
-    const url = result?.url || result?.downloadUrl;
-    if (!url) {
-      throw Object.assign(new Error("Upload concluído, mas URL não retornada pelo Blob"), { status: 502 });
-    }
-    return { url, path: url };
+    const blobPathname = `media/${publicPath}`;
+    await writePublicBlob(blobPathname, buffer, contentType);
+    return { url: toMediaUrl(publicPath), path: publicPath };
   }
 
   const localDir = join(process.cwd(), assetRoot, folder);
@@ -54,8 +52,7 @@ async function persistBuffer({ buffer, filename, contentType, folder, assetRoot,
   const localPath = join(localDir, storedName);
   await writeFile(localPath, buffer);
 
-  const publicPath = `${publicPrefix}/${folder}/${storedName}`;
-  return { url: `/${publicPath}`, path: publicPath };
+  return { url: toMediaUrl(publicPath), path: publicPath };
 }
 
 export async function saveUploadedMedia({ filename, data, contentType, folder = "uploads" }) {

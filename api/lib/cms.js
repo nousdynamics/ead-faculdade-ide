@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { list } from "@vercel/blob";
-import { hasBlobStorage, writeBlob } from "./blob-storage.js";
+import { hasBlobStorage, writeBlob, getBlobClientOptions } from "./blob-storage.js";
 
 export const COLLECTIONS = {
   courses: "courses.json",
@@ -38,7 +38,7 @@ async function readFromBlob(pathname) {
   if (!hasBlobStorage()) return null;
 
   try {
-    const { blobs } = await list({ prefix: pathname, limit: 10 });
+    const { blobs } = await list({ prefix: pathname, limit: 10, ...getBlobClientOptions() });
     const match = blobs.find((blob) => blob.pathname === pathname);
     if (!match) return null;
 

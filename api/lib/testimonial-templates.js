@@ -1,6 +1,7 @@
 /**
  * Modelo adaptativo de depoimentos — blocos condicionais + seção fixa na página do curso.
  */
+import { toMediaUrl, isMediaPath } from "./media-url.js";
 
 const DEFAULT_ITEM_TEMPLATE = "item-depoimento-adaptativo";
 export const DEFAULT_CLASS_ROOT = "testimonial-card";
@@ -74,7 +75,9 @@ function escapeHtml(value) {
 function assetUrl(path, base = "../../") {
   if (!path) return "";
   if (/^https?:\/\//.test(path)) return path;
-  return `${base}${path.replace(/^\//, "")}`;
+  const normalized = String(path).replace(/^\//, "");
+  if (isMediaPath(normalized)) return toMediaUrl(normalized);
+  return `${base}${normalized}`;
 }
 
 function youtubeEmbed(url) {

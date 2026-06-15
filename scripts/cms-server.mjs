@@ -10,6 +10,7 @@ import {
   updateAccountProfile,
 } from "../api/lib/account.js";
 import { saveUploadedMedia } from "../api/lib/image-storage.js";
+import { handleMediaFileRequest } from "../api/lib/media-files.js";
 import { publishCoursePages } from "../api/lib/course-pages.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -244,6 +245,16 @@ const server = createServer(async (req, res) => {
     } catch (err) {
       return send(res, err.status || 500, { error: err.message });
     }
+  }
+
+  if (url.pathname.startsWith("/api/media/") && req.method === "GET") {
+    const relativePath = url.pathname.replace(/^\/api\/media\//, "");
+    try {
+      await handleMediaFileRequest(req, res, relativePath);
+    } catch (err) {
+      return send(res, err.status || 500, { error: err.message });
+    }
+    return;
   }
 
   const apiMatch = url.pathname.match(/^\/api\/cms\/([^/]+)(?:\/([^/]+))?$/);

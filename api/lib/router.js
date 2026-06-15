@@ -4,6 +4,7 @@ import { getAccountProfile, updateAccountProfile } from "./account.js";
 import { COLLECTIONS, readCollection, writeCollection, readAllCollections } from "./cms.js";
 import { saveUploadedMedia } from "./image-storage.js";
 import { handleCoursePageRequest } from "./course-pages.js";
+import { handleMediaFileRequest } from "./media-files.js";
 
 export async function routeRequest(req, res, segments) {
   if (handleCors(req, res)) return;
@@ -16,6 +17,13 @@ export async function routeRequest(req, res, segments) {
     if (a === "auth" && b === "me" && !c) return handleAuthMe(req, res);
     if (a === "auth" && b === "account" && !c) return handleAuthAccount(req, res);
     if (a === "media" && b === "upload" && !c) return handleMediaUpload(req, res);
+    if (a === "media" && b && req.method === "GET") {
+      try {
+        return await handleMediaFileRequest(req, res, segments.slice(1).join("/"));
+      } catch (err) {
+        return jsonResponse(res, err.status || 404, { error: err.message || "Arquivo não encontrado" });
+      }
+    }
     if (a === "course-page" && b && !c) return handleCoursePageRequest(req, res, b);
     if (a === "cms" && !b) return handleCmsAll(req, res);
     if (a === "cms" && b && !c) return handleCmsCollection(req, res, b);

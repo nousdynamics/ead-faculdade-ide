@@ -7,7 +7,16 @@ const IMAGE_ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/g
 export function mediaUrl(path) {
   if (!path) return "";
   if (/^https?:\/\//i.test(path)) return path;
-  return `/${String(path).replace(/^\//, "")}`;
+
+  const normalized = String(path).replace(/^\//, "");
+  if (
+    normalized.startsWith("assets/img/") ||
+    normalized.startsWith("assets/docs/")
+  ) {
+    return `/api/media/${normalized}`;
+  }
+
+  return `/${normalized}`;
 }
 
 function readFileAsBase64(file) {
