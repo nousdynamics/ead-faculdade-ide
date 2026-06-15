@@ -11,7 +11,7 @@
 
 .course-guide__inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 391px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 488px);
   gap: 2rem;
   align-items: center;
   padding-block: 2rem;
@@ -77,12 +77,14 @@
 
 .course-guide__media img {
   display: block;
-  width: min(100%, 391px);
+  width: min(100%, 488px);
   height: auto;
+  aspect-ratio: 488 / 638;
   margin: -7.0625rem 0 -3.875rem;
   position: relative;
   z-index: 3;
   pointer-events: none;
+  object-fit: contain;
 }
 
 /* Modal — captura de lead */

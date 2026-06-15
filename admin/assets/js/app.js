@@ -611,12 +611,13 @@ function renderCourseForm(course) {
             </div>
           `)}
 
-          ${coursePanel("cf-grade", "Grade curricular", "Módulos, disciplinas e PDF do guia do curso.", `
+          ${coursePanel("cf-grade", "Grade curricular", "Módulos, disciplinas, imagem e PDF do guia do curso.", `
             <div class="repeater" id="modulos-repeater">
               ${mods.length ? mods.map((m) => moduleItemHtml(m)).join("") : moduleItemHtml({ titulo: "Módulo 1", itens: [] })}
             </div>
             <button type="button" class="btn btn--ghost btn--sm" id="add-modulo">${icon("plus", { size: 14 })} Adicionar módulo</button>
-            <div class="form-divider"><span>Guia do curso (PDF)</span></div>
+            <div class="form-divider"><span>Guia do curso</span></div>
+            ${renderImageUploadField({ name: "guia_imagem", value: c.guia?.imagem || "", label: "Imagem do celular (seção &quot;Baixe o guia&quot;)", folder: "courses/guide", dimensions: "488×638 px" })}
             ${renderGuidePdfField({ value: c.guia?.pdf || c.guia_pdf || "" })}
           `)}
 
@@ -858,7 +859,7 @@ function emptyCourse() {
     modulos: [],
     publico_alvo: [{}, {}, {}, {}],
     secao_complementar: {},
-    guia: { pdf: "" },
+    guia: { pdf: "", imagem: "" },
     investimento: { beneficios: [] },
     faq: [],
     seo: {},
@@ -1365,6 +1366,7 @@ function collectCourseForm(form) {
     },
     guia: {
       pdf: form.guia_pdf?.value.trim() || "",
+      imagem: form.guia_imagem?.value.trim() || "",
     },
     investimento: {
       oferta_label: form.inv_oferta_label?.value.trim(),
