@@ -1,4 +1,4 @@
-import { routeRequest } from "./lib/router.js";
+import { routeRequest } from "../lib/router.js";
 
 function getPathSegments(req) {
   const raw = req.query?.path;

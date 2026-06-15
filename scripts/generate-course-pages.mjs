@@ -5,7 +5,7 @@
 import { readFile } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { publishCoursePages, courseSlug, isPosGraduacaoCourse } from "../api/lib/course-pages.js";
+import { publishCoursePages, courseSlug, isPosGraduacaoCourse } from "../lib/course-pages.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");

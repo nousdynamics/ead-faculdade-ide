@@ -16,7 +16,8 @@
   ],
   "functions": {
     "api/handler.js": {
-      "maxDuration": 10
+      "maxDuration": 10,
+      "excludeFiles": "{.git/**,_capture/**,docs/**,assets/**,admin/**,scripts/**,pos-graduacao/**,node_modules/.cache/**}"
     }
   },
   "headers": [

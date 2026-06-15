@@ -8,8 +8,8 @@ import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execSync } from "node:child_process";
-import { COLLECTIONS } from "../api/lib/cms.js";
-import { loadCourseContext, publishCoursePage, isPosGraduacaoCourse } from "../api/lib/course-pages.js";
+import { COLLECTIONS } from "../lib/cms.js";
+import { loadCourseContext, publishCoursePage, isPosGraduacaoCourse } from "../lib/course-pages.js";
 
 const ROOT = join(fileURLToPath(new URL(".", import.meta.url)), "..");
 const CMS_DIR = join(ROOT, "data", "cms");
@@ -49,7 +49,7 @@ async function republishCoursePages() {
 
     const slug = course.slug || course.id;
     const tmpHtml = join(TMP_DIR, `${slug}.html`);
-    const { renderCoursePage } = await import("../api/lib/render-course-page.js");
+    const { renderCoursePage } = await import("../lib/render-course-page.js");
     const html = renderCoursePage(course, ctx);
     await writeFile(tmpHtml, html, "utf8");
     await blobPut(tmpHtml, `pages/pos-graduacao/${slug}.html`, "private");

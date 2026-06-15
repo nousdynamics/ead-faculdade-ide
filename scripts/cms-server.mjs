@@ -8,12 +8,12 @@ import {
   verifyAccountLogin,
   getAccountProfile,
   updateAccountProfile,
-} from "../api/lib/account.js";
-import { saveUploadedMedia } from "../api/lib/image-storage.js";
-import { handleMediaFileRequest } from "../api/lib/media-files.js";
-import { handleGuideLeadRequest, submitGuideLead } from "../api/lib/guide-leads.js";
-import { publishCoursePages } from "../api/lib/course-pages.js";
-import { buildCatalogPayload } from "../api/lib/catalog.js";
+} from "../lib/account.js";
+import { saveUploadedMedia } from "../lib/image-storage.js";
+import { handleMediaFileRequest } from "../lib/media-files.js";
+import { handleGuideLeadRequest, submitGuideLead } from "../lib/guide-leads.js";
+import { publishCoursePages } from "../lib/course-pages.js";
+import { buildCatalogPayload } from "../lib/catalog.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const ROOT = join(__dirname, "..");
