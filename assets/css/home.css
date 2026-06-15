@@ -197,11 +197,6 @@
   flex-shrink: 0;
 }
 
-.benefits__cell--navy .benefits__feature-icon,
-.benefits__cell--teal .benefits__feature-icon {
-  filter: brightness(0) invert(1);
-}
-
 .benefits__text {
   font-size: 0.9em;
   font-weight: var(--fw-body);

@@ -12,7 +12,7 @@ import {
 import { saveUploadedMedia } from "../lib/image-storage.js";
 import { handleMediaFileRequest } from "../lib/media-files.js";
 import { handleGuideLeadRequest, submitGuideLead } from "../lib/guide-leads.js";
-import { publishCoursePages } from "../lib/course-pages.js";
+import { publishCoursePages, handleCoursePageRequest } from "../lib/course-pages.js";
 import { buildCatalogPayload } from "../lib/catalog.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -139,7 +139,12 @@ async function writeCollection(name, data) {
       stdio: "ignore",
       detached: true,
     }).unref();
-  } else if (name === "testimonials" || name === "testimonial-templates") {
+  } else if (
+    name === "testimonials" ||
+    name === "testimonial-templates" ||
+    name === "coordination" ||
+    name === "professors"
+  ) {
     publishCoursePages(ctx.courses, pageCtx).catch((err) => console.error("[course-pages]", err));
   }
 }
@@ -277,6 +282,38 @@ const server = createServer(async (req, res) => {
     } catch (err) {
       return send(res, err.status || 500, { error: err.message });
     }
+  }
+
+  const coursePageMatch = url.pathname.match(/^\/pos-graduacao\/([^/]+)\/?$/);
+  if (coursePageMatch && req.method === "GET") {
+    const slug = coursePageMatch[1];
+  const mockReq = { method: "GET" };
+  const mockRes = {
+    statusCode: 200,
+    headers: {},
+    status(code) {
+      this.statusCode = code;
+      return this;
+    },
+    setHeader(key, value) {
+      this.headers[key] = value;
+    },
+    end(body) {
+      const type = this.headers["Content-Type"] || "text/html; charset=utf-8";
+      res.writeHead(this.statusCode, {
+        "Content-Type": type,
+        "Cache-Control": this.headers["Cache-Control"] || "no-store",
+        "Access-Control-Allow-Origin": "*",
+      });
+      res.end(body);
+    },
+  };
+  try {
+    await handleCoursePageRequest(mockReq, mockRes, slug);
+  } catch (err) {
+    return send(res, err.status || 500, { error: err.message });
+  }
+  return;
   }
 
   const apiMatch = url.pathname.match(/^\/api\/cms\/([^/]+)(?:\/([^/]+))?$/);
