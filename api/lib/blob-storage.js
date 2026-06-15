@@ -3,22 +3,40 @@ import { put } from "@vercel/blob";
 export const STORAGE_ERROR =
   "Armazenamento não configurado. Conecte o Blob ao projeto (Storage → ead-faculdade-ide-blob → gru1) e confira BLOB_STORE_ID.";
 
-/** Blob disponível via token estático ou OIDC (conexão moderna da Vercel). */
-export function hasBlobStorage() {
+export const MEDIA_STORAGE_ERROR =
+  "Blob de mídia não configurado. Conecte ead-faculdade-ide-blob-public ao projeto e confira BLOB_MEDIA_STORE_ID.";
+
+export function getPrivateBlobStoreId() {
+  return process.env.BLOB_STORE_ID?.trim() || "";
+}
+
+/** Store pública para imagens/PDFs (ead-faculdade-ide-blob-public). */
+export function getMediaBlobStoreId() {
+  return process.env.BLOB_MEDIA_STORE_ID?.trim() || "";
+}
+
+function canUseBlobRuntime() {
   if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) return true;
-  if (!process.env.BLOB_STORE_ID?.trim()) return false;
-  // No runtime Vercel o OIDC vem do header x-vercel-oidc-token por requisição,
-  // não necessariamente de process.env.VERCEL_OIDC_TOKEN.
   if (process.env.VERCEL) return true;
   if (process.env.VERCEL_OIDC_TOKEN?.trim()) return true;
   return false;
 }
 
+/** Blob privado (CMS, páginas, conta). */
+export function hasBlobStorage() {
+  if (!getPrivateBlobStoreId()) return false;
+  return canUseBlobRuntime();
+}
+
+/** Blob público de mídia. */
+export function hasMediaBlobStorage() {
+  if (!getMediaBlobStoreId()) return false;
+  return canUseBlobRuntime();
+}
+
 export function getBlobStorageMode() {
   if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) return "token";
-  if (process.env.BLOB_STORE_ID?.trim() && (process.env.VERCEL || process.env.VERCEL_OIDC_TOKEN?.trim())) {
-    return "oidc";
-  }
+  if (getPrivateBlobStoreId() && canUseBlobRuntime()) return "oidc";
   return null;
 }
 
@@ -27,9 +45,13 @@ function assertBlobStorage() {
   throw Object.assign(new Error(STORAGE_ERROR), { status: 503 });
 }
 
-/** Opções compartilhadas para @vercel/blob. No runtime Vercel usa OIDC; local usa token RW ou CLI. */
-export function getBlobClientOptions() {
-  const storeId = process.env.BLOB_STORE_ID?.trim();
+function assertMediaBlobStorage() {
+  if (hasMediaBlobStorage()) return;
+  throw Object.assign(new Error(MEDIA_STORAGE_ERROR), { status: 503 });
+}
+
+/** Opções para @vercel/blob. No runtime Vercel usa OIDC; local usa token RW ou CLI. */
+export function getBlobClientOptions(storeId = getPrivateBlobStoreId()) {
   const oidcToken = process.env.VERCEL_OIDC_TOKEN?.trim();
   const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
 
@@ -45,23 +67,27 @@ export function getBlobClientOptions() {
 }
 
 export function getCanonicalBlobStoreId() {
-  return process.env.BLOB_STORE_ID?.trim() || "";
+  return getPrivateBlobStoreId();
 }
 
 /**
- * Grava JSON ou binário no Vercel Blob (OIDC ou BLOB_READ_WRITE_TOKEN).
+ * Grava JSON ou binário no Vercel Blob privado (OIDC ou BLOB_READ_WRITE_TOKEN).
  */
 export async function writeBlob(pathname, body, contentType = "application/json; charset=utf-8") {
-  return putBlob(pathname, body, contentType, "private");
+  return putBlob(pathname, body, contentType, "private", getPrivateBlobStoreId());
 }
 
-/** Mídia pública (imagens/PDFs) — acessível via URL pública do Blob ou proxy /api/media. */
-export async function writePublicBlob(pathname, body, contentType) {
-  return putBlob(pathname, body, contentType, "public");
+/** Mídia pública (imagens/PDFs) na store ead-faculdade-ide-blob-public. */
+export async function writeMediaBlob(pathname, body, contentType) {
+  return putBlob(pathname, body, contentType, "public", getMediaBlobStoreId());
 }
 
-async function putBlob(pathname, body, contentType, access) {
-  assertBlobStorage();
+async function putBlob(pathname, body, contentType, access, storeId) {
+  if (access === "public") {
+    assertMediaBlobStorage();
+  } else {
+    assertBlobStorage();
+  }
 
   let payload;
   if (Buffer.isBuffer(body)) {
@@ -82,7 +108,7 @@ async function putBlob(pathname, body, contentType, access) {
       contentType,
       addRandomSuffix: false,
       allowOverwrite: true,
-      ...getBlobClientOptions(),
+      ...getBlobClientOptions(storeId),
     });
   } catch (err) {
     const message = err?.message || "Falha ao salvar no Blob";

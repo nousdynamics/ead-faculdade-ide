@@ -1,7 +1,13 @@
 import { readFile } from "node:fs/promises";
 import { join, extname } from "node:path";
-import { list } from "@vercel/blob";
-import { hasBlobStorage, getBlobClientOptions } from "./blob-storage.js";
+import { get, list } from "@vercel/blob";
+import {
+  hasBlobStorage,
+  hasMediaBlobStorage,
+  getBlobClientOptions,
+  getMediaBlobStoreId,
+  getPrivateBlobStoreId,
+} from "./blob-storage.js";
 import { sanitizeMediaPath } from "./media-url.js";
 
 const MIME_BY_EXT = {
@@ -25,26 +31,52 @@ async function readLocalMedia(relativePath) {
   };
 }
 
-async function readBlobMedia(relativePath) {
+async function readFromStore(relativePath, { storeId, access }) {
   const pathname = `media/${relativePath}`;
-  const { blobs } = await list({ prefix: pathname, limit: 10, ...getBlobClientOptions() });
-  const match = blobs.find((blob) => blob.pathname === pathname);
-  if (!match?.url) return null;
+  const options = { access, ...getBlobClientOptions(storeId) };
 
-  if (/\.public\.blob\.vercel-storage\.com/i.test(match.url)) {
-    return { redirect: match.url, contentType: match.contentType || contentTypeFromPath(relativePath) };
+  if (access === "public") {
+    const { blobs } = await list({ prefix: pathname, limit: 10, ...options });
+    const match = blobs.find((blob) => blob.pathname === pathname);
+    if (!match?.url) return null;
+
+    return {
+      redirect: match.url,
+      contentType: match.contentType || contentTypeFromPath(relativePath),
+    };
   }
 
-  const headers = process.env.BLOB_READ_WRITE_TOKEN
-    ? { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` }
-    : undefined;
-  const res = await fetch(match.url, headers ? { headers } : undefined);
-  if (!res.ok) return null;
+  const result = await get(pathname, options);
+  if (result?.statusCode !== 200 || !result.stream) return null;
 
+  const buffer = Buffer.from(await new Response(result.stream).arrayBuffer());
   return {
-    buffer: Buffer.from(await res.arrayBuffer()),
-    contentType: match.contentType || res.headers.get("content-type") || contentTypeFromPath(relativePath),
+    buffer,
+    contentType: result.blob.contentType || contentTypeFromPath(relativePath),
   };
+}
+
+async function readBlobMedia(relativePath) {
+  if (hasMediaBlobStorage()) {
+    const fromPublic = await readFromStore(relativePath, {
+      storeId: getMediaBlobStoreId(),
+      access: "public",
+    });
+    if (fromPublic) return fromPublic;
+  }
+
+  if (hasBlobStorage()) {
+    try {
+      return await readFromStore(relativePath, {
+        storeId: getPrivateBlobStoreId(),
+        access: "private",
+      });
+    } catch {
+      /* legado na store privada */
+    }
+  }
+
+  return null;
 }
 
 export async function resolveMediaFile(relativePath) {
@@ -59,10 +91,8 @@ export async function resolveMediaFile(relativePath) {
     /* tenta Blob em produção */
   }
 
-  if (hasBlobStorage()) {
-    const fromBlob = await readBlobMedia(safePath);
-    if (fromBlob) return fromBlob;
-  }
+  const fromBlob = await readBlobMedia(safePath);
+  if (fromBlob) return fromBlob;
 
   throw Object.assign(new Error("Arquivo não encontrado"), { status: 404 });
 }

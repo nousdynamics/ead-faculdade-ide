@@ -1,6 +1,6 @@
 import { writeFile, mkdir } from "node:fs/promises";
 import { join, extname } from "node:path";
-import { hasBlobStorage, writePublicBlob, STORAGE_ERROR } from "./blob-storage.js";
+import { hasMediaBlobStorage, writeMediaBlob, MEDIA_STORAGE_ERROR } from "./blob-storage.js";
 import { toMediaUrl } from "./media-url.js";
 
 const MAX_BYTES = 2 * 1024 * 1024;
@@ -41,14 +41,14 @@ async function persistBuffer({ buffer, filename, contentType, folder, assetRoot,
   const storedName = `${Date.now()}-${safeFilename(filename).replace(/\.[^.]+$/, "")}${ext}`;
   const publicPath = `${publicPrefix}/${folder}/${storedName}`.replace(/\/+/g, "/");
 
-  if (hasBlobStorage()) {
+  if (hasMediaBlobStorage()) {
     const blobPathname = `media/${publicPath}`;
-    await writePublicBlob(blobPathname, buffer, contentType);
+    await writeMediaBlob(blobPathname, buffer, contentType);
     return { url: toMediaUrl(publicPath), path: publicPath };
   }
 
   if (process.env.VERCEL) {
-    throw Object.assign(new Error(STORAGE_ERROR), { status: 503 });
+    throw Object.assign(new Error(MEDIA_STORAGE_ERROR), { status: 503 });
   }
 
   const localDir = join(process.cwd(), assetRoot, folder);
