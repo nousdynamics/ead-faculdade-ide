@@ -10,7 +10,6 @@ import {
   previewTemplate,
   templateEscopoLabel,
   templateTipoLabel,
-  renderTestimonialsSectionPreview,
   extractTemplateVariables,
   variablesForTemplate,
   renderVariablesHelp,
@@ -365,39 +364,86 @@ function templateUsageCount(templateId) {
   return getAll("courses").filter((c) => templateUsedByCourse(c, templateId)).length;
 }
 
-function collectDepoimentosConfig(form) {
+function collectDepoimentosConfig(_form, existingDepoimentos = {}) {
   return {
-    titulo_secao: form.dep_titulo_secao?.value.trim() || "O que nossos alunos dizem",
-    template_item_id: form.dep_template_item_id?.value || "item-depoimento-adaptativo",
+    titulo_secao: existingDepoimentos.titulo_secao || "O que nossos alunos dizem",
+    template_item_id:
+      existingDepoimentos.template_item_id ||
+      existingDepoimentos.template_item_texto_id ||
+      "item-depoimento-adaptativo",
   };
 }
 
-function renderCourseDepoimentosPreview(course) {
-  const partial = {
-    depoimento_ids: getCourseDepoimentoIds(course),
-    depoimentos: course.depoimentos || emptyCourse().depoimentos,
-  };
-  return renderTestimonialsSectionPreview(
-    partial,
-    getAll("testimonials"),
-    getAll("testimonial-templates"),
-    "/",
-  ) || '<p class="empty-hint">Selecione depoimentos para visualizar a seção.</p>';
+function checkboxGroupPaginated(name, collection, selectedIds, label, pageSize = 10) {
+  const items = getAll(collection);
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize) || 1);
+
+  return `
+    <div class="entity-picker" data-entity-picker data-collection="${collection}" data-field-name="${name}" data-page-size="${pageSize}">
+      <div class="entity-picker__head">
+        <label>${label}</label>
+        <span class="entity-picker__meta" data-picker-meta>${items.length} disponíveis · ${selectedIds.length} selecionados</span>
+      </div>
+      <div class="form-checks entity-picker__checks">
+        ${items
+          .map(
+            (item, index) => `
+          <label class="form-check entity-picker__item" data-picker-page="${Math.floor(index / pageSize) + 1}"${index >= pageSize ? " hidden" : ""}>
+            <input type="checkbox" name="${name}" value="${item.id}" ${selectedIds.includes(item.id) ? "checked" : ""}>
+            ${escapeHtml(item.nome)}${collection === "testimonials" ? ` <small class="form-check__meta">(${escapeHtml(testimonialSummary(item))})</small>` : ""}
+          </label>`,
+          )
+          .join("")}
+        ${!items.length ? "<small class=\"entity-picker__empty\">Nenhum item cadastrado.</small>" : ""}
+      </div>
+      ${
+        items.length > pageSize
+          ? `<div class="entity-picker__pager">
+          <button type="button" class="btn btn--ghost btn--sm" data-picker-prev disabled>Anterior</button>
+          <span class="entity-picker__status" data-picker-status>Página 1 de ${totalPages}</span>
+          <button type="button" class="btn btn--ghost btn--sm" data-picker-next>Próxima</button>
+        </div>`
+          : ""
+      }
+    </div>`;
 }
 
-function updateCourseDepoimentosPreview(form) {
-  const preview = $("#course-depoimentos-preview", form);
-  if (!preview) return;
-  const partial = {
-    depoimento_ids: getCheckedIds(form, "depoimento_ids"),
-    depoimentos: collectDepoimentosConfig(form),
-  };
-  preview.innerHTML = renderTestimonialsSectionPreview(
-    partial,
-    getAll("testimonials"),
-    getAll("testimonial-templates"),
-    "/",
-  ) || '<p class="empty-hint">Selecione depoimentos para visualizar a seção.</p>';
+function bindEntityPickers(form) {
+  $$("[data-entity-picker]", form).forEach((picker) => {
+    const pageSize = Number(picker.dataset.pageSize) || 10;
+    const fieldName = picker.dataset.fieldName;
+    const collection = picker.dataset.collection;
+    const items = $$(".entity-picker__item", picker);
+    const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+    const prevBtn = $("[data-picker-prev]", picker);
+    const nextBtn = $("[data-picker-next]", picker);
+    const statusEl = $("[data-picker-status]", picker);
+    const metaEl = $("[data-picker-meta]", picker);
+    let currentPage = 1;
+
+    const updateMeta = () => {
+      if (!metaEl) return;
+      const total = collection ? getAll(collection).length : items.length;
+      const selected = fieldName ? getCheckedIds(form, fieldName).length : 0;
+      metaEl.textContent = `${total} disponíveis · ${selected} selecionados`;
+    };
+
+    const showPage = (page) => {
+      currentPage = Math.min(Math.max(1, page), totalPages);
+      items.forEach((el) => {
+        el.hidden = Number(el.dataset.pickerPage) !== currentPage;
+      });
+      if (statusEl) statusEl.textContent = `Página ${currentPage} de ${totalPages}`;
+      if (prevBtn) prevBtn.disabled = currentPage <= 1;
+      if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+    };
+
+    prevBtn?.addEventListener("click", () => showPage(currentPage - 1));
+    nextBtn?.addEventListener("click", () => showPage(currentPage + 1));
+    picker.addEventListener("change", updateMeta);
+    showPage(1);
+    updateMeta();
+  });
 }
 
 function testimonialSummary(item) {
@@ -550,27 +596,10 @@ function renderCourseForm(course) {
           `)}
 
           ${coursePanel("cf-equipe", "Equipe e depoimentos", "Vincule coordenação, professores e depoimentos exibidos na página do curso.", `
-            <div class="form-grid">
-              ${checkboxGroup("coordenacao_ids", "coordination", c.coordenacao_ids || [], "Coordenação pedagógica")}
-              ${checkboxGroup("professor_ids", "professors", c.professor_ids || [], "Professores")}
-              ${checkboxGroup("depoimento_ids", "testimonials", getCourseDepoimentoIds(c), "Depoimentos")}
-            </div>
-            <div class="form-divider"><span>Modelo de exibição</span></div>
-            <p class="form-hint">O layout da seção é fixo; edite o card de cada depoimento em <a href="#/testimonial-templates">Modelos de depoimento</a>. Blocos como <code>{{bloco_video}}</code> somem quando o depoimento não tem esses dados.</p>
-            <div class="form-grid">
-              <div class="form-group form-group--full">
-                <label>Título da seção</label>
-                <input name="dep_titulo_secao" value="${escapeHtml(c.depoimentos?.titulo_secao || "O que nossos alunos dizem")}">
-              </div>
-              ${testimonialTemplateSelect("dep_template_item_id", {
-                value: c.depoimentos?.template_item_id || c.depoimentos?.template_item_texto_id || "item-depoimento-adaptativo",
-                label: "Modelo do depoimento",
-              })}
-            </div>
-            <div class="form-divider"><span>Pré-visualização da seção</span></div>
-            <p class="form-hint">Atualiza conforme você altera depoimentos, título ou modelo selecionado.</p>
-            <div class="template-preview-shell">
-              <div class="template-preview template-preview--course" id="course-depoimentos-preview">${renderCourseDepoimentosPreview(c)}</div>
+            <div class="entity-pickers">
+              ${checkboxGroupPaginated("coordenacao_ids", "coordination", c.coordenacao_ids || [], "Coordenação pedagógica")}
+              ${checkboxGroupPaginated("professor_ids", "professors", c.professor_ids || [], "Professores")}
+              ${checkboxGroupPaginated("depoimento_ids", "testimonials", getCourseDepoimentoIds(c), "Depoimentos")}
             </div>
           `)}
 
@@ -707,6 +736,8 @@ function bindCourseFormEvents(form) {
     bindPdfUpload(wrap, { folder: wrap.dataset.folder || "courses" });
   });
 
+  bindEntityPickers(form);
+
   $$("[data-course-jump]", form).forEach((btn, index) => {
     if (index === 0) btn.classList.add("is-active");
     btn.addEventListener("click", (e) => {
@@ -783,13 +814,6 @@ function bindCourseFormEvents(form) {
     if (preview) preview.innerHTML = renderSeoPreview(generated);
     toast("SEO regenerado!");
   });
-
-  const depoimentosPanel = $("#cf-equipe", form);
-  if (depoimentosPanel) {
-    const refreshDepoimentos = () => updateCourseDepoimentosPreview(form);
-    depoimentosPanel.addEventListener("change", refreshDepoimentos);
-    depoimentosPanel.addEventListener("input", refreshDepoimentos);
-  }
 }
 
 function emptyCourse() {
@@ -1268,7 +1292,7 @@ function collectCourseForm(form) {
     coordenacao_ids: getCheckedIds(form, "coordenacao_ids"),
     professor_ids: getCheckedIds(form, "professor_ids"),
     depoimento_ids: getCheckedIds(form, "depoimento_ids"),
-    depoimentos: collectDepoimentosConfig(form),
+    depoimentos: collectDepoimentosConfig(form, existing?.depoimentos),
     hero: {
       texto_botao: form.hero_texto_botao?.value.trim(),
       link_botao: form.hero_link_botao?.value.trim(),
