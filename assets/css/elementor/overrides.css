@@ -258,3 +258,17 @@
 #parcela :is(.elementor-heading-title, li, strong, em) {
   font-family: var(--font-heading, "Gotham", sans-serif);
 }
+
+.course-complement-banner {
+  width: min(100%, var(--container-max, 1200px));
+  margin: clamp(1.5rem, 3vw, 2.5rem) auto 0;
+  padding-inline: var(--container-pad, 1.25rem);
+  box-sizing: border-box;
+}
+
+.course-complement-banner__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md, 12px);
+}

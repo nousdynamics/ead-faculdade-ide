@@ -49,6 +49,15 @@ function assetUrl(path, base = "../../") {
   return `${base}${path.replace(/^\//, "")}`;
 }
 
+function renderComplementBanner(course, base) {
+  const img = course.secao_complementar?.imagem?.trim();
+  if (!img) return "";
+
+  return `<div class="course-complement-banner">
+    <img class="course-complement-banner__img" src="${assetUrl(img, base)}" alt="" loading="lazy" width="2560" height="360">
+  </div>`;
+}
+
 function absUrl(path) {
   if (!path) return SITE_URL;
   if (/^https?:\/\//.test(path)) return path;
@@ -602,6 +611,8 @@ export function renderCoursePage(course, ctx) {
         </div>`
             : ""
         }
+
+        ${renderComplementBanner(course, base)}
       </div>
 
       ${

@@ -70,7 +70,7 @@ export function bindImageUpload(root, { folder = "uploads", onChange } = {}) {
   const wrap = root?.closest?.("[data-image-upload]") || root;
   if (!wrap) return;
 
-  const hidden = wrap.querySelector('input[type="hidden"][name="foto"], input[type="hidden"][name="imagem"]');
+  const hidden = wrap.querySelector('input[type="hidden"]');
   const preview = wrap.querySelector(".image-upload__preview");
   const fileInput = wrap.querySelector(".image-upload__input");
   const status = wrap.querySelector(".image-upload__status");
