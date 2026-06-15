@@ -1,18 +1,24 @@
 import { put } from "@vercel/blob";
 
-const STORAGE_ERROR =
+export const STORAGE_ERROR =
   "Armazenamento não configurado. Conecte o Blob ao projeto (Storage → ead-faculdade-ide-blob → gru1) e confira BLOB_STORE_ID.";
 
 /** Blob disponível via token estático ou OIDC (conexão moderna da Vercel). */
 export function hasBlobStorage() {
   if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) return true;
-  if (process.env.BLOB_STORE_ID?.trim() && process.env.VERCEL_OIDC_TOKEN?.trim()) return true;
+  if (!process.env.BLOB_STORE_ID?.trim()) return false;
+  // No runtime Vercel o OIDC vem do header x-vercel-oidc-token por requisição,
+  // não necessariamente de process.env.VERCEL_OIDC_TOKEN.
+  if (process.env.VERCEL) return true;
+  if (process.env.VERCEL_OIDC_TOKEN?.trim()) return true;
   return false;
 }
 
 export function getBlobStorageMode() {
   if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) return "token";
-  if (process.env.BLOB_STORE_ID?.trim() && process.env.VERCEL_OIDC_TOKEN?.trim()) return "oidc";
+  if (process.env.BLOB_STORE_ID?.trim() && (process.env.VERCEL || process.env.VERCEL_OIDC_TOKEN?.trim())) {
+    return "oidc";
+  }
   return null;
 }
 
@@ -27,8 +33,8 @@ export function getBlobClientOptions() {
   const oidcToken = process.env.VERCEL_OIDC_TOKEN?.trim();
   const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
 
-  if (process.env.VERCEL && storeId && oidcToken) {
-    return { storeId, oidcToken };
+  if (process.env.VERCEL && storeId) {
+    return oidcToken ? { storeId, oidcToken } : { storeId };
   }
 
   if (token) return { token };
