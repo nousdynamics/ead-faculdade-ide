@@ -4,18 +4,17 @@ const MAX_BYTES = 2 * 1024 * 1024;
 const PDF_MAX_BYTES = 10 * 1024 * 1024;
 const IMAGE_ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 
+function isCmsUploadedMedia(path) {
+  const normalized = String(path || "").replace(/^\//, "");
+  return /^assets\/(img|docs)\/(courses|coordination|professors|testimonials|uploads)\//.test(normalized);
+}
+
 export function mediaUrl(path) {
   if (!path) return "";
   if (/^https?:\/\//i.test(path)) return path;
 
   const normalized = String(path).replace(/^\//, "");
-  if (
-    normalized.startsWith("assets/img/") ||
-    normalized.startsWith("assets/docs/")
-  ) {
-    return `/api/media/${normalized}`;
-  }
-
+  if (isCmsUploadedMedia(normalized)) return `/api/media/${normalized}`;
   return `/${normalized}`;
 }
 

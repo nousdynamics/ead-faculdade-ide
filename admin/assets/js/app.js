@@ -1898,12 +1898,12 @@ function bindEntityForm(collection) {
         $("#entity-form-panel")?.remove();
         await navigate();
       }, {
-        loading: collection === "testimonials"
-          ? "Salvando depoimento e republicando páginas..."
+        loading: ["coordination", "professors", "testimonials"].includes(collection)
+          ? "Salvando e republicando páginas de curso..."
           : "Salvando registro...",
         submitBtn: form.querySelector('[type="submit"]'),
-        success: collection === "testimonials"
-          ? "Depoimento salvo! Páginas de curso republicadas."
+        success: ["coordination", "professors", "testimonials"].includes(collection)
+          ? "Salvo! Páginas de curso republicadas."
           : "Salvo!",
       });
     } catch {
