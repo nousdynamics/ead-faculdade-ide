@@ -75,6 +75,112 @@ async function uploadMedia(file, folder) {
   return payload.path || payload.url;
 }
 
+function imagePreviewPlaceholder(wrap) {
+  return wrap?.dataset?.placeholder || "Sem imagem";
+}
+
+/** HTML da pré-visualização (com botão remover quando há imagem). */
+export function renderImagePreview(path, { placeholder = "Nenhuma imagem" } = {}) {
+  if (!path) {
+    return `<div class="image-upload__placeholder">${placeholder}</div>`;
+  }
+
+  return `
+    <img src="${mediaUrl(path)}" alt="">
+    <button type="button" class="image-upload__clear" aria-label="Remover imagem" title="Remover imagem">×</button>`;
+}
+
+function setImagePreview(preview, wrap, src) {
+  preview.innerHTML = `
+    <img src="${src}" alt="Pré-visualização">
+    <button type="button" class="image-upload__clear" aria-label="Remover imagem" title="Remover imagem">×</button>`;
+}
+
+function clearImagePreview(wrap, hidden, preview, fileInput, status, onChange) {
+  hidden.value = "";
+  fileInput.value = "";
+  preview.innerHTML = `<div class="image-upload__placeholder">${imagePreviewPlaceholder(wrap)}</div>`;
+  if (status) {
+    status.hidden = true;
+    status.textContent = "";
+    status.classList.remove("image-upload__status--error");
+  }
+  onChange?.("");
+}
+
+async function processImageFile(file, { wrap, hidden, preview, fileInput, status, uploadFolder, onChange }) {
+  if (!file) return;
+
+  const objectUrl = URL.createObjectURL(file);
+  setImagePreview(preview, wrap, objectUrl);
+
+  if (status) {
+    status.textContent = "Enviando imagem…";
+    status.hidden = false;
+    status.classList.remove("image-upload__status--error");
+  }
+
+  try {
+    const path = await uploadImage(file, uploadFolder);
+    hidden.value = path;
+    setImagePreview(preview, wrap, mediaUrl(path));
+    if (status) {
+      status.textContent = "Imagem enviada com sucesso.";
+      status.classList.remove("image-upload__status--error");
+    }
+    onChange?.(path);
+  } catch (err) {
+    if (status) {
+      status.textContent = err.message;
+      status.classList.add("image-upload__status--error");
+    }
+    const current = hidden.value;
+    preview.innerHTML = current
+      ? renderImagePreview(current, { placeholder: imagePreviewPlaceholder(wrap) })
+      : `<div class="image-upload__placeholder">${imagePreviewPlaceholder(wrap)}</div>`;
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+    fileInput.value = "";
+  }
+}
+
+function bindImageDropZone(wrap, handleFile) {
+  wrap.addEventListener("dragenter", (event) => {
+    event.preventDefault();
+    wrap.classList.add("image-upload--dragover");
+  });
+
+  wrap.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+  });
+
+  wrap.addEventListener("dragleave", (event) => {
+    if (wrap.contains(event.relatedTarget)) return;
+    wrap.classList.remove("image-upload--dragover");
+  });
+
+  wrap.addEventListener("drop", (event) => {
+    event.preventDefault();
+    wrap.classList.remove("image-upload--dragover");
+
+    const file = event.dataTransfer.files?.[0];
+    if (!file) return;
+
+    if (!IMAGE_ALLOWED.has(file.type)) {
+      const status = wrap.querySelector(".image-upload__status");
+      if (status) {
+        status.textContent = "Formato não suportado. Use JPG, PNG, WebP ou GIF.";
+        status.hidden = false;
+        status.classList.add("image-upload__status--error");
+      }
+      return;
+    }
+
+    handleFile(file);
+  });
+}
+
 export function bindImageUpload(root, { folder = "uploads", onChange } = {}) {
   const wrap = root?.closest?.("[data-image-upload]") || root;
   if (!wrap) return;
@@ -88,40 +194,21 @@ export function bindImageUpload(root, { folder = "uploads", onChange } = {}) {
 
   const uploadFolder = folder || wrap.dataset.folder || "uploads";
 
+  wrap.addEventListener("click", (event) => {
+    if (!event.target.closest(".image-upload__clear")) return;
+    event.preventDefault();
+    clearImagePreview(wrap, hidden, preview, fileInput, status, onChange);
+  });
+
+  const uploadContext = { wrap, hidden, preview, fileInput, status, uploadFolder, onChange };
+  const handleFile = (file) => processImageFile(file, uploadContext);
+
+  bindImageDropZone(wrap, handleFile);
+
   fileInput.addEventListener("change", async () => {
     const file = fileInput.files?.[0];
     if (!file) return;
-
-    const objectUrl = URL.createObjectURL(file);
-    preview.innerHTML = `<img src="${objectUrl}" alt="Pré-visualização">`;
-
-    if (status) {
-      status.textContent = "Enviando imagem…";
-      status.hidden = false;
-    }
-
-    try {
-      const path = await uploadImage(file, uploadFolder);
-      hidden.value = path;
-      preview.innerHTML = `<img src="${mediaUrl(path)}" alt="Pré-visualização">`;
-      if (status) {
-        status.textContent = "Imagem enviada com sucesso.";
-        status.classList.remove("image-upload__status--error");
-      }
-      onChange?.(path);
-    } catch (err) {
-      if (status) {
-        status.textContent = err.message;
-        status.classList.add("image-upload__status--error");
-      }
-      const current = hidden.value;
-      preview.innerHTML = current
-        ? `<img src="${mediaUrl(current)}" alt="Pré-visualização">`
-        : `<div class="image-upload__placeholder">${wrap.dataset.placeholder || "Sem imagem"}</div>`;
-    } finally {
-      URL.revokeObjectURL(objectUrl);
-      fileInput.value = "";
-    }
+    await handleFile(file);
   });
 }
 
@@ -129,7 +216,7 @@ export function bindPdfUpload(root, { folder = "courses", onChange } = {}) {
   const wrap = root?.closest?.("[data-pdf-upload]") || root;
   if (!wrap) return;
 
-  const urlInput = wrap.querySelector('input[type="text"][name="inv_pdf_descontos"]');
+  const urlInput = wrap.querySelector('input[type="text"]');
   const fileInput = wrap.querySelector(".pdf-upload__input");
   const status = wrap.querySelector(".pdf-upload__status");
   const preview = wrap.querySelector(".pdf-upload__preview");

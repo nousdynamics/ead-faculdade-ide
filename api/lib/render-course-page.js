@@ -12,8 +12,6 @@ const CHECK_BULLET_URL = `${WP_UPLOADS}/2025/10/ICON-CHECKK-BOLLET-01.svg`;
 const DISCOUNTS_PDF = `${WP_UPLOADS}/2026/06/Tabela-de-Convenios-e-Descontos.pdf`;
 const SELO_VD_URL = `${WP_UPLOADS}/2024/08/SELO-VD-IDE-V2.svg`;
 const GUIDE_IMG = "assets/img/IMG-GUIA-DO-CURSO-01.webp";
-const DEFAULT_VIDEO = "https://www.youtube.com/watch?v=XHOmBV4js_E";
-
 const BTN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M44 22C44 34.1503 34.1503 44 22 44C9.84974 44 0 34.1503 0 22C0 9.84974 9.84974 0 22 0C34.1503 0 44 9.84974 44 22Z" fill="white"></path><path d="M24.5977 16L31 22.4023L24.5977 28.8046" stroke="black" stroke-width="1.30605"></path><line x1="30.4833" y1="22.4209" x2="11.6674" y2="22.4209" stroke="black" stroke-width="1.30605"></line></svg>`;
 
 const MINI_CV_CHEVRON = `<svg class="coord-mini-cv__chevron" aria-hidden="true" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>`;
@@ -56,9 +54,69 @@ function renderComplementBanner(course, base) {
   const img = course.secao_complementar?.imagem?.trim();
   if (!img) return "";
 
-  return `<div class="course-complement-banner">
+  return `<section class="course-complement-banner" aria-label="Banner complementar">
     <img class="course-complement-banner__img" src="${assetUrl(img, base)}" alt="" loading="lazy" width="2560" height="360">
-  </div>`;
+  </section>`;
+}
+
+function renderGuideSection(course, base) {
+  return `<section class="course-guide">
+    <div class="container course-guide__inner">
+      <div class="course-guide__text">
+        <h2>Baixe o guia do seu curso e entenda tudo sobre ele</h2>
+        <button
+          type="button"
+          class="course-guide__cta hovers"
+          data-open-guide-modal
+        >
+          <span class="course-guide__cta-icon">${BTN_ICON}</span>
+          <span class="course-guide__cta-text">Baixar agora</span>
+        </button>
+      </div>
+      <div class="course-guide__media">
+        <img src="${assetUrl(GUIDE_IMG, base)}" alt="Guia do curso no celular" loading="lazy" width="206" height="420">
+      </div>
+    </div>
+  </section>`;
+}
+
+function renderGuideLeadModal(course) {
+  const pdfUrl = (() => {
+    const pdf = course.guia?.pdf?.trim() || course.guia_pdf?.trim() || "";
+    if (!pdf) return "";
+    if (/^https?:\/\//i.test(pdf)) return pdf;
+    return toMediaUrl(pdf);
+  })();
+
+  return `<dialog class="course-guide-modal" id="course-guide-modal" aria-labelledby="course-guide-modal-title" data-course-slug="${escapeHtml(course.slug || "")}" data-pdf-url="${escapeHtml(pdfUrl)}">
+    <div class="course-guide-modal__panel">
+      <button type="button" class="course-guide-modal__close" aria-label="Fechar formulário">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h2 id="course-guide-modal-title" class="course-guide-modal__title">Baixe o guia do curso</h2>
+      <p class="course-guide-modal__subtitle">Preencha seus dados para receber o material.</p>
+      <form class="course-guide-modal__form" id="course-guide-form" novalidate>
+        <label class="course-guide-modal__field">
+          <span>Nome completo</span>
+          <input type="text" name="nome" autocomplete="name" required>
+        </label>
+        <label class="course-guide-modal__field">
+          <span>E-mail</span>
+          <input type="email" name="email" autocomplete="email" required>
+        </label>
+        <label class="course-guide-modal__field">
+          <span>Telefone</span>
+          <input type="tel" name="telefone" autocomplete="tel" inputmode="tel" required>
+        </label>
+        <label class="course-guide-modal__consent">
+          <input type="checkbox" name="consent" checked required>
+          <span>Autorizo o uso dos dados fornecidos para envio de mensagens e contato comercial.</span>
+        </label>
+        <p class="course-guide-modal__error" id="course-guide-error" hidden></p>
+        <button type="submit" class="course-guide-modal__submit hovers">Baixar guia</button>
+      </form>
+    </div>
+  </dialog>`;
 }
 
 function absUrl(path) {
@@ -382,7 +440,7 @@ export function renderCoursePage(course, ctx) {
   const statusCss = statusClass(course.status_curso_id || status?.id);
   const inscricaoLink = hero.link_botao || inv.link_botao || "#investimento";
   const coverImg = assetUrl(course.imagem_capa, base);
-  const embed = youtubeEmbed(info.video || DEFAULT_VIDEO);
+  const embed = youtubeEmbed(info.video);
 
   const pill1 = formatPill(info.carga_horaria, "360 Horas");
   const pill2 = formatPill(info.duracao, "12 Meses");
@@ -476,6 +534,7 @@ export function renderCoursePage(course, ctx) {
   <link rel="stylesheet" href="${base}assets/css/testimonials.css">
   <link rel="stylesheet" href="${base}assets/css/course-faq.css">
   <link rel="stylesheet" href="${base}assets/css/course-investment.css">
+  <link rel="stylesheet" href="${base}assets/css/course-guide.css">
   <link rel="stylesheet" href="${base}assets/css/elementor/overrides.css">
   <link rel="stylesheet" href="${base}assets/css/tokens.css">
   <link rel="stylesheet" href="${base}assets/css/base.css">
@@ -585,21 +644,7 @@ export function renderCoursePage(course, ctx) {
         }
 
         <div class="elementor-element elementor-element-47f27a3 e-con-full e-flex e-con e-child">
-          <div class="elementor-element elementor-element-d3e2afa e-flex e-con-boxed e-con e-child">
-            <div class="e-con-inner">
-              <div class="elementor-element elementor-element-c50d4f8 e-con-full e-flex e-con e-child">
-                <div class="elementor-element elementor-element-f0f6d81 elementor-widget elementor-widget-heading">
-                  <div class="elementor-widget-container"><h2 class="elementor-heading-title elementor-size-default">Baixe o guia do seu curso e entenda tudo sobre ele</h2></div>
-                </div>
-                <div class="elementor-element elementor-element-0d18598 elementor-widget elementor-widget-image">
-                  <div class="elementor-widget-container"><img width="44" height="44" src="${base}assets/img/ICON-BUT-V1.svg" alt=""></div>
-                </div>
-              </div>
-              <div class="elementor-element elementor-element-734d6f2 elementor-widget elementor-widget-image">
-                <div class="elementor-widget-container"><img src="${assetUrl(GUIDE_IMG, base)}" alt="Guia do curso no celular" loading="lazy"></div>
-              </div>
-            </div>
-          </div>
+          ${renderGuideSection(course, base)}
         </div>
 
         ${
@@ -614,8 +659,6 @@ export function renderCoursePage(course, ctx) {
         </div>`
             : ""
         }
-
-        ${renderComplementBanner(course, base)}
       </div>
 
       ${
@@ -641,6 +684,8 @@ export function renderCoursePage(course, ctx) {
       }
 
       ${renderTestimonialsSection(course, ctx, base)}
+
+      ${renderComplementBanner(course, base)}
 
       ${renderInvestmentSection(inv, inscricaoLink, base)}
 
@@ -693,6 +738,7 @@ export function renderCoursePage(course, ctx) {
     </div>
   </main>
   ${renderFooter({ base })}
+  ${renderGuideLeadModal(course)}
   ${renderSiteLayoutScripts({ base })}
   <script src="${base}assets/js/course-page.js" defer></script>
 </body>

@@ -1,0 +1,248 @@
+/* Seção — guia do curso */
+.course-guide {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(90deg, #01e3f8 0%, #13a6b4 100%);
+  color: #fff;
+  overflow: visible;
+  margin-block: -4rem;
+}
+
+.course-guide__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2rem;
+  align-items: center;
+  padding-block: 2rem;
+}
+
+.course-guide__text h2 {
+  color: #fff;
+  max-width: 18ch;
+  margin: 0 0 1.25rem;
+  font-size: clamp(1.5rem, 2.5vw, 1.85rem);
+  line-height: 1.15;
+}
+
+.course-guide__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 1.25rem 0.35rem 0.35rem;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: #101429;
+  font-family: var(--font-heading, "Gotham", sans-serif);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.course-guide__cta:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgb(16 20 41 / 0.18);
+}
+
+.course-guide__cta:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.course-guide__cta:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.course-guide__cta-icon {
+  display: inline-flex;
+  line-height: 0;
+  flex: 0 0 auto;
+}
+
+.course-guide__cta-icon svg {
+  width: 44px;
+  height: 44px;
+}
+
+.course-guide__media {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.course-guide__media img {
+  width: min(100%, 206px);
+  margin: -6.75rem 0;
+  position: relative;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Modal — captura de lead */
+.course-guide-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(calc(100vw - 2rem), 28rem);
+  max-height: calc(100vh - 2rem);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  overflow: visible;
+}
+
+.course-guide-modal::backdrop {
+  background: rgb(16 20 41 / 0.72);
+  backdrop-filter: blur(2px);
+}
+
+.course-guide-modal__panel {
+  position: relative;
+  padding: 1.75rem 1.5rem 1.5rem;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 24px 64px rgb(16 20 41 / 0.24);
+}
+
+.course-guide-modal__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(16 20 41 / 0.06);
+  color: #101429;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.course-guide-modal__close:hover {
+  background: rgb(16 20 41 / 0.12);
+}
+
+.course-guide-modal__title {
+  margin: 0 2rem 0.35rem 0;
+  color: #2b325c;
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.course-guide-modal__subtitle {
+  margin: 0 0 1.25rem;
+  color: #5b647a;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.course-guide-modal__form {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.course-guide-modal__field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.course-guide-modal__field span {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #2b325c;
+}
+
+.course-guide-modal__field input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid #d3d7e4;
+  border-radius: 10px;
+  font: inherit;
+  color: #101429;
+  background: #fff;
+}
+
+.course-guide-modal__field input:focus {
+  outline: 2px solid rgb(19 166 180 / 0.35);
+  border-color: #13a6b4;
+}
+
+.course-guide-modal__consent {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.55rem 0.65rem;
+  align-items: start;
+  margin-top: 0.15rem;
+  cursor: pointer;
+}
+
+.course-guide-modal__consent input {
+  margin-top: 0.15rem;
+}
+
+.course-guide-modal__consent span {
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  color: #5b647a;
+}
+
+.course-guide-modal__error {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: #dc2626;
+}
+
+.course-guide-modal__submit {
+  margin-top: 0.25rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #01e3f8 0%, #13a6b4 100%);
+  color: #fff;
+  font-family: var(--font-heading, "Gotham", sans-serif);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.course-guide-modal__submit:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+@media (max-width: 767px) {
+  .course-guide {
+    margin-block: -2rem;
+  }
+
+  .course-guide__inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+    justify-items: center;
+  }
+
+  .course-guide__text h2 {
+    max-width: none;
+  }
+
+  .course-guide__media img {
+    margin: 0;
+    width: min(100%, 160px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-guide__cta,
+  .course-guide__cta:hover:not(:disabled) {
+    transform: none;
+  }
+}
