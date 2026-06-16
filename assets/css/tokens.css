@@ -88,4 +88,8 @@
      --bp-mobile-sm: 479px
      --bp-mobile:    767px
      --bp-tablet:    1024px  */
+
+  /* Mobile — aplicados em @media em base.css / responsive.css */
+  --container-pad-mobile: 16px;
+  --site-header-offset-mobile: 120px;
 }

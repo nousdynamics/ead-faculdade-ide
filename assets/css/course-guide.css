@@ -227,13 +227,15 @@
 
 @media (max-width: 767px) {
   .course-guide {
-    margin-block: -2rem;
+    margin-block: 0;
   }
 
   .course-guide__inner {
     grid-template-columns: 1fr;
     text-align: center;
     justify-items: center;
+    padding-block: 1.5rem;
+    gap: 1rem;
   }
 
   .course-guide__text h2 {
@@ -246,8 +248,8 @@
   }
 
   .course-guide__media img {
-    width: min(100%, 214px);
-    margin: -2.3125rem 0 -3.4375rem;
+    width: min(72vw, 240px);
+    margin: -1.5rem 0 -1rem;
   }
 }
 

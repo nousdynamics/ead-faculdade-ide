@@ -410,6 +410,15 @@
   .course-hero__inner,
   .course-about__inner,
   .course-guide__inner { grid-template-columns: 1fr; }
+  .course-hero {
+    padding-block: 2rem 1.5rem;
+  }
+  .course-hero__inner {
+    gap: 1.5rem;
+  }
+  .course-hero__subtitle {
+    max-width: none;
+  }
   .course-hero__pills { gap: .5rem .75rem; }
   .course-infobar__inner { grid-template-columns: 1fr 1fr; }
   .course-infobar__item:nth-child(odd) { border-left: none; }
@@ -419,18 +428,22 @@
   .course-info-grid__items { grid-template-columns: 1fr; }
   .faculty-grid--compact { grid-template-columns: 1fr 1fr; }
   .course-learn { padding-bottom: calc(var(--space-xl) + 2rem); }
-  .course-guide { margin-block: -2rem; }
+  .course-guide { margin-block: 0; }
   .course-guide__media {
     order: -1;
-    justify-content: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
   .course-guide__media img {
-    width: min(100%, 335px);
-    margin: -5.7rem 0 -0.6rem;
+    width: min(72vw, 240px);
+    margin: -1.5rem 0 -1rem;
   }
-  .course-audience { padding-top: calc(var(--space-xl) + 1.5rem); }
+
+  .course-audience {
+    padding-top: calc(var(--space-xl) + 1.5rem);
+  }
 }
+
 @media (max-width: 575px) {
+  .course-infobar__inner { grid-template-columns: 1fr; }
   .faculty-grid { grid-template-columns: 1fr 1fr; }
 }

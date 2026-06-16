@@ -217,9 +217,9 @@
   }
 
   .hero__shell {
-    min-height: 932px;
+    min-height: clamp(520px, 88svh, 760px);
     align-items: flex-start;
-    padding: 2rem;
+    padding: 1.5rem var(--container-pad);
   }
 
   .hero__inner {
@@ -259,6 +259,16 @@
 
   .excelencia { margin-top: 0; }
 
+  .excelencia__inner {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .excelencia__title {
+    font-size: clamp(1.35rem, 5vw, 1.75rem);
+    width: 100%;
+  }
+
   .benefits { grid-template-columns: 1fr; }
 
   .benefits__cell,
@@ -267,7 +277,15 @@
   .benefits__cell--teal,
   .benefits__cell--gray {
     min-height: auto;
-    padding: 2rem;
+    padding: 1.5rem var(--container-pad);
+    padding-left: var(--container-pad);
+    padding-right: var(--container-pad);
+  }
+
+  .benefits__cell--bg-praticas,
+  .benefits__cell--bg-disciplinas,
+  .benefits__cell--bg-novidades {
+    min-height: 200px;
   }
 
   .benefits__feature-icon {
@@ -501,37 +519,60 @@
 }
 
 @media (max-width: 767px) {
+  .catalog {
+    padding: 48px 0 40px;
+  }
+
+  .catalog__layout {
+    padding-inline: 0;
+    gap: 24px;
+  }
+
   .catalog__banner {
     min-height: auto;
     border-radius: 16px;
-    padding: 62px 24px 72px;
+    padding: 48px 16px 56px;
   }
 
   .catalog__title {
-    font-size: 24px;
-    line-height: 32px;
+    font-size: clamp(1.35rem, 5vw, 1.5rem);
+    line-height: 1.25;
   }
 
   .catalog__subtitle {
-    max-width: 287px;
-    font-size: 16px;
-    line-height: 21px;
+    max-width: none;
+    font-size: 1rem;
+    line-height: 1.35;
   }
 
   .filters {
-    margin-top: -73px;
-    padding: 22px;
-    border-radius: 0;
+    margin-top: -40px;
+    padding: 20px 16px;
+    border-radius: 16px;
+    gap: 16px;
+  }
+
+  .filters .field {
+    flex: 1 1 100%;
+    max-width: 100%;
   }
 
   .filters .field label {
-    font-size: 18px;
-    line-height: 26px;
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+
+  .filters select {
+    max-width: 100%;
+    min-height: 44px;
+    font-size: 0.875rem;
+    line-height: 1.2;
   }
 
   .course-grid {
     grid-template-columns: 1fr;
-    padding: 32px;
+    padding: 24px 0 0;
+    gap: 1.25rem;
   }
 }
 
@@ -759,40 +800,44 @@
 
 @media (max-width: 767px) {
   .newsletter {
-    padding: 32px;
+    padding: 48px 0;
   }
 
   .newsletter__card {
     flex-direction: column;
+    max-width: 100%;
   }
 
   .newsletter__media,
   .newsletter__media img {
-    min-height: 371px;
+    min-height: 220px;
   }
 
   .newsletter__content {
-    padding: 32px;
+    padding: 32px var(--container-pad);
+    gap: 16px;
+  }
+
+  .newsletter__title {
+    font-size: clamp(1.25rem, 5vw, 1.5rem);
+    line-height: 1.25;
   }
 
   .newsletter__logo {
     width: 67px;
   }
 
-  .newsletter__title {
-    font-size: 24px;
-    line-height: 32px;
-  }
-
   .newsletter__sub {
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 0.875rem;
+    line-height: 1.35;
   }
 }
 
 @media (max-width: 767px) {
+  .testimonials { padding-block: var(--space-xl); }
   .testimonials__layout { grid-template-columns: 1fr; }
-  .review-card { flex-basis: 82%; }
+  .reviews-summary { max-width: 100%; }
+  .review-card { flex-basis: min(82%, 300px); }
   .reviews-nav--prev { left: 0; }
   .reviews-nav--next { right: 0; }
 }

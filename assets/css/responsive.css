@@ -1,0 +1,157 @@
+/* ============================================================
+   Responsive — ajustes mobile/tablet (tokens IDE)
+   Carregar por último no site público e páginas de curso.
+   ============================================================ */
+
+/* Evita scroll horizontal por margens negativas / Elementor */
+@media (max-width: 767px) {
+  html {
+    overflow-x: clip;
+  }
+
+  body.site-layout {
+    overflow-x: clip;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* ---- Página de curso (Elementor post-13) ---- */
+@media (max-width: 767px) {
+  .elementor-13 .e-con-boxed > .e-con-inner {
+    padding-inline: var(--container-pad) !important;
+  }
+
+  /* Hero — coluna única, imagem proporcional */
+  .elementor-13 .elementor-element.elementor-element-9072d3c > .e-con-inner {
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-fb93f95,
+  .elementor-13 .elementor-element.elementor-element-9396dd8 {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-9396dd8 {
+    min-height: 220px;
+    aspect-ratio: 4 / 3;
+    border-radius: 0 0 0 var(--radius-lg);
+  }
+
+  .elementor-13 .elementor-element.elementor-element-5ea481a .elementor-image-box-title {
+    font-size: clamp(1.35rem, 5vw, 1.75rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-1363c47 {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-1363c47 .elementor-image-box-title {
+    font-size: 0.8rem !important;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-0e95694 .elementor-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Info bar — 2 colunas em telas médias, 1 em muito estreitas */
+  .elementor-13 .elementor-element.elementor-element-4ff9f4f > .e-con-inner {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-4ff9f4f .elementor-image-box-wrapper {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 0.35rem !important;
+    padding: 0.85rem 0.5rem !important;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-4ff9f4f .elementor-image-box-title {
+    font-size: 0.68rem !important;
+    line-height: 1.25 !important;
+    text-align: center !important;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-4ff9f4f .elementor-image-box-img img {
+    width: 22px !important;
+    height: auto;
+  }
+
+  /* Conheça o curso — vídeo e texto empilhados */
+  .elementor-13 .elementor-element.elementor-element-6cba087 > .e-con-inner {
+    flex-direction: column !important;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-fb22a49,
+  .elementor-13 .elementor-element.elementor-element-0f00e66 {
+    width: 100% !important;
+  }
+
+  /* Módulos / público — padding lateral */
+  .elementor-13 .elementor-element.elementor-element-a0cfd63 > .e-con-inner {
+    padding-inline: var(--container-pad) !important;
+  }
+
+  /* Professores — cards centralizados */
+  .professores .jet-listing-grid__items {
+    grid-template-columns: minmax(0, 1fr) !important;
+    justify-items: center;
+  }
+
+  .professores .elementor-flip-box {
+    max-width: min(100%, 280px);
+  }
+}
+
+@media (max-width: 479px) {
+  .elementor-13 .elementor-element.elementor-element-4ff9f4f > .e-con-inner {
+    grid-template-columns: 1fr !important;
+  }
+
+  .course-investment__price {
+    font-size: clamp(1.35rem, 6vw, 1.75rem) !important;
+  }
+
+  .course-investment__price-highlight {
+    font-size: clamp(1.5rem, 7vw, 2rem) !important;
+  }
+}
+
+/* Investimento — evita overflow do selo e CTA */
+@media (max-width: 767px) {
+  .course-investment__inner {
+    gap: 2.5rem;
+  }
+
+  .course-investment__benefits {
+    padding: 3.5rem 1rem 1.5rem;
+  }
+
+  .course-investment__pricing {
+    padding: 3rem 1rem 1.75rem;
+  }
+
+  .course-investment__cta {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__scroll {
+    animation: none !important;
+  }
+}

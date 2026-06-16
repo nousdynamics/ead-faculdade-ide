@@ -102,4 +102,17 @@ strong { font-weight: 600; }
 .btn--orange:hover { filter: brightness(1.05); transform: translateY(-2px); }
 
 @media (max-width: 1024px) { .section { padding-block: var(--space-xl); } }
-@media (max-width: 767px)  { .section { padding-block: var(--space-lg); } }
+@media (max-width: 767px) {
+  :root {
+    --container-pad: var(--container-pad-mobile);
+    --form-width: 100%;
+  }
+
+  .section { padding-block: var(--space-lg); }
+
+  .btn {
+    min-height: 44px;
+    white-space: normal;
+    text-align: center;
+  }
+}
