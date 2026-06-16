@@ -43,7 +43,7 @@
 .hero__title {
   max-width: 401px;
   width: 100%;
-  color: #fff;
+  color: var(--color-primary);
   font-family: var(--font-heading);
   font-size: 29px;
   font-weight: var(--fw-title);
@@ -56,6 +56,13 @@
   width: var(--form-width);
   max-width: var(--form-width);
   flex-shrink: 0;
+  padding: 1.35rem 1.25rem 1.15rem;
+  background: rgba(32, 38, 74, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow:
+    0 16px 40px rgba(19, 30, 68, 0.28),
+    0 1px 0 rgba(255, 255, 255, 0.06) inset;
 }
 
 .hero__scroll {
