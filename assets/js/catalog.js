@@ -3,6 +3,9 @@
   var grid = document.getElementById("courseGrid");
   if (!grid) return;
 
+  var catalogSection = grid.closest(".catalog");
+  var prefilterNivel = catalogSection && catalogSection.dataset.prefilterNivel;
+
   var selNivel = document.getElementById("f-nivel");
   var selArea = document.getElementById("f-area");
   var selStatus = document.getElementById("f-status");
@@ -70,6 +73,10 @@
     fillSelect(selNivel, "Selecione o nível do curso", payload.filters.niveis);
     fillSelect(selArea, "Selecione uma área de interesse:", payload.filters.areas);
     fillSelect(selStatus, "Selecione o momento do curso:", payload.filters.statuses);
+
+    if (prefilterNivel && selNivel) {
+      selNivel.value = prefilterNivel;
+    }
 
     payload.courses.forEach(function (course) {
       grid.insertBefore(renderCard(course), empty);

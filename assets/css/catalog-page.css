@@ -1,0 +1,52 @@
+/* Páginas de catálogo (/paginas-de-cursos) */
+
+.catalog-page__hero {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 2.5rem 0 2rem;
+}
+
+.catalog-page__title {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+  font-weight: var(--fw-title);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.catalog-page__lead {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.catalog--page {
+  border-top: none;
+  padding-top: 3rem;
+}
+
+.catalog--page .catalog__intro {
+  max-width: 720px;
+}
+
+.catalog--page .catalog__banner,
+.catalog--page .catalog__slideshow {
+  display: none;
+}
+
+.catalog[data-prefilter-nivel] .field--nivel {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .catalog-page__hero {
+    padding: 2rem 0 1.5rem;
+  }
+
+  .catalog--page {
+    padding-top: 2rem;
+  }
+}

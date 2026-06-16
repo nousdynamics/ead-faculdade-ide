@@ -1,4 +1,5 @@
 [
   { "id": "pos-graduacao", "nome": "Pós-Graduação", "slug": "pos-graduacao" },
+  { "id": "graduacao", "nome": "Graduação", "slug": "graduacao" },
   { "id": "curta-duracao", "nome": "Curta duração", "slug": "curta-duracao" }
 ]

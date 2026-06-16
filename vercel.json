@@ -6,6 +6,14 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/paginas-de-cursos",
+      "destination": "/api/handler?path=catalog-page"
+    },
+    {
+      "source": "/paginas-de-cursos/:filter",
+      "destination": "/api/handler?path=catalog-page/:filter"
+    },
+    {
       "source": "/pos-graduacao/:slug",
       "destination": "/api/handler?path=course-page/:slug"
     },
@@ -45,6 +53,24 @@
         {
           "key": "Cache-Control",
           "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/paginas-de-cursos",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=60, stale-while-revalidate=300"
+        }
+      ]
+    },
+    {
+      "source": "/paginas-de-cursos/:filter",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=60, stale-while-revalidate=300"
         }
       ]
     },

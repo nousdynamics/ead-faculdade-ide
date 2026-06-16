@@ -3,6 +3,9 @@
   var grid = document.getElementById('courseGrid');
   if (!grid) return;
 
+  var catalogSection = grid.closest('.catalog');
+  var lockedNivel = catalogSection && catalogSection.dataset.prefilterNivel;
+
   var selNivel  = document.getElementById('f-nivel');
   var selArea   = document.getElementById('f-area');
   var selStatus = document.getElementById('f-status');
@@ -15,6 +18,7 @@
   function apply() {
     cards = Array.prototype.slice.call(grid.querySelectorAll('.course-card'));
     var n = norm(selNivel && selNivel.value);
+    if (!n && lockedNivel) n = norm(lockedNivel);
     var a = norm(selArea && selArea.value);
     var s = norm(selStatus && selStatus.value);
     var visible = 0;

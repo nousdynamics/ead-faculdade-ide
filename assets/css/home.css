@@ -5,6 +5,7 @@
 /* ===================== HERO ===================== */
 .hero {
   position: relative;
+  height: 630px;
   background-color: var(--color-accent);
   background-image: url("../img/hero-banner-desktop-v3.png");
   background-position: center center;
@@ -15,7 +16,7 @@
 
 .hero__shell {
   position: relative;
-  min-height: 630px;
+  height: 100%;
   display: flex;
   align-items: center;
   padding-block: 2.5rem 2.75rem;
@@ -212,12 +213,13 @@
 
 @media (max-width: 767px) {
   .hero {
+    height: 630px;
     background-image: url("../img/hero-banner-mobile-v3.png");
     background-position: top center;
   }
 
   .hero__shell {
-    min-height: clamp(520px, 88svh, 760px);
+    height: 100%;
     align-items: flex-start;
     padding: 1.5rem var(--container-pad);
   }
