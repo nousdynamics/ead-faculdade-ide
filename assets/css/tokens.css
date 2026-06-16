@@ -91,5 +91,5 @@
 
   /* Mobile — aplicados em @media em base.css / responsive.css */
   --container-pad-mobile: 16px;
-  --site-header-offset-mobile: 120px;
+  --site-header-offset-mobile: 64px;
 }

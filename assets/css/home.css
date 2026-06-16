@@ -6,7 +6,7 @@
 .hero {
   position: relative;
   background-color: var(--color-accent);
-  background-image: url("../img/IMG-BACKGROUND-FACULDADE-IDE-EAD-V1-HERO.jpeg");
+  background-image: url("../img/hero-banner-desktop-v3.png");
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -212,8 +212,8 @@
 
 @media (max-width: 767px) {
   .hero {
-    background-image: url("../img/IMG-BACKGROUND-FACULDADE-IDE-EAD-V1-HERO-MOBILE.jpeg");
-    background-position: bottom center;
+    background-image: url("../img/hero-banner-mobile-v3.png");
+    background-position: top center;
   }
 
   .hero__shell {

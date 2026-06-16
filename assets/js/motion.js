@@ -18,7 +18,7 @@
     "main > section.testimonials .testimonials__head",
     "main > section.testimonials .reviews-summary",
     ".not-found > *",
-    ".site-footer__grid > .site-footer__col",
+    ".site-footer__main > *",
   ];
 
   var LIFT_SELECTORS = ".course-card, .course-modules__list li, .testimonial-card, .review-card, .jet-listing-grid__item";

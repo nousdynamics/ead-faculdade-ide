@@ -278,3 +278,27 @@
   aspect-ratio: 2560 / 360;
   object-fit: cover;
 }
+
+/* Investimento — preço proporcional (substitui tamanhos enormes do export Elementor) */
+.investiment p,
+.elementor-13 .elementor-element.elementor-element-9aadfc1 .elementor-heading-title p {
+  font-size: clamp(0.875rem, 1.6vw, 1rem) !important;
+  line-height: 1.25 !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+}
+
+.investiment strong,
+.investiment p strong,
+.elementor-13 .elementor-element.elementor-element-9aadfc1 .elementor-heading-title strong {
+  font-size: clamp(1.75rem, 3.5vw, 2.25rem) !important;
+  line-height: 1.1 !important;
+  font-weight: 600 !important;
+  color: var(--color-accent) !important;
+}
+
+.investiment em,
+.elementor-13 .elementor-element.elementor-element-9aadfc1 .elementor-heading-title em {
+  font-size: 1rem !important;
+  line-height: 1.3 !important;
+}

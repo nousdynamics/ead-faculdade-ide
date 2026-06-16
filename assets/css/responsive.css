@@ -119,14 +119,6 @@
   .elementor-13 .elementor-element.elementor-element-4ff9f4f > .e-con-inner {
     grid-template-columns: 1fr !important;
   }
-
-  .course-investment__price {
-    font-size: clamp(1.35rem, 6vw, 1.75rem) !important;
-  }
-
-  .course-investment__price-highlight {
-    font-size: clamp(1.5rem, 7vw, 2rem) !important;
-  }
 }
 
 /* Investimento — evita overflow do selo e CTA */
