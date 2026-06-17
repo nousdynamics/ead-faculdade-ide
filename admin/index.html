@@ -61,7 +61,7 @@
   </div>
 
   <div class="admin" id="app" hidden>
-    <aside class="admin__sidebar">
+    <aside class="admin__sidebar" id="admin-sidebar">
       <div class="admin__brand">
         <img src="/assets/img/LOGO-IDE-ONLINE-02.svg" alt="Faculdade IDE" width="103">
         <span>Painel CMS</span>
@@ -75,6 +75,8 @@
       </div>
     </aside>
 
+    <div class="admin__overlay" id="admin-nav-overlay" hidden aria-hidden="true"></div>
+
     <div class="admin__main">
       <div class="save-bar" id="save-bar" hidden aria-hidden="true"></div>
       <div class="save-status" id="save-status" hidden role="status" aria-live="polite">
@@ -82,7 +84,17 @@
         <span class="save-status__text">Salvando...</span>
       </div>
       <header class="admin__topbar">
-        <div>
+        <button
+          type="button"
+          class="admin__nav-toggle"
+          id="admin-nav-toggle"
+          aria-expanded="false"
+          aria-controls="admin-sidebar"
+        >
+          <span class="sr-only">Abrir menu do painel</span>
+          <span class="admin__nav-toggle-bars" aria-hidden="true"></span>
+        </button>
+        <div class="admin__topbar-text">
           <h1 id="page-title">Dashboard</h1>
           <p id="page-subtitle">Gerencie cursos e conteúdos do site</p>
         </div>
@@ -100,6 +112,7 @@
     </div>
   </div>
 
+  <script src="/admin/assets/js/admin-nav.js" defer></script>
   <script type="module" src="/admin/assets/js/app.js"></script>
 </body>
 </html>

@@ -420,6 +420,75 @@ body.admin-mode {
   --admin-sticky-top: 5.5rem;
 }
 
+.admin__topbar-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.admin__nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  color: var(--color-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.admin__nav-toggle-bars,
+.admin__nav-toggle-bars::before,
+.admin__nav-toggle-bars::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  position: relative;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.admin__nav-toggle-bars::before,
+.admin__nav-toggle-bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.admin__nav-toggle-bars::before { top: -6px; }
+.admin__nav-toggle-bars::after { top: 6px; }
+
+.admin--nav-open .admin__nav-toggle-bars {
+  background: transparent;
+}
+
+.admin--nav-open .admin__nav-toggle-bars::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.admin--nav-open .admin__nav-toggle-bars::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+.admin__overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(16, 20, 41, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+body.admin-nav-lock {
+  overflow: hidden;
+}
+
 .admin__topbar h1 {
   margin: 0;
   font-size: 1.35rem;
@@ -2016,6 +2085,111 @@ tr:hover td {
   .course-form__actions-end .btn {
     width: 100%;
     justify-content: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .admin__nav-toggle {
+    display: inline-flex;
+  }
+
+  .admin__overlay {
+    display: block;
+  }
+
+  .admin__overlay[hidden] {
+    display: none;
+  }
+
+  .admin__sidebar {
+    width: min(280px, 86vw);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 160;
+    box-shadow: none;
+  }
+
+  .admin--nav-open .admin__sidebar {
+    transform: translateX(0);
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.22);
+  }
+
+  .admin__brand span,
+  .admin__nav .nav-label,
+  .sidebar-link-text {
+    display: inline !important;
+  }
+
+  .admin__nav a {
+    justify-content: flex-start !important;
+    padding-inline: 1rem !important;
+    margin-inline: 0.5rem !important;
+  }
+
+  .nav-logout,
+  .sidebar-link-out {
+    justify-content: flex-start !important;
+    width: calc(100% - 1rem) !important;
+  }
+
+  .admin__main {
+    margin-left: 0 !important;
+  }
+
+  .admin__topbar {
+    padding: 0.85rem 1rem;
+    align-items: flex-start;
+  }
+
+  .admin__topbar h1 {
+    font-size: 1.15rem;
+    line-height: 1.2;
+  }
+
+  .admin__topbar p {
+    font-size: 0.8rem;
+    line-height: 1.35;
+  }
+
+  .admin__content {
+    padding: 1rem 1rem 2.5rem;
+  }
+
+  .stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  .panel__head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .panel__head .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .data-table {
+    font-size: 0.8125rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.75rem 0.65rem;
+  }
+
+  .course-form__nav-link {
+    flex: 1 1 100%;
+  }
+
+  .template-code-modal__panel {
+    width: calc(100vw - 1.5rem);
+    max-height: calc(100dvh - 1.5rem);
+  }
+
+  .save-bar {
+    padding-inline: 1rem;
   }
 }
 

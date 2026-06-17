@@ -248,6 +248,11 @@
     max-width: 100%;
   }
 
+  .hero__shell {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .hero__scroll {
     left: 50%;
     transform: translateX(-50%);

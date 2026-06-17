@@ -19,16 +19,59 @@
   }
 }
 
-/* ---- Página de curso (Elementor post-13) ---- */
+/* ---- Catálogo (home + páginas por nível) ---- */
 @media (max-width: 767px) {
+  .catalog > .container {
+    padding-inline: var(--container-pad);
+  }
+
+  .catalog__layout {
+    width: 100%;
+  }
+
+  .course-card__img {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+}
+
+/* ---- Página de curso (Elementor post-13) ---- */
+@media (max-width: 991px) {
+  .elementor-page-13 .e-con-boxed > .e-con-inner {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .elementor-page-13 .e-con-boxed > .e-con-inner,
+  .elementor-page-13 .e-con-full {
+    max-width: 100% !important;
+  }
+
   .elementor-13 .e-con-boxed > .e-con-inner {
     padding-inline: var(--container-pad) !important;
+  }
+
+  /* Widgets com largura fixa do export Elementor */
+  .elementor-13 .elementor-widget__width-initial,
+  .elementor-13 .elementor-element.elementor-element-bd1680a,
+  .elementor-13 .elementor-element.elementor-element-63840b1,
+  .elementor-13 .elementor-element.elementor-element-7b903f9,
+  .elementor-13 .elementor-element.elementor-element-8de6b8f,
+  .elementor-13 .elementor-element.elementor-element-e3dd28f,
+  .elementor-13 .elementor-element.elementor-element-ea4d595,
+  .elementor-13 .elementor-element.elementor-element-a9770f4,
+  .elementor-13 .elementor-element.elementor-element-a729781 {
+    width: 100% !important;
+    max-width: 100% !important;
+    --container-widget-width: 100% !important;
   }
 
   /* Hero — coluna única, imagem proporcional */
   .elementor-13 .elementor-element.elementor-element-9072d3c > .e-con-inner {
     flex-direction: column !important;
     gap: 1.5rem !important;
+    padding-block: 1.5rem !important;
   }
 
   .elementor-13 .elementor-element.elementor-element-fb93f95,
@@ -46,6 +89,11 @@
   .elementor-13 .elementor-element.elementor-element-5ea481a .elementor-image-box-title {
     font-size: clamp(1.35rem, 5vw, 1.75rem) !important;
     line-height: 1.2 !important;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-5ea481a .elementor-image-box-description {
+    font-size: 1rem !important;
+    line-height: 1.35 !important;
   }
 
   .elementor-13 .elementor-element.elementor-element-1363c47 {
@@ -92,6 +140,8 @@
   /* Conheça o curso — vídeo e texto empilhados */
   .elementor-13 .elementor-element.elementor-element-6cba087 > .e-con-inner {
     flex-direction: column !important;
+    padding-block: 2.5rem !important;
+    gap: 1.5rem !important;
   }
 
   .elementor-13 .elementor-element.elementor-element-fb22a49,
@@ -100,8 +150,16 @@
   }
 
   /* Módulos / público — padding lateral */
-  .elementor-13 .elementor-element.elementor-element-a0cfd63 > .e-con-inner {
+  .elementor-13 .elementor-element.elementor-element-a0cfd63 > .e-con-inner,
+  .elementor-13 .elementor-element.elementor-element-ad3d8d1 > .e-con-inner {
     padding-inline: var(--container-pad) !important;
+  }
+
+  /* Público-alvo e objetivos — cards empilhados */
+  .elementor-13 .elementor-element.elementor-element-ede1902 > .e-con-inner {
+    flex-direction: column !important;
+    gap: 1.25rem !important;
+    padding-block: 2.5rem !important;
   }
 
   /* Professores — cards centralizados */
@@ -112,6 +170,41 @@
 
   .professores .elementor-flip-box {
     max-width: min(100%, 280px);
+  }
+
+  /* Cursos relacionados / carrossel */
+  .elementor-13 .elementor-element.elementor-element-c600f96 .jet-listing-grid__items {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    gap: 0.75rem !important;
+    padding-bottom: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-c600f96 .jet-listing-grid__item {
+    flex: 0 0 min(82vw, 280px);
+    scroll-snap-align: start;
+  }
+
+  /* Banner complementar */
+  .course-complement-banner__img {
+    aspect-ratio: 16 / 6;
+    min-height: 80px;
+  }
+
+  /* Depoimentos na página de curso */
+  .elementor-page-13 .testimonials__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .elementor-page-13 .reviews-summary {
+    max-width: 100%;
+  }
+
+  .elementor-page-13 .review-card {
+    flex-basis: min(85%, 300px);
   }
 }
 
@@ -139,6 +232,23 @@
     width: 100%;
     max-width: 100%;
     justify-content: center;
+  }
+
+  .course-installments-modal {
+    width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+  }
+
+  .course-installments-modal__panel {
+    padding: 1.25rem 1rem 1rem;
+  }
+
+  .course-faq {
+    padding-inline: var(--container-pad);
+  }
+
+  .course-faq__list {
+    gap: 0.65rem;
   }
 }
 
