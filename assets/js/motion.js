@@ -14,6 +14,8 @@
 
   var SECTION_SELECTORS = [
     "main > section.hero",
+    ".catalog-page__hero .container > *",
+    ".catalog--page .catalog__intro",
     ".catalog__intro",
     "main > section.testimonials .testimonials__head",
     "main > section.testimonials .reviews-summary",

@@ -29,6 +29,12 @@ html {
   scroll-padding-top: var(--site-header-offset, 96px);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   font-family: var(--font-body);
   font-weight: var(--fw-body);
