@@ -98,8 +98,7 @@ a.course-card__btn:active,
 
 /* ---- Footer ---- */
 .site-footer__brand.motion-reveal,
-.site-footer__col.motion-reveal,
-.site-footer__emec.motion-reveal {
+.site-footer__col.motion-reveal {
   --motion-distance: 20px;
 }
 
