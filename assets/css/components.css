@@ -524,9 +524,30 @@ body.site-nav-lock {
 
 .site-footer__col--stack-sm { gap: 24px; }
 
+.site-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
 .site-footer__logo {
   width: 88px;
   height: auto;
+  flex-shrink: 0;
+}
+
+.site-footer__emec-logo {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.site-footer__emec-logo img {
+  width: 110px;
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .site-footer__block {
@@ -588,7 +609,7 @@ body.site-nav-lock {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
   text-align: center;
 }
 
@@ -600,22 +621,11 @@ body.site-nav-lock {
   text-wrap: balance;
 }
 
-.site-footer__emec a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.site-footer__emec img {
-  width: 110px;
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
 .social {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
 }
 
@@ -705,9 +715,11 @@ body.site-nav-lock {
     width: min(100%, 260px);
   }
 
+  .site-footer__brand {
+    justify-content: center;
+  }
+
   .social {
-    flex-direction: row;
-    gap: 26px;
     justify-content: center;
   }
 
