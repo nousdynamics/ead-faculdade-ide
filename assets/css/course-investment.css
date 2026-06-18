@@ -92,6 +92,7 @@
 
 .course-investment__cta,
 .elementor-kit-5 a.course-investment__cta,
+.elementor-kit-5 button.course-investment__cta,
 .elementor-kit-5 .course-investment__cta {
   display: inline-flex;
   align-items: center;
@@ -319,6 +320,21 @@
     white-space: normal;
     text-align: center;
     max-width: calc(100% - 2rem);
+  }
+}
+
+.course-investment__cta--pricing {
+  display: none;
+  margin-top: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .course-investment--rd-modal .course-investment__benefits > .course-investment__cta {
+    display: none;
+  }
+
+  .course-investment--rd-modal .course-investment__cta--pricing {
+    display: inline-flex;
   }
 }
 

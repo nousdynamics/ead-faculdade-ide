@@ -1,0 +1,248 @@
+/* ============================================================
+   RD Station — formulários em popup (páginas de curso)
+   Estilos genéricos para qualquer embed Bricks/RD
+   ============================================================ */
+
+.course-rd-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(calc(100vw - 2rem), 28rem);
+  max-height: calc(100vh - 2rem);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  overflow: visible;
+}
+
+.course-rd-modal::backdrop {
+  background: rgb(16 20 41 / 0.72);
+  backdrop-filter: blur(2px);
+}
+
+.course-rd-modal__panel {
+  position: relative;
+  max-height: calc(100vh - 2rem);
+  padding: 1.75rem 1.5rem 1.5rem;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 24px 64px rgb(16 20 41 / 0.24);
+  overflow: auto;
+}
+
+.course-rd-modal__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(16 20 41 / 0.06);
+  color: #101429;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.course-rd-modal__close:hover {
+  background: rgb(16 20 41 / 0.12);
+}
+
+.course-rd-modal__title {
+  margin: 0 2rem 0.35rem 0;
+  color: #2b325c;
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.course-rd-modal__subtitle {
+  margin: 0 0 1.25rem;
+  color: #5b647a;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.course-rd-modal__embed,
+.course-rd-modal__embed > [role="main"] {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  text-align: left;
+}
+
+.course-rd-modal__embed [id^="rd-section-"],
+.course-rd-modal__embed [id^="rd-row-"],
+.course-rd-modal__embed [id^="rd-column-"],
+.course-rd-modal__embed [id^="rd-form-"],
+.course-rd-modal__embed [id^="bricks-component-"] {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.course-rd-modal__embed [id^="rd-section-"],
+.course-rd-modal__embed [id^="rd-row-"],
+.course-rd-modal__embed [id^="rd-column-"],
+.course-rd-modal__embed [id^="rd-column-"] > div,
+.course-rd-modal__embed [id^="bricks-component-"],
+.course-rd-modal__embed .bricks-form,
+.course-rd-modal__embed .bricks-form__fieldset,
+.course-rd-modal__embed .bricks-form__field,
+.course-rd-modal__embed .bricks-form__submit,
+.course-rd-modal__embed form {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.course-rd-modal__embed [id^="rd-column-"] > div {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.course-rd-modal__embed .bricks-form__label,
+.course-rd-modal__embed label {
+  color: var(--color-primary) !important;
+  font-family: var(--font-body) !important;
+  font-size: 13px !important;
+  font-weight: var(--fw-body) !important;
+  line-height: 1.35 !important;
+  margin-bottom: 6px !important;
+  display: inline-block !important;
+}
+
+.course-rd-modal__embed .bricks-form__input,
+.course-rd-modal__embed input[type="text"],
+.course-rd-modal__embed input[type="email"],
+.course-rd-modal__embed input[type="tel"],
+.course-rd-modal__embed select {
+  background-color: #fff !important;
+  border: 1.5px solid rgba(43, 50, 92, 0.14) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(43, 50, 92, 0.08) !important;
+  color: var(--color-primary) !important;
+  font-family: var(--font-body) !important;
+  font-size: 15px !important;
+  font-weight: var(--fw-body) !important;
+  height: 48px !important;
+  padding: 0 16px !important;
+  width: 100% !important;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.course-rd-modal__embed select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' stroke='%232B325C' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 16px center !important;
+  padding-right: 40px !important;
+}
+
+.course-rd-modal__embed .bricks-form__input::placeholder,
+.course-rd-modal__embed input::placeholder {
+  color: rgba(43, 50, 92, 0.45) !important;
+  opacity: 1 !important;
+}
+
+.course-rd-modal__embed .bricks-form__input:focus,
+.course-rd-modal__embed input:focus,
+.course-rd-modal__embed select:focus {
+  border-color: var(--color-accent) !important;
+  box-shadow:
+    0 0 0 3px rgba(19, 166, 180, 0.22),
+    0 6px 20px rgba(43, 50, 92, 0.12) !important;
+  outline: none !important;
+}
+
+.course-rd-modal__embed .bricks-form__field {
+  margin-bottom: 14px !important;
+}
+
+.course-rd-modal__embed .select2-container .select2-choice {
+  background: #fff !important;
+  border: 1.5px solid rgba(43, 50, 92, 0.14) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(43, 50, 92, 0.08) !important;
+  color: var(--color-primary) !important;
+  height: 46px !important;
+  line-height: 46px !important;
+}
+
+.course-rd-modal__embed .select2-container .select2-chosen {
+  color: var(--color-primary) !important;
+}
+
+.course-rd-modal__embed .bricks-form__static,
+.course-rd-modal__embed .bricks-form__static span,
+.course-rd-modal__embed .bricks-form__static a,
+.course-rd-modal__embed [id^="rd-text-"],
+.course-rd-modal__embed [id^="rd-text-"] p,
+.course-rd-modal__embed [id^="rd-text-"] p span {
+  color: rgba(43, 50, 92, 0.72) !important;
+  font-family: var(--font-body) !important;
+  font-size: 12px !important;
+  line-height: 1.55 !important;
+}
+
+.course-rd-modal__embed .bricks-form__static a {
+  color: var(--color-accent-deep) !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.course-rd-modal__embed label.error {
+  color: var(--color-danger) !important;
+  font-size: 12px !important;
+}
+
+.course-rd-modal__embed .bricks--component-button,
+.course-rd-modal__embed [id^="rd-button-"].bricks--component-button {
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-deep) 100%) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 22px rgba(19, 166, 180, 0.35) !important;
+  color: #ffffff !important;
+  font-family: var(--font-body) !important;
+  font-size: 15px !important;
+  font-weight: var(--fw-bold) !important;
+  letter-spacing: 0.02em !important;
+  height: 50px !important;
+  margin-top: 16px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  cursor: pointer !important;
+}
+
+.course-rd-modal__embed .bricks--component-button:hover,
+.course-rd-modal__embed [id^="rd-button-"].bricks--component-button:hover {
+  background: linear-gradient(135deg, #18b8c6 0%, var(--color-accent) 100%) !important;
+  box-shadow: 0 12px 28px rgba(19, 166, 180, 0.45) !important;
+  color: #ffffff !important;
+}
+
+.course-rd-modal__empty {
+  margin: 0;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgb(43 50 92 / 0.06);
+  color: #5b647a;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .course-rd-modal {
+    width: min(calc(100vw - 1.5rem), 28rem);
+  }
+
+  .course-rd-modal__panel {
+    padding: 1.5rem 1.25rem 1.25rem;
+  }
+}

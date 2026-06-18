@@ -515,6 +515,7 @@ function renderCourseFormNav() {
     ["cf-grade", "Grade curricular", "list"],
     ["cf-publico", "Público-alvo", "target"],
     ["cf-investimento", "Investimento", "credit-card"],
+    ["cf-formularios", "Formulários RD", "file-text"],
     ["cf-faq", "FAQ", "help-circle"],
     ["cf-seo", "SEO", "search"],
   ];
@@ -534,6 +535,7 @@ function renderCourseForm(course) {
   const h = c.hero || {};
   const i = c.informacoes || {};
   const inv = c.investimento || {};
+  const forms = c.formularios || {};
   const parcelas = inv.opcoes_parcelamento || [];
   const mods = c.modulos || [];
   const faqs = c.faq || [];
@@ -641,7 +643,7 @@ function renderCourseForm(course) {
               <div class="form-group"><label>Valor (parcelas)</label><input name="inv_oferta_valor" value="${escapeHtml(inv.oferta_valor || "")}" placeholder="Ex: 24x de R$ 277,08"></div>
               <div class="form-group"><label>Taxa de inscrição</label><input name="inv_taxa" value="${escapeHtml(inv.taxa_inscricao || "")}" placeholder="Ex: Taxa de Inscrição R$ 197,00"></div>
               <div class="form-group"><label>Texto do botão</label><input name="inv_texto_botao" value="${escapeHtml(inv.texto_botao || "Adquira")}"></div>
-              <div class="form-group form-group--full"><label>Link do botão</label><input name="inv_link_botao" value="${escapeHtml(inv.link_botao || "")}"></div>
+              <div class="form-group form-group--full"><label>Link do botão (fallback sem formulário RD)</label><input name="inv_link_botao" value="${escapeHtml(inv.link_botao || "")}"></div>
               <div class="form-group form-group--full"><label>Matrícula (HTML opcional)</label><textarea name="inv_matricula" rows="2">${escapeHtml(inv.matricula_html || "")}</textarea></div>
               <div class="form-divider"><span>Opções de parcelamento (popup)</span></div>
               <p class="course-section__desc">Exibidas ao clicar em &quot;Confira outras opções de parcelamento&quot; na página do curso. Adicione quantas opções precisar.</p>
@@ -653,6 +655,32 @@ function renderCourseForm(course) {
               ${renderPdfUploadField({ value: inv.pdf_descontos || "" })}
               <div class="form-group form-group--full"><label>Benefícios (um por linha)</label><textarea name="inv_beneficios" rows="6" placeholder="Formação em instituição referência...">${escapeHtml((inv.beneficios || []).join("\n"))}</textarea></div>
             </div>
+          `)}
+
+          ${coursePanel("cf-formularios", "Formulários RD Station", "Popups da página de curso — guia do curso e seção de investimento.", `
+            <p class="course-section__desc">Cada curso pode ter dois formulários RD Station distintos. Cole o código embed completo gerado no RD Station (div + scripts). O visual é padronizado pelo site; o que muda entre cursos é o ID/código interno do formulário.</p>
+            <div class="form-divider"><span>Popup 1 — Baixar guia</span></div>
+            <div class="form-grid">
+              <div class="form-group"><label>Título do popup</label><input name="form_guia_titulo" value="${escapeHtml(forms.guia_titulo || "")}" placeholder="Baixe o guia do curso"></div>
+              <div class="form-group form-group--full"><label>Subtítulo</label><input name="form_guia_subtitulo" value="${escapeHtml(forms.guia_subtitulo || "")}" placeholder="Preencha seus dados para receber o material."></div>
+            </div>
+            ${renderRdEmbedField({
+              name: "form_guia_embed",
+              value: forms.guia_embed || "",
+              label: "Código embed — Baixar guia",
+              description: "Aberto ao clicar em &quot;Baixar agora&quot; na seção do guia do curso.",
+            })}
+            <div class="form-divider"><span>Popup 2 — Investimento / oferta</span></div>
+            <div class="form-grid">
+              <div class="form-group"><label>Título do popup</label><input name="form_investimento_titulo" value="${escapeHtml(forms.investimento_titulo || "")}" placeholder="Garanta sua vaga"></div>
+              <div class="form-group form-group--full"><label>Subtítulo</label><input name="form_investimento_subtitulo" value="${escapeHtml(forms.investimento_subtitulo || "")}" placeholder="Preencha o formulário e fale com nossa equipe."></div>
+            </div>
+            ${renderRdEmbedField({
+              name: "form_investimento_embed",
+              value: forms.investimento_embed || "",
+              label: "Código embed — Investimento",
+              description: "Aberto ao clicar em &quot;Adquira&quot; na seção de investimento (desktop e mobile). Se vazio, o botão usa o link externo de inscrição.",
+            })}
           `)}
 
           ${coursePanel("cf-faq", "Perguntas frequentes", "Accordion exibido no final da página do curso.", `
@@ -860,10 +888,28 @@ function emptyCourse() {
     publico_alvo: [{}, {}, {}, {}],
     secao_complementar: {},
     guia: { pdf: "", imagem: "" },
+    formularios: {
+      guia_embed: "",
+      guia_titulo: "",
+      guia_subtitulo: "",
+      investimento_embed: "",
+      investimento_titulo: "",
+      investimento_subtitulo: "",
+    },
     investimento: { beneficios: [] },
     faq: [],
     seo: {},
   };
+}
+
+function renderRdEmbedField({ name, value = "", label, description }) {
+  return `
+    <div class="form-group form-group--full">
+      <label for="${name}">${label}</label>
+      ${description ? `<p class="course-section__desc">${description}</p>` : ""}
+      <textarea id="${name}" name="${name}" rows="10" spellcheck="false" placeholder="<div role=&quot;main&quot; id=&quot;seu-form-id&quot;></div>&#10;<script type=&quot;text/javascript&quot; src=&quot;https://d335luupugsy2.cloudfront.net/js/rdstation-forms/stable/rdstation-forms.min.js&quot;></script>&#10;<script type=&quot;text/javascript&quot;> new RDStationForms('seu-form-id', 'null').createForm(); </script>">${escapeHtml(value)}</textarea>
+      <small>Cole o código embed completo do RD Station. O site aplica o CSS padrão automaticamente no popup.</small>
+    </div>`;
 }
 
 function renderGuidePdfField({ value = "" }) {
@@ -875,7 +921,7 @@ function renderGuidePdfField({ value = "" }) {
   return `
     <div class="form-group form-group--full pdf-upload" data-pdf-upload data-folder="courses">
       <label>PDF do guia do curso</label>
-      <p class="course-section__desc">Enviado após o visitante preencher nome, e-mail e telefone no botão &quot;Baixar agora&quot; da página.</p>
+      <p class="course-section__desc">Opcional — use se o RD Station redirecionar ou enviar o PDF após a conversão. Não substitui o formulário embed.</p>
       <div class="pdf-upload__preview">${preview}</div>
       <input type="text" name="guia_pdf" value="${escapeHtml(value)}" placeholder="URL do PDF ou caminho após upload">
       <label class="pdf-upload__btn btn btn--ghost btn--sm">
@@ -1367,6 +1413,14 @@ function collectCourseForm(form) {
     guia: {
       pdf: form.guia_pdf?.value.trim() || "",
       imagem: form.guia_imagem?.value.trim() || "",
+    },
+    formularios: {
+      guia_embed: form.form_guia_embed?.value.trim() || "",
+      guia_titulo: form.form_guia_titulo?.value.trim() || "",
+      guia_subtitulo: form.form_guia_subtitulo?.value.trim() || "",
+      investimento_embed: form.form_investimento_embed?.value.trim() || "",
+      investimento_titulo: form.form_investimento_titulo?.value.trim() || "",
+      investimento_subtitulo: form.form_investimento_subtitulo?.value.trim() || "",
     },
     investimento: {
       oferta_label: form.inv_oferta_label?.value.trim(),
