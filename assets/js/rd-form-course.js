@@ -59,35 +59,48 @@
       return Promise.resolve();
     }
 
-    return loadRdScript()
-      .then(function () {
-        if (typeof RDStationForms === "undefined") return;
-        return waitForRdForm(formId).then(function (ready) {
-          if (!ready || booted.has(formId)) return;
-          new RDStationForms(formId, "null").createForm();
-          booted.add(formId);
-        });
+    return loadRdScript().then(function () {
+      if (typeof RDStationForms === "undefined") return;
+      return waitForRdForm(formId).then(function (ready) {
+        if (!ready || booted.has(formId)) return;
+        new RDStationForms(formId, "null").createForm();
+        booted.add(formId);
       });
+    });
+  }
+
+  function openDialog(dialog) {
+    if (!(dialog instanceof HTMLDialogElement)) return Promise.resolve();
+
+    var formId = dialog.dataset.rdFormId || "";
+    var show = function () {
+      if (typeof dialog.showModal === "function") dialog.showModal();
+    };
+
+    if (!formId) {
+      show();
+      return Promise.resolve();
+    }
+
+    return initRdForm(formId).then(show);
+  }
+
+  function shouldUseInvestmentModal(trigger, dialog) {
+    if (!trigger || !(dialog instanceof HTMLDialogElement)) return false;
+    if (trigger.hasAttribute("data-open-investment-modal")) return true;
+    if (dialog.dataset.rdFormId) return true;
+    return Boolean(document.querySelector(".course-investment--rd-modal"));
   }
 
   function bindDialog(dialog, triggerSelector) {
     if (!(dialog instanceof HTMLDialogElement)) return;
 
-    var formId = dialog.dataset.rdFormId || "";
-
     document.querySelectorAll(triggerSelector).forEach(function (trigger) {
-    trigger.addEventListener("click", function () {
-      var open = function () {
-        if (typeof dialog.showModal === "function") dialog.showModal();
-      };
-
-      if (!formId) {
-        open();
-        return;
-      }
-
-      initRdForm(formId).then(open);
-    });
+      trigger.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        openDialog(dialog);
+      });
     });
 
     dialog.querySelector(".course-rd-modal__close")?.addEventListener("click", function () {
@@ -104,6 +117,33 @@
     });
   }
 
-  bindDialog(document.getElementById("course-guide-modal"), "[data-open-guide-modal]");
-  bindDialog(document.getElementById("course-investment-modal"), "[data-open-investment-modal]");
+  function bindInvestmentDelegation() {
+    var dialog = document.getElementById("course-investment-modal");
+    if (!(dialog instanceof HTMLDialogElement)) return;
+
+    document.addEventListener(
+      "click",
+      function (event) {
+        var trigger = event.target.closest("[data-open-investment-modal], .course-investment__cta");
+        if (!trigger || !shouldUseInvestmentModal(trigger, dialog)) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        openDialog(dialog);
+      },
+      true,
+    );
+  }
+
+  function boot() {
+    bindDialog(document.getElementById("course-guide-modal"), "[data-open-guide-modal]");
+    bindDialog(document.getElementById("course-investment-modal"), "[data-open-investment-modal]");
+    bindInvestmentDelegation();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
 })();

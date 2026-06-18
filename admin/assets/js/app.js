@@ -902,12 +902,31 @@ function emptyCourse() {
   };
 }
 
+function rdEmbedStatus(value = "") {
+  const raw = String(value || "").trim();
+  if (!raw) {
+    return `<small class="rd-embed-status">Sem embed — o botão usará o link externo de inscrição.</small>`;
+  }
+
+  const match =
+    raw.match(/RDStationForms\s*\(\s*['"]([^'"]+)['"]/i) ||
+    raw.match(/<div[^>]*\brole\s*=\s*["']main["'][^>]*\bid\s*=\s*["']([^"']+)["']/i) ||
+    raw.match(/\bid\s*=\s*["']([^"']+)["']/i);
+
+  if (match?.[1]) {
+    return `<small class="rd-embed-status rd-embed-status--ok">Formulário detectado: <code>${escapeHtml(match[1])}</code> — o botão abrirá o popup.</small>`;
+  }
+
+  return `<small class="rd-embed-status rd-embed-status--warn">Não foi possível detectar o ID do formulário. Cole o embed completo (div + scripts) do RD Station.</small>`;
+}
+
 function renderRdEmbedField({ name, value = "", label, description }) {
   return `
     <div class="form-group form-group--full">
       <label for="${name}">${label}</label>
       ${description ? `<p class="course-section__desc">${description}</p>` : ""}
       <textarea id="${name}" name="${name}" rows="10" spellcheck="false" placeholder="<div role=&quot;main&quot; id=&quot;seu-form-id&quot;></div>&#10;<script type=&quot;text/javascript&quot; src=&quot;https://d335luupugsy2.cloudfront.net/js/rdstation-forms/stable/rdstation-forms.min.js&quot;></script>&#10;<script type=&quot;text/javascript&quot;> new RDStationForms('seu-form-id', 'null').createForm(); </script>">${escapeHtml(value)}</textarea>
+      ${rdEmbedStatus(value)}
       <small>Cole o código embed completo do RD Station. O site aplica o CSS padrão automaticamente no popup.</small>
     </div>`;
 }

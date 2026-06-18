@@ -1511,6 +1511,25 @@ tr:hover td {
   color: var(--admin-success);
 }
 
+.rd-embed-status {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.rd-embed-status--ok {
+  color: var(--admin-success);
+}
+
+.rd-embed-status--warn {
+  color: var(--admin-warning, #b45309);
+}
+
+.rd-embed-status code {
+  font-size: 0.82em;
+}
+
 .course-form__actions {
   position: sticky;
   bottom: 0;
