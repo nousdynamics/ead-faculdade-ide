@@ -88,8 +88,7 @@
   function shouldUseInvestmentModal(trigger, dialog) {
     if (!trigger || !(dialog instanceof HTMLDialogElement)) return false;
     if (trigger.hasAttribute("data-open-investment-modal")) return true;
-    if (dialog.dataset.rdFormId) return true;
-    return Boolean(document.querySelector(".course-investment--rd-modal"));
+    return Boolean(dialog.dataset.rdFormId);
   }
 
   function bindDialog(dialog, triggerSelector) {

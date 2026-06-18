@@ -323,21 +323,6 @@
   }
 }
 
-.course-investment__cta--pricing {
-  display: none;
-  margin-top: 1rem;
-}
-
-@media (max-width: 1024px) {
-  .course-investment--rd-modal .course-investment__benefits > .course-investment__cta {
-    display: none;
-  }
-
-  .course-investment--rd-modal .course-investment__cta--pricing {
-    display: inline-flex;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .course-investment__cta {
     animation: none;
