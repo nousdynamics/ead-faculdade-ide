@@ -105,6 +105,11 @@
   padding-right: 0 !important;
 }
 
+/* Título interno do RD — o popup usa só o título configurado no painel admin */
+.course-rd-modal__embed [id^="rd-row-"]:not(:has(.bricks-form__field, input, select, textarea)):has([id^="rd-text-"], [id^="rd-heading-"]) {
+  display: none !important;
+}
+
 .course-rd-modal__embed .bricks-form__label,
 .course-rd-modal__embed label {
   color: var(--color-primary) !important;

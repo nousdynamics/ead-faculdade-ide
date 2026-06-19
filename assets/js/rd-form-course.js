@@ -54,8 +54,43 @@
     });
   }
 
+  function hideEmbeddedRdTitles(formId) {
+    var root = document.getElementById(formId);
+    if (!root) return;
+
+    root.querySelectorAll('[id^="rd-row-"]').forEach(function (row) {
+      if (row.querySelector(".bricks-form__field, .bricks-form, input, select, textarea")) return;
+      if (!row.querySelector('[id^="rd-text-"], [id^="rd-heading-"]')) return;
+      row.hidden = true;
+      row.setAttribute("aria-hidden", "true");
+    });
+  }
+
+  function watchEmbeddedRdTitles(formId) {
+    var root = document.getElementById(formId);
+    if (!root) return;
+
+    hideEmbeddedRdTitles(formId);
+
+    var observer = new MutationObserver(function () {
+      hideEmbeddedRdTitles(formId);
+    });
+
+    observer.observe(root, { childList: true, subtree: true });
+
+    window.setTimeout(function () {
+      hideEmbeddedRdTitles(formId);
+      observer.disconnect();
+    }, 3000);
+  }
+
   function initRdForm(formId) {
-    if (!formId || booted.has(formId)) {
+    if (!formId) {
+      return Promise.resolve();
+    }
+
+    if (booted.has(formId)) {
+      hideEmbeddedRdTitles(formId);
       return Promise.resolve();
     }
 
@@ -65,6 +100,7 @@
         if (!ready || booted.has(formId)) return;
         new RDStationForms(formId, "null").createForm();
         booted.add(formId);
+        watchEmbeddedRdTitles(formId);
       });
     });
   }
@@ -82,7 +118,10 @@
       return Promise.resolve();
     }
 
-    return initRdForm(formId).then(show);
+    return initRdForm(formId).then(function () {
+      hideEmbeddedRdTitles(formId);
+      show();
+    });
   }
 
   function shouldUseInvestmentModal(trigger, dialog) {
