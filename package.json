@@ -13,11 +13,19 @@
     "generate:courses": "node scripts/generate-course-pages.mjs",
     "generate:all": "node scripts/generate-course-pages.mjs --all && node scripts/generate-sitemap.mjs",
     "sync:blob": "node scripts/sync-blob-storage.mjs",
+    "sync:supabase": "node scripts/sync-supabase-cms.mjs",
+    "migrate:blob-to-supabase": "node scripts/migrate-blob-to-supabase.mjs",
+    "migrate:media-production": "node scripts/migrate-media-from-production.mjs",
+    "migrate:account-supabase": "node scripts/migrate-account-to-supabase.mjs",
+    "seed:super-admin": "node scripts/seed-super-admin.mjs",
+    "configure:supabase-auth": "node scripts/configure-supabase-auth-urls.mjs",
+    "env:vercel-supabase": "node scripts/push-supabase-env-vercel.mjs",
     "migrate:blob-media": "node scripts/migrate-blob-media.mjs",
     "deploy:preview": "npx vercel",
     "deploy:prod": "npx vercel --prod"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.8",
     "@vercel/blob": "^2.4.0"
   }
 }

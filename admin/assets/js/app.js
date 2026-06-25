@@ -4,6 +4,12 @@ import {
 } from "./store.js";
 import { generateCourseSeo, scoreSeo, renderSeoPreview, escapeHtml, SEO_LIMITS } from "./seo.js";
 import { login, logout, verifySession, isAuthenticated, getUser, getEmail, fetchAccountProfile, updateAccount } from "./auth.js";
+import {
+  fetchSiteUsers,
+  updateSiteUserLevel,
+  formatAccessLevel,
+  SUPER_ADMIN_EMAIL,
+} from "./site-users.js";
 import { icon, navIcon, statIcon } from "./icons.js";
 import { bindImageUpload, bindPdfUpload, mediaUrl, renderImagePreview } from "./upload.js";
 import {
@@ -140,31 +146,59 @@ async function navigate() {
       else if (route === "formation-levels") content.innerHTML = renderTaxonomy("formation-levels", "Níveis de formação", true);
       else if (route === "statuses") content.innerHTML = renderTaxonomy("statuses", "Status do curso", false);
       else if (route === "account") {
-        let profile = { user: getUser(), email: getEmail() };
+        let profile = { user: getUser(), email: getEmail(), isSuperAdmin: false };
         try {
           profile = await fetchAccountProfile();
         } catch { /* modo offline */ }
-        content.innerHTML = renderAccount(profile);
+        const tab = id === "users" ? "users" : "cms";
+        const isSuperAdmin = Boolean(profile.isSuperAdmin);
+        if (tab === "users" && !isSuperAdmin) {
+          location.replace("#/account");
+          return;
+        }
+        content.innerHTML = tab === "users"
+          ? renderAccountUsers(profile)
+          : renderAccount(profile, { isSuperAdmin });
       }
       else content.innerHTML = renderDashboard();
       bindEvents();
+      if (route === "account" && id === "users") {
+        await loadSiteUsersTable();
+      }
     } catch (err) {
       content.innerHTML = `<div class="panel"><div class="panel__body empty"><p>Erro ao carregar: ${escapeHtml(err.message)}</p></div></div>`;
     }
   });
 }
 
-function renderAccount(profile) {
-  setPage("Configurações de conta", "Gerencie e-mail, senha e acesso ao painel");
+function renderAccountTabs(activeTab, isSuperAdmin) {
+  const cmsClass = activeTab === "cms" ? " account-tabs__link--active" : "";
+  const usersClass = activeTab === "users" ? " account-tabs__link--active" : "";
+  const usersTab = isSuperAdmin
+    ? `<a href="#/account/users" class="account-tabs__link${usersClass}">${icon("users", { size: 16 })} Usuários cadastrados</a>`
+    : "";
 
   return `
+    <nav class="account-tabs" aria-label="Configurações de conta">
+      <a href="#/account" class="account-tabs__link${cmsClass}">${icon("settings", { size: 16 })} Painel CMS</a>
+      ${usersTab}
+    </nav>`;
+}
+
+function renderAccount(profile, { isSuperAdmin = false } = {}) {
+  setPage("Configurações de conta", isSuperAdmin
+    ? "Gerencie o painel CMS e os usuários cadastrados no site"
+    : "Gerencie e-mail, senha e acesso ao painel");
+
+  return `
+    ${renderAccountTabs("cms", isSuperAdmin)}
     <div class="account-grid">
       <div class="panel">
         <div class="panel__head"><h2>${icon("mail", { size: 18 })} E-mail</h2></div>
         <div class="panel__body">
           <form id="account-email-form" class="account-form">
             <div class="form-group">
-              <label for="account-user">Usuário</label>
+              <label for="account-user">E-mail de login</label>
               <input id="account-user" value="${escapeHtml(profile.user || getUser())}" disabled>
             </div>
             <div class="form-group">
@@ -209,6 +243,117 @@ function renderAccount(profile) {
         </div>
       </div>
     </div>`;
+}
+
+function renderAccountUsers(profile) {
+  setPage("Usuários cadastrados", "Somente o super admin pode alterar níveis de acesso");
+
+  return `
+    ${renderAccountTabs("users", true)}
+    <div class="panel">
+      <div class="panel__head">
+        <h2>${icon("users", { size: 18 })} Usuários do site</h2>
+        <p class="panel__lead">Contas criadas em <strong>/cadastro</strong>. Usuários básicos têm acesso somente leitura em <strong>/minha-conta</strong>.</p>
+      </div>
+      <div class="panel__body">
+        <p class="account-form__error" id="site-users-error" hidden></p>
+        <p class="account-form__success" id="site-users-success" hidden></p>
+        <div class="site-users-table-wrap" id="site-users-table-wrap">
+          <p class="site-users-loading">Carregando usuários…</p>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel__head"><h2>${icon("user-cog", { size: 18 })} Super admin</h2></div>
+      <div class="panel__body">
+        <p class="account-logout__text">
+          O e-mail <strong>${escapeHtml(SUPER_ADMIN_EMAIL)}</strong> é o único super admin do site.
+          Você está autenticado como <strong>${escapeHtml(profile.email || profile.user || SUPER_ADMIN_EMAIL)}</strong>.
+        </p>
+      </div>
+    </div>`;
+}
+
+function renderSiteUsersTable(users) {
+  if (!users.length) {
+    return `<p class="empty">Nenhum usuário cadastrado ainda.</p>`;
+  }
+
+  const rows = users.map((row) => {
+    const isFixedSuperAdmin = row.email?.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase();
+    const actionCell = isFixedSuperAdmin
+      ? `<span class="site-users-fixed">Super admin fixo</span>`
+      : `<div class="site-users-actions">
+          <select class="site-users-level" data-user-id="${escapeHtml(row.id)}" aria-label="Nível de acesso de ${escapeHtml(row.email)}">
+            <option value="basic"${row.access_level === "basic" ? " selected" : ""}>Básico</option>
+          </select>
+          <button type="button" class="btn btn--outline btn--sm site-users-save" data-user-id="${escapeHtml(row.id)}">${icon("save", { size: 14 })} Salvar</button>
+        </div>`;
+
+    return `<tr>
+      <td>${escapeHtml(row.full_name || "—")}</td>
+      <td>${escapeHtml(row.email || "—")}</td>
+      <td>${escapeHtml(row.phone || "—")}</td>
+      <td>${escapeHtml(formatAccessLevel(row.access_level))}</td>
+      <td>${actionCell}</td>
+    </tr>`;
+  }).join("");
+
+  return `<table class="site-users-table">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>E-mail</th>
+        <th>Telefone</th>
+        <th>Nível</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+async function loadSiteUsersTable() {
+  const wrap = $("#site-users-table-wrap");
+  const errorEl = $("#site-users-error");
+  const successEl = $("#site-users-success");
+  if (!wrap) return;
+
+  errorEl.hidden = true;
+  successEl.hidden = true;
+
+  try {
+    const users = await fetchSiteUsers();
+    wrap.innerHTML = renderSiteUsersTable(users);
+    bindSiteUsersEvents();
+  } catch (err) {
+    wrap.innerHTML = `<p class="empty">Não foi possível carregar os usuários.</p>`;
+    errorEl.textContent = err.message;
+    errorEl.hidden = false;
+  }
+}
+
+function bindSiteUsersEvents() {
+  $$(".site-users-save").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const userId = btn.dataset.userId;
+      const select = document.querySelector(`.site-users-level[data-user-id="${userId}"]`);
+      const errorEl = $("#site-users-error");
+      const successEl = $("#site-users-success");
+      errorEl.hidden = true;
+      successEl.hidden = true;
+
+      try {
+        await updateSiteUserLevel(userId, select?.value || "basic");
+        successEl.textContent = "Nível de acesso atualizado.";
+        successEl.hidden = false;
+        await loadSiteUsersTable();
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.hidden = false;
+      }
+    });
+  });
 }
 
 function renderDashboard() {

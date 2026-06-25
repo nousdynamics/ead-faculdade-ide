@@ -6,6 +6,34 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/entrar",
+      "destination": "/api/handler?path=auth-page/login"
+    },
+    {
+      "source": "/cadastro",
+      "destination": "/api/handler?path=auth-page/register"
+    },
+    {
+      "source": "/minha-conta",
+      "destination": "/api/handler?path=auth-page/account"
+    },
+    {
+      "source": "/recuperar-senha",
+      "destination": "/api/handler?path=auth-page/reset"
+    },
+    {
+      "source": "/admin-usuarios",
+      "destination": "/api/handler?path=auth-page/admin-users"
+    },
+    {
+      "source": "/auth/callback",
+      "destination": "/api/handler?path=auth-page/callback"
+    },
+    {
+      "source": "/redefinir-senha",
+      "destination": "/api/handler?path=auth-page/new-password"
+    },
+    {
       "source": "/paginas-de-cursos",
       "destination": "/api/handler?path=catalog-page"
     },
@@ -76,6 +104,42 @@
     },
     {
       "source": "/pos-graduacao/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/minha-conta",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/entrar",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/cadastro",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/recuperar-senha",
       "headers": [
         {
           "key": "Cache-Control",

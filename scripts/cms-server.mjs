@@ -15,13 +15,17 @@ import { handleGuideLeadRequest, submitGuideLead } from "../lib/guide-leads.js";
 import { publishCoursePages, handleCoursePageRequest } from "../lib/course-pages.js";
 import { buildCatalogPayload } from "../lib/catalog.js";
 import { handleCatalogPageRequest } from "../lib/catalog-pages.js";
+import { handleAuthPageRequest, handlePublicConfigRequest } from "../lib/user-auth-pages.js";
+import { loadProjectEnv } from "./load-env.mjs";
+
+await loadProjectEnv();
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const ROOT = join(__dirname, "..");
 const CMS_DIR = join(ROOT, "data", "cms");
 
-const CMS_USER = process.env.CMS_USER || "yeaslest";
-const CMS_PASSWORD = process.env.CMS_PASSWORD || "lest1234567";
+const CMS_USER = process.env.CMS_USER?.trim() || "";
+const CMS_PASSWORD = process.env.CMS_PASSWORD || "";
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 
 const sessions = new Map();
@@ -60,6 +64,29 @@ function send(res, status, body, type = "application/json") {
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   });
   res.end(typeof body === "string" ? body : JSON.stringify(body));
+}
+
+function createHtmlMockRes(res) {
+  return {
+    statusCode: 200,
+    headers: {},
+    status(code) {
+      this.statusCode = code;
+      return this;
+    },
+    setHeader(key, value) {
+      this.headers[key] = value;
+    },
+    end(body) {
+      const type = this.headers["Content-Type"] || "text/html; charset=utf-8";
+      res.writeHead(this.statusCode, {
+        "Content-Type": type,
+        "Cache-Control": this.headers["Cache-Control"] || "no-store",
+        "Access-Control-Allow-Origin": "*",
+      });
+      res.end(body);
+    },
+  };
 }
 
 function safeEqual(a, b) {
@@ -201,7 +228,11 @@ const server = createServer(async (req, res) => {
     try {
       if (req.method === "GET") {
         const profile = await getAccountProfile(session.user);
-        return send(res, 200, profile);
+        const { isSuperAdminEmail } = await import("../lib/site-users-admin.js");
+        return send(res, 200, {
+          ...profile,
+          isSuperAdmin: isSuperAdminEmail(profile.email || session.user),
+        });
       }
 
       if (req.method === "PUT") {
@@ -225,7 +256,39 @@ const server = createServer(async (req, res) => {
     if (!session) return;
     try {
       const profile = await getAccountProfile(session.user);
-      return send(res, 200, profile);
+      const { isSuperAdminEmail } = await import("../lib/site-users-admin.js");
+      return send(res, 200, {
+        ...profile,
+        isSuperAdmin: isSuperAdminEmail(profile.email || session.user),
+      });
+    } catch (err) {
+      return send(res, err.status || 500, { error: err.message });
+    }
+  }
+
+  if (url.pathname === "/api/auth/site-users") {
+    const session = requireAuth(req, res);
+    if (!session) return;
+
+    try {
+      const profile = await getAccountProfile(session.user);
+      const { isSuperAdminEmail, listSiteUsers, updateSiteUserAccessLevel } = await import("../lib/site-users-admin.js");
+      if (!isSuperAdminEmail(profile.email || session.user)) {
+        return send(res, 403, { error: "Acesso restrito ao super admin" });
+      }
+
+      if (req.method === "GET") {
+        const users = await listSiteUsers();
+        return send(res, 200, { users });
+      }
+
+      if (req.method === "PUT") {
+        const body = await readBody(req);
+        const user = await updateSiteUserAccessLevel(body.userId, body.accessLevel);
+        return send(res, 200, { user });
+      }
+
+      return send(res, 405, { error: "Método não permitido" });
     } catch (err) {
       return send(res, err.status || 500, { error: err.message });
     }
@@ -283,6 +346,38 @@ const server = createServer(async (req, res) => {
     } catch (err) {
       return send(res, err.status || 500, { error: err.message });
     }
+  }
+
+  if (url.pathname === "/api/config/public" && req.method === "GET") {
+    const mockReq = { method: "GET" };
+    const mockRes = createHtmlMockRes(res);
+    try {
+      await handlePublicConfigRequest(mockReq, mockRes);
+    } catch (err) {
+      return send(res, err.status || 500, { error: err.message });
+    }
+    return;
+  }
+
+  const authPageRoutes = {
+    "/entrar": "login",
+    "/cadastro": "register",
+    "/minha-conta": "account",
+    "/admin-usuarios": "admin-users",
+    "/recuperar-senha": "reset",
+    "/auth/callback": "callback",
+    "/redefinir-senha": "new-password",
+  };
+  const authPageKey = authPageRoutes[url.pathname.replace(/\/$/, "")];
+  if (authPageKey && req.method === "GET") {
+    const mockReq = { method: "GET" };
+    const mockRes = createHtmlMockRes(res);
+    try {
+      await handleAuthPageRequest(mockReq, mockRes, authPageKey);
+    } catch (err) {
+      return send(res, err.status || 500, { error: err.message });
+    }
+    return;
   }
 
   const catalogPageMatch = url.pathname.match(/^\/paginas-de-cursos(?:\/([^/]+))?\/?$/);

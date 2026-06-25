@@ -34,13 +34,13 @@
         <div class="login-card__head">
           <span class="login-card__badge">Acesso restrito</span>
           <h1>Entrar no CMS</h1>
-          <p>Use suas credenciais de equipe de conteúdo.</p>
+          <p>Use suas credenciais de equipe de conteúdo. Alunos e cadastros usam a <a href="/entrar">área do aluno</a>.</p>
         </div>
 
         <form id="login-form" class="login-form">
           <div class="form-group">
-            <label for="login-user">Usuário</label>
-            <input id="login-user" name="username" type="text" autocomplete="username" placeholder="seu.usuario" required>
+            <label for="login-user">E-mail</label>
+            <input id="login-user" name="username" type="email" autocomplete="username" placeholder="seu@email.com" required>
           </div>
           <div class="form-group">
             <label for="login-pass">Senha</label>
@@ -53,8 +53,12 @@
           </button>
         </form>
 
-        <p class="login-card__foot">
-          <a href="/" target="_blank" rel="noopener">← Voltar ao site</a>
+        <p class="login-card__foot login-card__foot--links">
+          <a href="/">← Voltar ao site</a>
+          <span aria-hidden="true">·</span>
+          <a href="/entrar">Área do aluno</a>
+          <span aria-hidden="true">·</span>
+          <a href="/cadastro">Criar conta</a>
         </p>
       </div>
     </div>
