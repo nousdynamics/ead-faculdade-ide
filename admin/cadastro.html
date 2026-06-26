@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar conta — Painel CMS Faculdade IDE EAD</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="/assets/img/FAV-ICON-3.svg">
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/admin/assets/css/admin.css">
+</head>
+<body class="login-mode">
+  <div class="login-screen">
+    <div class="login-screen__bg" aria-hidden="true"></div>
+
+    <div class="login-layout">
+      <aside class="login-brand">
+        <img src="/assets/img/LOGO-IDE-ONLINE-02.svg" alt="Faculdade IDE EAD" width="103" height="40">
+        <p class="login-brand__tag">Painel administrativo</p>
+        <h2 class="login-brand__title">Gerencie cursos, professores e conteúdos do site EAD.</h2>
+        <ul class="login-brand__list">
+          <li><svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>Cursos e pós-graduações</li>
+          <li><svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Professores e coordenação</li>
+          <li><svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>Depoimentos e SEO</li>
+        </ul>
+      </aside>
+
+      <div class="login-card">
+        <div class="login-card__head">
+          <span class="login-card__badge">Acesso restrito</span>
+          <h1>Criar conta</h1>
+          <p>Cadastre o acesso da equipe interna ao painel CMS da Faculdade IDE.</p>
+        </div>
+
+        <form id="register-form" class="login-form" novalidate>
+          <div class="form-group">
+            <label for="register-email">E-mail</label>
+            <input id="register-email" name="email" type="email" autocomplete="email" placeholder="seu@faculdadeide.edu.br" required>
+          </div>
+          <div class="form-group">
+            <label for="register-password">Senha</label>
+            <input id="register-password" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="••••••••" required>
+          </div>
+          <div class="form-group">
+            <label for="register-password-confirm">Confirmar senha</label>
+            <input id="register-password-confirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="••••••••" required>
+          </div>
+          <p class="login-error" id="register-error" hidden></p>
+          <button type="submit" class="btn btn--accent login-submit">
+            Criar conta
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </form>
+
+        <p class="login-card__foot">
+          <small>Novas contas entram como <strong>básico</strong> (somente leitura). O super admin pode promover para admin.</small>
+        </p>
+        <p class="login-card__foot login-card__foot--links">
+          <a href="/admin">Já tem conta? Entrar</a>
+          <span aria-hidden="true">·</span>
+          <a href="/">← Voltar ao site</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/admin/assets/js/register.js"></script>
+</body>
+</html>

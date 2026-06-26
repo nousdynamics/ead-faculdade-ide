@@ -20,6 +20,7 @@ export async function updateSiteUserLevel(userId, accessLevel) {
 
 export function formatAccessLevel(level) {
   if (level === "super_admin") return "Super admin";
+  if (level === "admin") return "Admin";
   if (level === "basic") return "Básico (somente leitura)";
   return level || "—";
 }

@@ -8,7 +8,6 @@ const VARS = [
   "STORAGE_PROVIDER",
   "SUPABASE_URL",
   "SUPABASE_SERVICE_ROLE_KEY",
-  "SUPABASE_ANON_KEY",
   "SUPABASE_MEDIA_BUCKET",
   // Auth do CMS — obrigatórias após o hardening (auth falha-fechado sem elas).
   "CMS_SECRET",

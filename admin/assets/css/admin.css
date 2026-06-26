@@ -219,6 +219,25 @@ body.admin-mode {
   border-radius: var(--radius-sm);
 }
 
+.login-notice {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  line-height: 1.55;
+}
+
+.login-notice p {
+  margin: 0 0 0.75rem;
+}
+
+.login-notice a {
+  color: var(--color-accent-dark);
+  font-weight: 600;
+}
+
+.login-notice a:hover {
+  color: var(--color-primary);
+}
+
 .login-card__foot {
   margin: 1.25rem 0 0;
   padding-top: 1rem;
@@ -1974,6 +1993,26 @@ tr:hover td {
   font-size: 0.8125rem;
   color: var(--color-muted);
   font-weight: 600;
+}
+
+.admin-readonly-banner {
+  margin: 0;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+body.admin-readonly .btn--primary:not(.nav-logout),
+body.admin-readonly .btn--danger,
+body.admin-readonly .btn--danger-outline,
+body.admin-readonly [data-delete-course],
+body.admin-readonly [data-delete-entity],
+body.admin-readonly [data-delete-tax] {
+  display: none !important;
 }
 
 .btn--sm {

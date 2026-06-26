@@ -3,7 +3,7 @@ import {
   uid, slugify, getCoursePublicPath, loadFromLocalStorage,
 } from "./store.js";
 import { generateCourseSeo, scoreSeo, renderSeoPreview, escapeHtml, SEO_LIMITS } from "./seo.js";
-import { login, logout, verifySession, isAuthenticated, getUser, getEmail, fetchAccountProfile, updateAccount } from "./auth.js";
+import { login, logout, verifySession, isAuthenticated, getUser, getEmail, getAccessLevel, fetchAccountProfile, updateAccount } from "./auth.js";
 import {
   fetchSiteUsers,
   updateSiteUserLevel,
@@ -51,11 +51,14 @@ const NAV = [
   { route: "statuses", label: "Status do curso", icon: "circle-dot" },
   { group: "Conta" },
   { route: "account", label: "Configurações de conta", icon: "settings" },
+  { route: "users", label: "Usuários", icon: "users", superAdminOnly: true },
   { action: "logout", label: "Sair", icon: "log-out" },
 ];
 
 let currentRoute = "dashboard";
 let editId = null;
+let isSuperAdminSession = false;
+let isReadOnlySession = false;
 
 function toast(msg, type = "success") {
   const el = $("#toast");
@@ -76,6 +79,10 @@ function toast(msg, type = "success") {
 }
 
 async function saveWithFeedback(task, { loading = "Salvando...", success, submitBtn = null } = {}) {
+  if (isReadOnlySession) {
+    toast("Seu acesso é somente leitura.", "error");
+    throw new Error("Seu acesso é somente leitura.");
+  }
   toast(loading, "loading");
   try {
     const result = await withSaveFeedback(task, { message: loading, submitBtn });
@@ -102,7 +109,7 @@ function statusBadge(statusId) {
 }
 
 function renderNav() {
-  $("#nav").innerHTML = NAV.map((item) => {
+  $("#nav").innerHTML = NAV.filter((item) => !item.superAdminOnly || isSuperAdminSession).map((item) => {
     if (item.group) return `<div class="nav-group">${item.group}</div>`;
     if (item.action === "logout") {
       return `<button type="button" class="nav-logout" data-action="logout"><span class="nav-icon">${navIcon(item.icon)}</span><span class="nav-label">${item.label}</span></button>`;
@@ -110,6 +117,36 @@ function renderNav() {
     const active = currentRoute === item.route || (item.route === "courses" && currentRoute.startsWith("course"));
     return `<a href="#/${item.route}" class="${active ? "active" : ""}" data-route="${item.route}"><span class="nav-icon">${navIcon(item.icon)}</span><span class="nav-label">${item.label}</span></a>`;
   }).join("");
+}
+
+async function refreshSessionAccess() {
+  try {
+    const profile = await fetchAccountProfile();
+    isSuperAdminSession = Boolean(profile.isSuperAdmin);
+    isReadOnlySession = profile.accessLevel === "basic" || profile.canWrite === false;
+  } catch {
+    isSuperAdminSession = false;
+    isReadOnlySession = getAccessLevel() === "basic";
+  }
+  document.body.classList.toggle("admin-readonly", isReadOnlySession);
+}
+
+function applyReadOnlyMode() {
+  document.body.classList.toggle("admin-readonly", isReadOnlySession);
+  if (!isReadOnlySession) return;
+
+  const banner = $("#readonly-banner");
+  if (banner) banner.hidden = false;
+
+  $$("button[type='submit'], .btn--danger, .btn--danger-outline, [data-delete-course], [data-delete-entity], [data-delete-tax], #btn-new-entity, #btn-new-template, .site-users-save").forEach((el) => {
+    el.disabled = true;
+    el.hidden = true;
+  });
+
+  $$("#content input:not([type='search']), #content textarea, #content select").forEach((el) => {
+    el.disabled = true;
+    el.readOnly = true;
+  });
 }
 
 function parseRoute() {
@@ -123,6 +160,11 @@ async function navigate() {
 
   if (route === "testimonials-text" || route === "testimonials-video" || route === "testimonials-image") {
     location.replace("#/testimonials");
+    return;
+  }
+
+  if (route === "account" && id === "users") {
+    location.replace("#/users");
     return;
   }
 
@@ -146,23 +188,30 @@ async function navigate() {
       else if (route === "formation-levels") content.innerHTML = renderTaxonomy("formation-levels", "Níveis de formação", true);
       else if (route === "statuses") content.innerHTML = renderTaxonomy("statuses", "Status do curso", false);
       else if (route === "account") {
-        let profile = { user: getUser(), email: getEmail(), isSuperAdmin: false };
+        let profile = { user: getUser(), email: getEmail(), isSuperAdmin: isSuperAdminSession };
+        try {
+          profile = await fetchAccountProfile();
+          isSuperAdminSession = Boolean(profile.isSuperAdmin);
+          isReadOnlySession = profile.accessLevel === "basic" || profile.canWrite === false;
+          renderNav();
+        } catch { /* modo offline */ }
+        content.innerHTML = renderAccount(profile);
+      }
+      else if (route === "users") {
+        if (!isSuperAdminSession) {
+          location.replace("#/dashboard");
+          return;
+        }
+        let profile = { user: getUser(), email: getEmail() };
         try {
           profile = await fetchAccountProfile();
         } catch { /* modo offline */ }
-        const tab = id === "users" ? "users" : "cms";
-        const isSuperAdmin = Boolean(profile.isSuperAdmin);
-        if (tab === "users" && !isSuperAdmin) {
-          location.replace("#/account");
-          return;
-        }
-        content.innerHTML = tab === "users"
-          ? renderAccountUsers(profile)
-          : renderAccount(profile, { isSuperAdmin });
+        content.innerHTML = renderUsersPage(profile);
       }
       else content.innerHTML = renderDashboard();
       bindEvents();
-      if (route === "account" && id === "users") {
+      applyReadOnlyMode();
+      if (route === "users") {
         await loadSiteUsersTable();
       }
     } catch (err) {
@@ -171,29 +220,19 @@ async function navigate() {
   });
 }
 
-function renderAccountTabs(activeTab, isSuperAdmin) {
-  const cmsClass = activeTab === "cms" ? " account-tabs__link--active" : "";
-  const usersClass = activeTab === "users" ? " account-tabs__link--active" : "";
-  const usersTab = isSuperAdmin
-    ? `<a href="#/account/users" class="account-tabs__link${usersClass}">${icon("users", { size: 16 })} Usuários cadastrados</a>`
-    : "";
+function renderAccount(profile) {
+  const readOnly = profile.accessLevel === "basic" || profile.canWrite === false;
+  const subtitle = profile.isSuperAdmin
+    ? "Credenciais da equipe e gestão de usuários no menu lateral"
+    : readOnly
+      ? "Seu acesso é somente leitura — visualize o conteúdo sem alterações"
+      : "Credenciais de acesso da equipe interna ao painel CMS";
+  setPage("Configurações de conta", subtitle);
 
-  return `
-    <nav class="account-tabs" aria-label="Configurações de conta">
-      <a href="#/account" class="account-tabs__link${cmsClass}">${icon("settings", { size: 16 })} Painel CMS</a>
-      ${usersTab}
-    </nav>`;
-}
-
-function renderAccount(profile, { isSuperAdmin = false } = {}) {
-  setPage("Configurações de conta", isSuperAdmin
-    ? "Gerencie o painel CMS e os usuários cadastrados no site"
-    : "Gerencie e-mail, senha e acesso ao painel");
-
-  return `
-    ${renderAccountTabs("cms", isSuperAdmin)}
-    <div class="account-grid">
-      <div class="panel">
+  const accountForms = readOnly
+    ? `<p class="account-logout__text">Contas com nível básico não podem alterar e-mail ou senha pelo painel.</p>`
+    : `
+    <div class="panel">
         <div class="panel__head"><h2>${icon("mail", { size: 18 })} E-mail</h2></div>
         <div class="panel__body">
           <form id="account-email-form" class="account-form">
@@ -233,7 +272,11 @@ function renderAccount(profile, { isSuperAdmin = false } = {}) {
             <button type="submit" class="btn btn--primary">${icon("save", { size: 16 })} Atualizar senha</button>
           </form>
         </div>
-      </div>
+      </div>`;
+
+  return `
+    <div class="account-grid">
+      ${accountForms}
 
       <div class="panel panel--danger">
         <div class="panel__head"><h2>${icon("log-out", { size: 18 })} Encerrar sessão</h2></div>
@@ -245,15 +288,14 @@ function renderAccount(profile, { isSuperAdmin = false } = {}) {
     </div>`;
 }
 
-function renderAccountUsers(profile) {
-  setPage("Usuários cadastrados", "Somente o super admin pode alterar níveis de acesso");
+function renderUsersPage(profile) {
+  setPage("Usuários", "Gerencie contas cadastradas e níveis de acesso");
 
   return `
-    ${renderAccountTabs("users", true)}
     <div class="panel">
       <div class="panel__head">
-        <h2>${icon("users", { size: 18 })} Usuários do site</h2>
-        <p class="panel__lead">Contas criadas em <strong>/cadastro</strong>. Usuários básicos têm acesso somente leitura em <strong>/minha-conta</strong>.</p>
+        <h2>${icon("users", { size: 18 })} Usuários cadastrados</h2>
+        <p class="panel__lead">Contas criadas via <strong>/admin/cadastro</strong>. Usuários básicos têm acesso somente leitura.</p>
       </div>
       <div class="panel__body">
         <p class="account-form__error" id="site-users-error" hidden></p>
@@ -267,7 +309,7 @@ function renderAccountUsers(profile) {
       <div class="panel__head"><h2>${icon("user-cog", { size: 18 })} Super admin</h2></div>
       <div class="panel__body">
         <p class="account-logout__text">
-          O e-mail <strong>${escapeHtml(SUPER_ADMIN_EMAIL)}</strong> é o único super admin do site.
+          O e-mail <strong>${escapeHtml(SUPER_ADMIN_EMAIL)}</strong> é o único super admin.
           Você está autenticado como <strong>${escapeHtml(profile.email || profile.user || SUPER_ADMIN_EMAIL)}</strong>.
         </p>
       </div>
@@ -285,16 +327,16 @@ function renderSiteUsersTable(users) {
       ? `<span class="site-users-fixed">Super admin fixo</span>`
       : `<div class="site-users-actions">
           <select class="site-users-level" data-user-id="${escapeHtml(row.id)}" aria-label="Nível de acesso de ${escapeHtml(row.email)}">
+            <option value="admin"${row.access_level === "admin" ? " selected" : ""}>Admin</option>
             <option value="basic"${row.access_level === "basic" ? " selected" : ""}>Básico</option>
           </select>
           <button type="button" class="btn btn--outline btn--sm site-users-save" data-user-id="${escapeHtml(row.id)}">${icon("save", { size: 14 })} Salvar</button>
         </div>`;
 
     return `<tr>
-      <td>${escapeHtml(row.full_name || "—")}</td>
       <td>${escapeHtml(row.email || "—")}</td>
-      <td>${escapeHtml(row.phone || "—")}</td>
       <td>${escapeHtml(formatAccessLevel(row.access_level))}</td>
+      <td>${escapeHtml(row.created_at ? new Date(row.created_at).toLocaleDateString("pt-BR") : "—")}</td>
       <td>${actionCell}</td>
     </tr>`;
   }).join("");
@@ -302,10 +344,9 @@ function renderSiteUsersTable(users) {
   return `<table class="site-users-table">
     <thead>
       <tr>
-        <th>Nome</th>
         <th>E-mail</th>
-        <th>Telefone</th>
         <th>Nível</th>
+        <th>Cadastro</th>
         <th>Ação</th>
       </tr>
     </thead>
@@ -319,8 +360,8 @@ async function loadSiteUsersTable() {
   const successEl = $("#site-users-success");
   if (!wrap) return;
 
-  errorEl.hidden = true;
-  successEl.hidden = true;
+  if (errorEl) errorEl.hidden = true;
+  if (successEl) successEl.hidden = true;
 
   try {
     const users = await fetchSiteUsers();
@@ -328,8 +369,10 @@ async function loadSiteUsersTable() {
     bindSiteUsersEvents();
   } catch (err) {
     wrap.innerHTML = `<p class="empty">Não foi possível carregar os usuários.</p>`;
-    errorEl.textContent = err.message;
-    errorEl.hidden = false;
+    if (errorEl) {
+      errorEl.textContent = err.message;
+      errorEl.hidden = false;
+    }
   }
 }
 
@@ -340,17 +383,21 @@ function bindSiteUsersEvents() {
       const select = document.querySelector(`.site-users-level[data-user-id="${userId}"]`);
       const errorEl = $("#site-users-error");
       const successEl = $("#site-users-success");
-      errorEl.hidden = true;
-      successEl.hidden = true;
+      if (errorEl) errorEl.hidden = true;
+      if (successEl) successEl.hidden = true;
 
       try {
         await updateSiteUserLevel(userId, select?.value || "basic");
-        successEl.textContent = "Nível de acesso atualizado.";
-        successEl.hidden = false;
+        if (successEl) {
+          successEl.textContent = "Nível de acesso atualizado.";
+          successEl.hidden = false;
+        }
         await loadSiteUsersTable();
       } catch (err) {
-        errorEl.textContent = err.message;
-        errorEl.hidden = false;
+        if (errorEl) {
+          errorEl.textContent = err.message;
+          errorEl.hidden = false;
+        }
       }
     });
   });
@@ -2244,6 +2291,8 @@ async function startApp() {
 
   loadFromLocalStorage();
   await initStore();
+  await refreshSessionAccess();
+  renderNav();
   navigate();
 }
 

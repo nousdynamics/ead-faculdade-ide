@@ -5,9 +5,13 @@ import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { randomBytes, timingSafeEqual } from "node:crypto";
 import {
-  verifyAccountLogin,
+  verifyUserLogin,
   getAccountProfile,
   updateAccountProfile,
+  isRegistrationAvailable,
+  registerCmsAccount,
+  canWrite,
+  canManageUsers,
 } from "../lib/account.js";
 import { saveUploadedMedia } from "../lib/image-storage.js";
 import { handleMediaFileRequest } from "../lib/media-files.js";
@@ -15,7 +19,6 @@ import { handleGuideLeadRequest, submitGuideLead } from "../lib/guide-leads.js";
 import { publishCoursePages, handleCoursePageRequest } from "../lib/course-pages.js";
 import { buildCatalogPayload } from "../lib/catalog.js";
 import { handleCatalogPageRequest } from "../lib/catalog-pages.js";
-import { handleAuthPageRequest, handlePublicConfigRequest } from "../lib/user-auth-pages.js";
 import { loadProjectEnv } from "./load-env.mjs";
 
 await loadProjectEnv();
@@ -129,6 +132,28 @@ function requireAuth(req, res) {
   return session;
 }
 
+async function requireWriteAuth(req, res) {
+  const session = requireAuth(req, res);
+  if (!session) return null;
+  const profile = await getAccountProfile(session.user);
+  if (!canWrite(profile.accessLevel)) {
+    send(res, 403, { error: "Seu acesso é somente leitura." });
+    return null;
+  }
+  return { session, profile };
+}
+
+async function requireSuperAdminAuth(req, res) {
+  const session = requireAuth(req, res);
+  if (!session) return null;
+  const profile = await getAccountProfile(session.user);
+  if (!canManageUsers(profile.accessLevel)) {
+    send(res, 403, { error: "Acesso restrito ao super admin" });
+    return null;
+  }
+  return { session, profile };
+}
+
 async function readBody(req) {
   let body = "";
   req.on("data", (chunk) => { body += chunk; });
@@ -210,14 +235,35 @@ const server = createServer(async (req, res) => {
   if (url.pathname === "/api/auth/login" && req.method === "POST") {
     try {
       const { username, password } = await readBody(req);
-      const valid = await verifyAccountLogin(username, password);
-      if (!valid) {
+      const user = await verifyUserLogin(username, password);
+      if (!user) {
         return send(res, 401, { error: "Usuário ou senha incorretos" });
       }
-      const token = createSession(username);
-      return send(res, 200, { token, user: username });
+      const profile = await getAccountProfile(user.email);
+      const token = createSession(user.email);
+      return send(res, 200, { token, ...profile });
     } catch (err) {
       return send(res, 400, { error: err.message });
+    }
+  }
+
+  if (url.pathname === "/api/auth/register-status" && req.method === "GET") {
+    try {
+      const available = await isRegistrationAvailable();
+      return send(res, 200, { available });
+    } catch (err) {
+      return send(res, err.status || 500, { error: err.message });
+    }
+  }
+
+  if (url.pathname === "/api/auth/register" && req.method === "POST") {
+    try {
+      const { email, password } = await readBody(req);
+      const profile = await registerCmsAccount({ email, password });
+      const token = createSession(profile.user);
+      return send(res, 201, { token, ...profile });
+    } catch (err) {
+      return send(res, err.status || 500, { error: err.message });
     }
   }
 
@@ -228,11 +274,7 @@ const server = createServer(async (req, res) => {
     try {
       if (req.method === "GET") {
         const profile = await getAccountProfile(session.user);
-        const { isSuperAdminEmail } = await import("../lib/site-users-admin.js");
-        return send(res, 200, {
-          ...profile,
-          isSuperAdmin: isSuperAdminEmail(profile.email || session.user),
-        });
+        return send(res, 200, profile);
       }
 
       if (req.method === "PUT") {
@@ -256,26 +298,18 @@ const server = createServer(async (req, res) => {
     if (!session) return;
     try {
       const profile = await getAccountProfile(session.user);
-      const { isSuperAdminEmail } = await import("../lib/site-users-admin.js");
-      return send(res, 200, {
-        ...profile,
-        isSuperAdmin: isSuperAdminEmail(profile.email || session.user),
-      });
+      return send(res, 200, profile);
     } catch (err) {
       return send(res, err.status || 500, { error: err.message });
     }
   }
 
   if (url.pathname === "/api/auth/site-users") {
-    const session = requireAuth(req, res);
-    if (!session) return;
-
     try {
-      const profile = await getAccountProfile(session.user);
-      const { isSuperAdminEmail, listSiteUsers, updateSiteUserAccessLevel } = await import("../lib/site-users-admin.js");
-      if (!isSuperAdminEmail(profile.email || session.user)) {
-        return send(res, 403, { error: "Acesso restrito ao super admin" });
-      }
+      const admin = await requireSuperAdminAuth(req, res);
+      if (!admin) return;
+
+      const { listSiteUsers, updateSiteUserAccessLevel } = await import("../lib/site-users-admin.js");
 
       if (req.method === "GET") {
         const users = await listSiteUsers();
@@ -301,8 +335,8 @@ const server = createServer(async (req, res) => {
   }
 
   if (url.pathname === "/api/media/upload" && req.method === "POST") {
-    const session = requireAuth(req, res);
-    if (!session) return;
+    const auth = await requireWriteAuth(req, res);
+    if (!auth) return;
 
     try {
       const body = await readBody(req);
@@ -346,38 +380,6 @@ const server = createServer(async (req, res) => {
     } catch (err) {
       return send(res, err.status || 500, { error: err.message });
     }
-  }
-
-  if (url.pathname === "/api/config/public" && req.method === "GET") {
-    const mockReq = { method: "GET" };
-    const mockRes = createHtmlMockRes(res);
-    try {
-      await handlePublicConfigRequest(mockReq, mockRes);
-    } catch (err) {
-      return send(res, err.status || 500, { error: err.message });
-    }
-    return;
-  }
-
-  const authPageRoutes = {
-    "/entrar": "login",
-    "/cadastro": "register",
-    "/minha-conta": "account",
-    "/admin-usuarios": "admin-users",
-    "/recuperar-senha": "reset",
-    "/auth/callback": "callback",
-    "/redefinir-senha": "new-password",
-  };
-  const authPageKey = authPageRoutes[url.pathname.replace(/\/$/, "")];
-  if (authPageKey && req.method === "GET") {
-    const mockReq = { method: "GET" };
-    const mockRes = createHtmlMockRes(res);
-    try {
-      await handleAuthPageRequest(mockReq, mockRes, authPageKey);
-    } catch (err) {
-      return send(res, err.status || 500, { error: err.message });
-    }
-    return;
   }
 
   const catalogPageMatch = url.pathname.match(/^\/paginas-de-cursos(?:\/([^/]+))?\/?$/);
@@ -446,9 +448,6 @@ const server = createServer(async (req, res) => {
   const apiMatch = url.pathname.match(/^\/api\/cms\/([^/]+)(?:\/([^/]+))?$/);
 
   if (apiMatch) {
-    const session = requireAuth(req, res);
-    if (!session) return;
-
     const [, collection, id] = apiMatch;
 
     if (!COLLECTIONS[collection]) {
@@ -457,16 +456,23 @@ const server = createServer(async (req, res) => {
 
     try {
       if (req.method === "GET" && !id) {
+        const session = requireAuth(req, res);
+        if (!session) return;
         const data = await readCollection(collection);
         return send(res, 200, data);
       }
 
       if (req.method === "GET" && id) {
+        const session = requireAuth(req, res);
+        if (!session) return;
         const data = await readCollection(collection);
         const item = data.find((x) => x.id === id);
         if (!item) return send(res, 404, { error: "Item não encontrado" });
         return send(res, 200, item);
       }
+
+      const auth = await requireWriteAuth(req, res);
+      if (!auth) return;
 
       const payload = await readBody(req);
 
@@ -515,6 +521,11 @@ const server = createServer(async (req, res) => {
       all[key] = await readCollection(key);
     }
     return send(res, 200, all);
+  }
+
+  if (url.pathname === "/cadastro" && req.method === "GET") {
+    res.writeHead(302, { Location: "/admin/cadastro" });
+    return res.end();
   }
 
   return serveStatic(req, res);
