@@ -205,9 +205,14 @@ async function writeCollection(name, data) {
 async function serveStatic(req, res) {
   let pathname = new URL(req.url, "http://localhost").pathname;
   if (pathname === "/") pathname = "/index.html";
-  const filePath = join(ROOT, pathname.replace(/^\//, ""));
+  let filePath = join(ROOT, pathname.replace(/^\//, ""));
   try {
-    const info = await stat(filePath);
+    let info = await stat(filePath);
+    if (info.isDirectory()) {
+      // /termos-de-uso/ → termos-de-uso/index.html (mesmo comportamento da Vercel)
+      filePath = join(filePath, "index.html");
+      info = await stat(filePath);
+    }
     if (!info.isFile()) {
       res.writeHead(404, { "Content-Type": "application/json" });
       return res.end(JSON.stringify({ error: "Not found" }));
