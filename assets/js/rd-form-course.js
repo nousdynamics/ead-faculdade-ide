@@ -173,7 +173,18 @@
     );
   }
 
+  function initInlineForms() {
+    document.querySelectorAll("[data-rd-inline-form]").forEach(function (wrap) {
+      var formId = wrap.dataset.rdFormId || "";
+      if (!formId) return;
+      initRdForm(formId).then(function () {
+        watchEmbeddedRdTitles(formId);
+      });
+    });
+  }
+
   function boot() {
+    initInlineForms();
     bindDialog(document.getElementById("course-guide-modal"), "[data-open-guide-modal]");
     bindDialog(document.getElementById("course-investment-modal"), "[data-open-investment-modal]");
     bindInvestmentDelegation();

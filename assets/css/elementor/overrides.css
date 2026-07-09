@@ -269,6 +269,7 @@
   width: 100%;
   margin: 0;
   padding: 0;
+  margin-block: var(--banner-margin, 0);
 }
 
 .course-complement-banner__img {
@@ -277,6 +278,25 @@
   height: auto;
   aspect-ratio: 2560 / 360;
   object-fit: cover;
+}
+
+/* Formato "contido": banner dentro do container, com cantos arredondados */
+.course-complement-banner--contido {
+  max-width: var(--container-max, 1230px);
+  margin-inline: auto;
+  padding-inline: var(--container-pad, 15px);
+}
+
+.course-complement-banner--contido .course-complement-banner__img {
+  border-radius: var(--radius-md, 12px);
+}
+
+/* Com imagem mobile própria, respeita a proporção natural do arquivo enviado */
+@media (max-width: 767px) {
+  .course-complement-banner--custom-mobile .course-complement-banner__img {
+    aspect-ratio: auto;
+    min-height: 0;
+  }
 }
 
 /* Investimento — preço proporcional (substitui tamanhos enormes do export Elementor) */

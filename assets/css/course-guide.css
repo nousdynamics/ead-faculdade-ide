@@ -87,6 +87,62 @@
   object-fit: contain;
 }
 
+/* Formulário exposto na seção (sem popup) — card branco com contraste sobre o gradiente teal */
+.course-guide__inner--form {
+  align-items: start;
+}
+
+.course-guide__form {
+  background: var(--color-white, #fff);
+  color: var(--color-primary, #2b325c);
+  border-radius: var(--radius-md, 12px);
+  box-shadow: 0 12px 32px rgb(16 20 41 / 0.22);
+  padding: 1.5rem 1.5rem 1rem;
+  max-width: 460px;
+}
+
+.course-guide__form-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+  color: var(--color-primary, #2b325c);
+}
+
+.course-guide__form-subtitle {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--color-text-body, #444);
+}
+
+/* Campos do RD Station dentro do card — reforço de contraste */
+.course-guide__form .bricks-form__label {
+  color: var(--color-primary, #2b325c) !important;
+}
+
+.course-guide__form input,
+.course-guide__form select,
+.course-guide__form textarea {
+  background: #fff !important;
+  color: var(--color-primary, #2b325c) !important;
+  border: 1px solid var(--color-border, #e3e8ee) !important;
+}
+
+.course-guide__form .bricks-form__submit button,
+.course-guide__form button[type="submit"] {
+  background: var(--color-orange, #f2791b) !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: var(--radius-pill, 999px) !important;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .course-guide__form {
+    max-width: 100%;
+    text-align: left;
+  }
+}
+
 /* Modal — legado (substituído por .course-rd-modal em rd-form-course.css) */
 
 @media (max-width: 767px) {
