@@ -1,5 +1,5 @@
 import {
-  initStore, getAll, getById, lookup, upsertItem, deleteItem,
+  initStore, getAll, getById, lookup, upsertItem, deleteItem, saveCollection,
   uid, slugify, getCoursePublicPath, loadFromLocalStorage,
 } from "./store.js";
 import { generateCourseSeo, scoreSeo, renderSeoPreview, escapeHtml, SEO_LIMITS } from "./seo.js";
@@ -887,8 +887,23 @@ function renderCourseForm(course) {
                   <div class="form-group form-group--full"><label>Texto</label><textarea name="publico_texto_${idx}" rows="3">${escapeHtml(audience[idx]?.texto || "")}</textarea></div>
                 </div>`).join("")}
             </div>
-            <div class="form-divider"><span>Seção complementar</span></div>
-            ${renderImageUploadField({ name: "secao_complementar_imagem", value: c.secao_complementar?.imagem || "", label: "Banner complementar", folder: "courses", dimensions: "2560×360 px" })}
+            <div class="form-divider"><span>Seção complementar (banner)</span></div>
+            ${renderImageUploadField({ name: "secao_complementar_imagem", value: c.secao_complementar?.imagem || "", label: "Banner — desktop", folder: "courses", dimensions: "2560×360 px" })}
+            ${renderImageUploadField({ name: "secao_complementar_imagem_mobile", value: c.secao_complementar?.imagem_mobile || "", label: "Banner — mobile (opcional)", folder: "courses", dimensions: "1080×470 px" })}
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="secao_complementar_formato">Formato do banner</label>
+                <select id="secao_complementar_formato" name="secao_complementar_formato">
+                  <option value="full" ${c.secao_complementar?.formato !== "contido" ? "selected" : ""}>Largura total</option>
+                  <option value="contido" ${c.secao_complementar?.formato === "contido" ? "selected" : ""}>Contido (com margem lateral e cantos arredondados)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="secao_complementar_margem">Margem vertical (px)</label>
+                <input type="number" id="secao_complementar_margem" name="secao_complementar_margem" min="0" max="200" step="4" value="${escapeHtml(String(c.secao_complementar?.margem ?? 0))}">
+                <small>Espaço acima/abaixo do banner. 0 = colado nas seções.</small>
+              </div>
+            </div>
           `)}
 
           ${coursePanel("cf-investimento", "Investimento", "Valores, benefícios e botão da seção de preço.", `
@@ -1251,6 +1266,56 @@ function renderImageUploadField({ name = "foto", value = "", label = "Foto", fol
     </div>`;
 }
 
+/**
+ * Picker de cursos no cadastro de professor/coordenador — vincula sem
+ * precisar abrir a edição de cada curso.
+ */
+function entityCoursePicker(entityId, field) {
+  const courses = getAll("courses");
+  const selected = courses.filter((c) => (c[field] || []).includes(entityId)).map((c) => c.id);
+
+  return `
+    <div class="form-group form-group--full entity-course-picker" data-course-link-field="${field}">
+      <label>Cursos vinculados</label>
+      <small>Marque os cursos em que este cadastro deve aparecer.</small>
+      <input type="search" class="list-search entity-picker__search" data-course-link-search placeholder="Filtrar cursos…" aria-label="Filtrar cursos">
+      <div class="form-checks">
+        ${courses.map((c) => `
+          <label class="form-check" data-course-link-item>
+            <input type="checkbox" name="curso_vinculado" value="${escapeHtml(c.id)}" ${selected.includes(c.id) ? "checked" : ""}>
+            ${escapeHtml(c.titulo)}
+          </label>`).join("") || "<small>Nenhum curso cadastrado ainda.</small>"}
+      </div>
+    </div>`;
+}
+
+/** Sincroniza professor_ids/coordenacao_ids dos cursos com o picker do formulário. */
+async function syncEntityCourses(form, entityId, field) {
+  const picker = form.querySelector("[data-course-link-field]");
+  if (!picker) return false;
+
+  const selected = new Set($$('input[name="curso_vinculado"]:checked', picker).map((el) => el.value));
+  let changed = false;
+  const updated = getAll("courses").map((course) => {
+    const has = (course[field] || []).includes(entityId);
+    const want = selected.has(course.id);
+    if (has === want) return course;
+    changed = true;
+    const ids = new Set(course[field] || []);
+    if (want) ids.add(entityId);
+    else ids.delete(entityId);
+    return { ...course, [field]: [...ids], atualizado_em: new Date().toISOString() };
+  });
+
+  if (changed) await saveCollection("courses", updated);
+  return changed;
+}
+
+const ENTITY_COURSE_FIELD = {
+  professors: "professor_ids",
+  coordination: "coordenacao_ids",
+};
+
 function renderEntityList(collection, title, formRenderer) {
   setPage(title, `Cadastro de ${title.toLowerCase()}`);
   const items = getAll(collection);
@@ -1321,6 +1386,7 @@ function renderProfessorForm(item) {
         <textarea id="descricao" name="descricao" rows="3" maxlength="120" data-char-counter="descricao-count">${escapeHtml(p.descricao || "")}</textarea>
         <small><span id="descricao-count">${descLen}</span>/120 caracteres</small>
       </div>
+      ${entityCoursePicker(p.id, "professor_ids")}
       <div class="form-group"><label class="form-check form-check--switch"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
     </div>`);
 }
@@ -1333,6 +1399,7 @@ function renderCoordForm(item) {
       <div class="form-group form-group--full"><label>Cargo / Resumo</label><input name="cargo" value="${escapeHtml(p.cargo || "")}"></div>
       ${renderImageUploadField({ value: p.foto || "", label: "Foto", folder: "coordination", dimensions: "350×350 px" })}
       <div class="form-group form-group--full"><label>Mini-currículo (um item por linha)</label><textarea name="mini_curriculo" rows="5">${escapeHtml((p.mini_curriculo || []).join("\n"))}</textarea></div>
+      ${entityCoursePicker(p.id, "coordenacao_ids")}
       <div class="form-group"><label class="form-check form-check--switch"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
     </div>`);
 }
@@ -1687,6 +1754,9 @@ function collectCourseForm(form) {
     publico_alvo,
     secao_complementar: {
       imagem: form.secao_complementar_imagem?.value.trim() || "",
+      imagem_mobile: form.secao_complementar_imagem_mobile?.value.trim() || "",
+      formato: form.secao_complementar_formato?.value === "contido" ? "contido" : "full",
+      margem: Math.max(0, Number(form.secao_complementar_margem?.value) || 0),
       nota_dimensoes: "2560x360px para Desktop e 1080x470px para Mobile",
     },
     guia: {
@@ -2231,6 +2301,14 @@ function bindEntityForm(collection) {
     update();
   });
 
+  const courseSearch = form?.querySelector("[data-course-link-search]");
+  courseSearch?.addEventListener("input", () => {
+    const q = normalizeName(courseSearch.value);
+    form.querySelectorAll("[data-course-link-item]").forEach((el) => {
+      el.hidden = Boolean(q) && !normalizeName(el.textContent).includes(q);
+    });
+  });
+
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const id = form.dataset.entityId;
@@ -2239,6 +2317,7 @@ function bindEntityForm(collection) {
 
     const fd = new FormData(form);
     for (const [key, val] of fd.entries()) {
+      if (key === "curso_vinculado") continue; // tratado por syncEntityCourses
       if (key === "ativo") data.ativo = true;
       else if (key === "mini_curriculo") data[key] = val.split("\n").map((s) => s.trim()).filter(Boolean);
       else if (key === "descricao") data[key] = String(val).slice(0, 120);
@@ -2269,6 +2348,8 @@ function bindEntityForm(collection) {
     try {
       await saveWithFeedback(async () => {
         await upsertItem(collection, data);
+        const courseField = ENTITY_COURSE_FIELD[collection];
+        if (courseField) await syncEntityCourses(form, id, courseField);
         $("#entity-form-panel")?.remove();
         await navigate();
       }, {
