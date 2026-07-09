@@ -170,6 +170,7 @@ body.site-nav-lock {
   font-size: 0.8em;
   font-weight: var(--fw-body);
   line-height: 1.2em;
+  text-transform: uppercase;
   white-space: nowrap;
   transition: background-color .2s ease, color .2s ease;
 }

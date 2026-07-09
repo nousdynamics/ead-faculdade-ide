@@ -19,9 +19,10 @@
   "sameAs": [
     "https://www.instagram.com/faculdadeide",
     "https://www.facebook.com/faculdadeide",
-    "https://twitter.com/faculdadeide",
+    "https://www.youtube.com/c/FaculdadeIDE",
     "https://www.faculdadeide.edu.br"
   ],
-  "privacyPolicy": "https://ead.faculdadeide.edu.br/?page_id=3",
-  "termsOfUse": "https://ead.faculdadeide.edu.br/?page_id=773"
+  "privacyPolicy": "https://ead.faculdadeide.edu.br/politica-de-privacidade",
+  "termsOfUse": "https://ead.faculdadeide.edu.br/termos-de-uso",
+  "institutionalVideo": ""
 }
