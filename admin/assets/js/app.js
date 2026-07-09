@@ -100,6 +100,41 @@ function setPage(title, subtitle) {
   $("#page-subtitle").textContent = subtitle || "";
 }
 
+/** Normaliza nome p/ comparação: sem acentos, caixa baixa, espaços colapsados. */
+function normalizeName(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+/** Item da coleção com o mesmo nome normalizado (evita duplicados por digitação diferente). */
+function findDuplicateByName(collection, nome, excludeId, field = "nome") {
+  const target = normalizeName(nome);
+  if (!target) return null;
+  return getAll(collection).find(
+    (it) => it.id !== excludeId && normalizeName(it[field]) === target,
+  ) || null;
+}
+
+function listSearchInput(id, placeholder) {
+  return `<input type="search" id="${id}" class="list-search" placeholder="${placeholder}" aria-label="${placeholder}">`;
+}
+
+/** Filtro client-side de linhas de tabela via atributo data-search. */
+function bindListSearch(inputSel, rowsSel) {
+  const input = $(inputSel);
+  if (!input) return;
+  input.addEventListener("input", () => {
+    const q = normalizeName(input.value);
+    $$(rowsSel).forEach((row) => {
+      row.hidden = Boolean(q) && !normalizeName(row.dataset.search || row.textContent).includes(q);
+    });
+  });
+}
+
 function statusBadge(statusId) {
   const s = getById("statuses", statusId);
   if (!s) return '<span class="badge badge--draft">—</span>';
@@ -452,13 +487,16 @@ function renderCoursesList() {
     <div class="panel">
       <div class="panel__head">
         <h2>${icon("folder-open", { size: 18 })} Todos os cursos (${courses.length})</h2>
-        <a href="#/courses/novo" class="btn btn--primary">${icon("plus", { size: 16 })} Novo curso</a>
+        <div class="panel__head-actions">
+          ${listSearchInput("course-search", "Buscar curso…")}
+          <a href="#/courses/novo" class="btn btn--primary">${icon("plus", { size: 16 })} Novo curso</a>
+        </div>
       </div>
       <div class="panel__body panel__body--flush table-wrap">
         <table class="data-table data-table--courses">
           <thead><tr><th class="col-title">Título</th><th class="col-slug">Slug</th><th class="col-meta">Nível</th><th class="col-status">Status</th><th class="col-published">Publicado</th><th class="col-actions">Ações</th></tr></thead>
           <tbody>
-            ${courses.map((c) => `<tr>
+            ${courses.map((c) => `<tr data-search="${escapeHtml([c.titulo, c.subtitulo, c.slug, lookup("formation-levels", c.nivel_formacao_id), lookup("areas", c.area_id), lookup("statuses", c.status_curso_id)].filter(Boolean).join(" "))}">
               <td class="col-title">
                 <span class="cell-name__title">${escapeHtml(c.titulo)}</span>
                 ${c.subtitulo ? `<span class="cell-muted">${escapeHtml(c.subtitulo.slice(0, 60))}${c.subtitulo.length > 60 ? "…" : ""}</span>` : ""}
@@ -466,7 +504,12 @@ function renderCoursesList() {
               <td class="col-slug"><code>${escapeHtml(c.slug)}</code></td>
               <td class="col-meta">${escapeHtml(lookup("formation-levels", c.nivel_formacao_id))}</td>
               <td class="col-status">${statusBadge(c.status_curso_id)}</td>
-              <td class="col-published">${c.publicado ? '<span class="badge badge--live">Sim</span>' : '<span class="badge badge--draft">Rascunho</span>'}</td>
+              <td class="col-published">
+                <label class="form-check form-check--switch publish-switch" title="${c.publicado ? "Publicado — clique para despublicar" : "Rascunho — clique para publicar"}">
+                  <input type="checkbox" data-toggle-published="${escapeHtml(c.id)}" ${c.publicado ? "checked" : ""}>
+                  <span class="publish-switch__label">${c.publicado ? "Publicado" : "Rascunho"}</span>
+                </label>
+              </td>
               <td class="col-actions">
                 <div class="table-actions">
                   <a href="#/courses/${c.id}" class="btn btn--ghost btn--sm">${icon("pencil", { size: 14 })} Editar</a>
@@ -576,6 +619,7 @@ function checkboxGroupPaginated(name, collection, selectedIds, label, pageSize =
         <label>${label}</label>
         <span class="entity-picker__meta" data-picker-meta>${items.length} disponíveis · ${selectedIds.length} selecionados</span>
       </div>
+      <input type="search" class="list-search entity-picker__search" data-picker-search placeholder="Filtrar ${label.toLowerCase()}…" aria-label="Filtrar ${label.toLowerCase()}">
       <div class="form-checks entity-picker__checks">
         ${items
           .map(
@@ -620,6 +664,9 @@ function bindEntityPickers(form) {
       metaEl.textContent = `${total} disponíveis · ${selected} selecionados`;
     };
 
+    const searchInput = $("[data-picker-search]", picker);
+    const pagerEl = $(".entity-picker__pager", picker);
+
     const showPage = (page) => {
       currentPage = Math.min(Math.max(1, page), totalPages);
       items.forEach((el) => {
@@ -630,8 +677,23 @@ function bindEntityPickers(form) {
       if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
     };
 
+    // Busca dentro do picker: filtra por nome ignorando a paginação enquanto há texto.
+    const applySearch = () => {
+      const q = normalizeName(searchInput?.value || "");
+      if (!q) {
+        if (pagerEl) pagerEl.hidden = false;
+        showPage(currentPage);
+        return;
+      }
+      if (pagerEl) pagerEl.hidden = true;
+      items.forEach((el) => {
+        el.hidden = !normalizeName(el.textContent).includes(q);
+      });
+    };
+
     prevBtn?.addEventListener("click", () => showPage(currentPage - 1));
     nextBtn?.addEventListener("click", () => showPage(currentPage + 1));
+    searchInput?.addEventListener("input", applySearch);
     picker.addEventListener("change", updateMeta);
     showPage(1);
     updateMeta();
@@ -1198,7 +1260,12 @@ function renderEntityList(collection, title, formRenderer) {
 
   return `
     <div class="panel">
-      <div class="panel__head"><h2>${title}</h2><button type="button" class="btn btn--primary btn--sm" id="btn-new-entity">${icon("plus", { size: 14 })} Adicionar</button></div>
+      <div class="panel__head"><h2>${title}</h2>
+        <div class="panel__head-actions">
+          ${listSearchInput("entity-search", `Buscar em ${title.toLowerCase()}…`)}
+          <button type="button" class="btn btn--primary btn--sm" id="btn-new-entity">${icon("plus", { size: 14 })} Adicionar</button>
+        </div>
+      </div>
       <div class="panel__body panel__body--flush table-wrap">
         <table class="${tableClass}"><thead><tr>
           <th class="col-name">Nome</th>
@@ -1206,7 +1273,7 @@ function renderEntityList(collection, title, formRenderer) {
           <th class="col-status">Status</th>
           <th class="col-actions">Ações</th>
         </tr></thead>
-        <tbody>${items.map((item) => `<tr>
+        <tbody>${items.map((item) => `<tr data-search="${escapeHtml([item.nome, item.nome_curso, item.cargo, item.descricao].filter(Boolean).join(" "))}">
           <td class="col-name">
             <span class="cell-name__title">${escapeHtml(item.nome)}</span>
             ${isProfessors && item.descricao ? `<span class="cell-name__meta">${escapeHtml(item.descricao.slice(0, 80))}${item.descricao.length > 80 ? "…" : ""}</span>` : ""}
@@ -1279,6 +1346,7 @@ function renderTestimonialsList() {
       <div class="panel__head">
         <h2>${icon("message-square-quote", { size: 18 })} Depoimentos</h2>
         <div class="panel__head-actions">
+          ${listSearchInput("entity-search", "Buscar depoimento…")}
           <a href="#/testimonial-templates" class="btn btn--ghost btn--sm">${icon("layout-grid", { size: 14 })} Modelo de exibição</a>
           <button type="button" class="btn btn--primary btn--sm" id="btn-new-entity">${icon("plus", { size: 14 })} Adicionar</button>
         </div>
@@ -1291,7 +1359,7 @@ function renderTestimonialsList() {
             <th class="col-status">Status</th>
             <th class="col-actions">Ações</th>
           </tr></thead>
-          <tbody>${items.map((item) => `<tr>
+          <tbody>${items.map((item) => `<tr data-search="${escapeHtml([item.nome, item.profissao, testimonialSummary(item)].filter(Boolean).join(" "))}">
             <td class="col-name">
               <span class="cell-name__title">${escapeHtml(item.nome)}</span>
               <span class="cell-name__meta">${escapeHtml(testimonialSummary(item))}</span>
@@ -1698,6 +1766,11 @@ function bindEvents() {
         return toast("Aguarde o upload terminar.", "error");
       }
       const submitBtn = courseForm.querySelector('[type="submit"]');
+      const draftCourse = collectCourseForm(courseForm);
+      const duplicateCourse = findDuplicateByName("courses", draftCourse.titulo, draftCourse.id, "titulo");
+      if (duplicateCourse) {
+        return toast(`Já existe um curso com o título "${duplicateCourse.titulo}". Edite o curso existente em vez de criar outro.`, "error");
+      }
       try {
         await saveWithFeedback(async () => {
           const course = collectCourseForm(courseForm);
@@ -1720,6 +1793,32 @@ function bindEvents() {
       }
     });
   }
+
+  bindListSearch("#course-search", ".data-table--courses tbody tr");
+  bindListSearch("#entity-search", ".data-table tbody tr");
+
+  $$("[data-toggle-published]").forEach((input) => {
+    input.addEventListener("change", async () => {
+      const id = input.dataset.togglePublished;
+      const course = getById("courses", id);
+      if (!course) return;
+      const publicado = input.checked;
+      try {
+        await saveWithFeedback(async () => {
+          await upsertItem("courses", { ...course, publicado, atualizado_em: new Date().toISOString() });
+        }, {
+          loading: publicado ? "Publicando curso e página..." : "Despublicando curso...",
+          success: publicado ? "Curso publicado no site!" : "Curso despublicado (rascunho).",
+        });
+        const label = input.closest(".publish-switch")?.querySelector(".publish-switch__label");
+        if (label) label.textContent = publicado ? "Publicado" : "Rascunho";
+        const wrap = input.closest(".publish-switch");
+        if (wrap) wrap.title = publicado ? "Publicado — clique para despublicar" : "Rascunho — clique para publicar";
+      } catch {
+        input.checked = !publicado;
+      }
+    });
+  });
 
   $$("[data-delete-course]").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -2080,13 +2179,16 @@ function bindEntityEvents() {
   };
 
   $("#btn-new-entity")?.addEventListener("click", () => {
+    $("#entity-form-panel")?.remove(); // evita formulário duplicado (um embaixo do outro)
     const html = formRenderers[collection](null);
     $("#content").insertAdjacentHTML("beforeend", html);
     bindEntityForm(collection);
+    $("#entity-form-panel")?.scrollIntoView({ behavior: "smooth" });
   });
 
   $$("[data-edit-entity]").forEach((btn) => {
     btn.addEventListener("click", () => {
+      $("#entity-form-panel")?.remove(); // evita formulário duplicado (um embaixo do outro)
       const item = getById(collection, btn.dataset.editEntity);
       const html = formRenderers[collection](item);
       $("#content").insertAdjacentHTML("beforeend", html);
@@ -2144,6 +2246,11 @@ function bindEntityForm(collection) {
     }
     if (!fd.has("ativo")) data.ativo = false;
     if (!data.nome?.trim()) return toast("Nome obrigatório", "error");
+
+    const duplicate = findDuplicateByName(collection, data.nome, id);
+    if (duplicate) {
+      return toast(`Já existe um registro com o nome "${duplicate.nome}". Edite o existente em vez de criar outro.`, "error");
+    }
 
     if (collection === "testimonials") {
       const hasContent = data.texto || data.video_url || data.imagem || data.foto || data.legenda || data.profissao;

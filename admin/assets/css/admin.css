@@ -2628,3 +2628,45 @@ body.admin-readonly [data-delete-tax] {
     opacity: 1;
   }
 }
+
+/* ---- Busca em listas (cursos, professores, coordenação, depoimentos) ---- */
+.list-search {
+  min-width: 220px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border, #e3e8ee);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.875rem;
+  background: var(--color-surface, #fafbfc);
+  color: inherit;
+}
+
+.list-search:focus-visible {
+  outline: 2px solid var(--color-accent, #13a6b4);
+  outline-offset: 1px;
+}
+
+.entity-picker__search {
+  width: 100%;
+  min-width: 0;
+  margin: 0.5rem 0;
+}
+
+/* ---- Switch de publicação na lista de cursos ---- */
+.publish-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.publish-switch__label {
+  font-size: 0.8125rem;
+  color: var(--color-muted, #6b7280);
+}
+
+.publish-switch input[type="checkbox"]:checked ~ .publish-switch__label {
+  color: var(--color-success, #059669);
+  font-weight: 600;
+}
