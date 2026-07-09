@@ -13,6 +13,8 @@ const today = new Date().toISOString().slice(0, 10);
 
 const urls = [
   { loc: `${base}/`, changefreq: "weekly", priority: "1.0", lastmod: today },
+  { loc: `${base}/termos-de-uso`, changefreq: "yearly", priority: "0.3", lastmod: today },
+  { loc: `${base}/politica-de-privacidade`, changefreq: "yearly", priority: "0.3", lastmod: today },
   ...courses
     .filter((c) => c.publicado !== false)
     .map((c) => ({
