@@ -352,6 +352,24 @@ const server = createServer(async (req, res) => {
     }
   }
 
+  if (url.pathname === "/api/media/signed-upload" && req.method === "POST") {
+    const auth = await requireWriteAuth(req, res);
+    if (!auth) return;
+
+    try {
+      const body = await readBody(req);
+      const { createSignedVideoUpload } = await import("../lib/image-storage.js");
+      const result = await createSignedVideoUpload({
+        filename: body?.filename,
+        contentType: body?.contentType,
+        folder: body?.folder || "testimonials",
+      });
+      return send(res, 201, result);
+    } catch (err) {
+      return send(res, err.status || 500, { error: err.message });
+    }
+  }
+
   if (url.pathname.startsWith("/api/media/") && req.method === "GET") {
     const relativePath = url.pathname.replace(/^\/api\/media\//, "");
     try {

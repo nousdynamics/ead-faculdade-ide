@@ -2,7 +2,9 @@ import { authHeaders } from "./auth.js";
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const PDF_MAX_BYTES = 10 * 1024 * 1024;
+const VIDEO_MAX_BYTES = 100 * 1024 * 1024;
 const IMAGE_ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+const VIDEO_ALLOWED = new Set(["video/mp4", "video/webm", "video/quicktime"]);
 
 function isCmsUploadedMedia(path) {
   const normalized = String(path || "").replace(/^\//, "");
@@ -208,6 +210,88 @@ export function bindImageUpload(root, { folder = "uploads", onChange } = {}) {
     const file = fileInput.files?.[0];
     if (!file) return;
     await handleFile(file);
+  });
+}
+
+/**
+ * Upload de vídeo direto ao Supabase Storage via URL assinada.
+ * O arquivo não passa pela API da Vercel (sem limite de body).
+ */
+export async function uploadVideo(file, folder = "testimonials", onProgress) {
+  if (!file) throw new Error("Nenhum arquivo selecionado");
+  if (!VIDEO_ALLOWED.has(file.type)) {
+    throw new Error("Formato não suportado. Use MP4, WebM ou MOV.");
+  }
+  if (file.size > VIDEO_MAX_BYTES) {
+    throw new Error("Vídeo muito grande. Máximo de 100 MB.");
+  }
+
+  const res = await fetch("/api/media/signed-upload", {
+    method: "POST",
+    headers: authHeaders({ "Content-Type": "application/json" }),
+    body: JSON.stringify({ filename: file.name, contentType: file.type, folder }),
+  });
+  const payload = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(payload.error || "Falha ao preparar o upload do vídeo");
+
+  await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", payload.signedUrl, true);
+    xhr.setRequestHeader("Content-Type", file.type);
+    xhr.setRequestHeader("x-upsert", "true");
+    xhr.upload.addEventListener("progress", (event) => {
+      if (event.lengthComputable && typeof onProgress === "function") {
+        onProgress(Math.round((event.loaded / event.total) * 100));
+      }
+    });
+    xhr.addEventListener("load", () => {
+      if (xhr.status >= 200 && xhr.status < 300) resolve();
+      else reject(new Error(`Falha no envio do vídeo (HTTP ${xhr.status}). Verifique se o bucket aceita vídeo.`));
+    });
+    xhr.addEventListener("error", () => reject(new Error("Falha de rede no envio do vídeo")));
+    xhr.send(file);
+  });
+
+  return payload.publicUrl || payload.path;
+}
+
+export function bindVideoUpload(root, { folder = "testimonials", onChange } = {}) {
+  const wrap = root?.closest?.("[data-video-upload]") || root;
+  if (!wrap) return;
+
+  const fileInput = wrap.querySelector(".video-upload__input");
+  const status = wrap.querySelector(".video-upload__status");
+  const preview = wrap.querySelector(".video-upload__preview");
+
+  if (!fileInput) return;
+
+  fileInput.addEventListener("change", async () => {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+
+    if (status) {
+      status.textContent = "Enviando vídeo… 0%";
+      status.hidden = false;
+      status.classList.remove("image-upload__status--error");
+    }
+
+    try {
+      const url = await uploadVideo(file, wrap.dataset.folder || folder, (pct) => {
+        if (status) status.textContent = `Enviando vídeo… ${pct}%`;
+      });
+      if (status) status.textContent = "Vídeo enviado com sucesso.";
+      if (preview) {
+        preview.innerHTML = `<a href="${url}" target="_blank" rel="noopener">${file.name}</a>`;
+      }
+      onChange?.(url);
+    } catch (err) {
+      if (status) {
+        status.textContent = err.message;
+        status.classList.add("image-upload__status--error");
+      }
+    } finally {
+      fileInput.value = "";
+    }
   });
 }
 

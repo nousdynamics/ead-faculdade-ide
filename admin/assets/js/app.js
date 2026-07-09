@@ -11,7 +11,7 @@ import {
   SUPER_ADMIN_EMAIL,
 } from "./site-users.js";
 import { icon, navIcon, statIcon } from "./icons.js";
-import { bindImageUpload, bindPdfUpload, mediaUrl, renderImagePreview } from "./upload.js";
+import { bindImageUpload, bindPdfUpload, bindVideoUpload, mediaUrl, renderImagePreview } from "./upload.js";
 import {
   previewTemplate,
   templateEscopoLabel,
@@ -1467,7 +1467,17 @@ function renderTestimonialForm(item) {
       <div class="form-group"><label>Profissão / Curso</label><input name="profissao" value="${escapeHtml(p.profissao || "")}"></div>
       <div class="form-group"><label class="form-check form-check--switch"><input type="checkbox" name="ativo" ${p.ativo !== false ? "checked" : ""}> Ativo</label></div>
       ${renderImageUploadField({ name: "foto", value: p.foto || p.thumbnail || "", label: "Foto da pessoa", folder: "testimonials" })}
-      <div class="form-group form-group--full"><label>URL do vídeo (YouTube)</label><input name="video_url" value="${escapeHtml(p.video_url || "")}" placeholder="https://www.youtube.com/watch?v=..."></div>
+      <div class="form-group form-group--full"><label>URL do vídeo (YouTube ou arquivo enviado)</label><input name="video_url" value="${escapeHtml(p.video_url || "")}" placeholder="https://www.youtube.com/watch?v=... ou link do vídeo enviado"></div>
+      <div class="form-group form-group--full video-upload" data-video-upload data-folder="testimonials">
+        <label>Upload nativo de vídeo (Supabase)</label>
+        <p class="course-section__desc">Envie MP4, WebM ou MOV (até 100 MB). O link gerado preenche o campo acima automaticamente — sem depender do YouTube.</p>
+        <div class="video-upload__preview">${p.video_url && !/youtube\.com|youtu\.be/.test(p.video_url) ? `<a href="${escapeHtml(p.video_url)}" target="_blank" rel="noopener">Vídeo atual</a>` : ""}</div>
+        <label class="btn btn--ghost btn--sm video-upload__btn">
+          ${icon("video", { size: 14 })} Enviar vídeo
+          <input type="file" accept="video/mp4,video/webm,video/quicktime" class="video-upload__input" hidden>
+        </label>
+        <p class="video-upload__status image-upload__status" hidden></p>
+      </div>
       ${renderImageUploadField({ name: "imagem", value: p.imagem || "", label: "Imagem do depoimento", folder: "testimonials" })}
       <div class="form-group form-group--full"><label>Texto do depoimento</label><textarea name="texto" rows="4">${escapeHtml(p.texto || "")}</textarea></div>
       <div class="form-group form-group--full"><label>Legenda</label><input name="legenda" value="${escapeHtml(p.legenda || "")}" placeholder="Opcional — aparece se preenchida"></div>
@@ -2290,6 +2300,15 @@ function bindEntityForm(collection) {
   const form = $("#entity-form");
   $$("[data-image-upload]", form).forEach((wrap) => {
     bindImageUpload(wrap, { folder: wrap.dataset.folder || "uploads" });
+  });
+
+  $$("[data-video-upload]", form).forEach((wrap) => {
+    bindVideoUpload(wrap, {
+      folder: wrap.dataset.folder || "testimonials",
+      onChange: (url) => {
+        if (form.video_url) form.video_url.value = url;
+      },
+    });
   });
 
   form?.querySelectorAll("[data-char-counter]").forEach((field) => {
