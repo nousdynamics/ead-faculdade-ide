@@ -375,6 +375,31 @@ const server = createServer(async (req, res) => {
     }
   }
 
+  if (url.pathname === "/api/media/videos") {
+    if (req.method === "GET") {
+      const auth = await requireAuth(req, res);
+      if (!auth) return;
+      try {
+        const { listSupabaseVideos } = await import("../lib/supabase/media-storage.js");
+        return send(res, 200, { videos: await listSupabaseVideos() });
+      } catch (err) {
+        return send(res, err.status || 500, { error: err.message });
+      }
+    }
+    if (req.method === "DELETE") {
+      const auth = await requireWriteAuth(req, res);
+      if (!auth) return;
+      try {
+        const body = await readBody(req);
+        const { deleteSupabaseVideo } = await import("../lib/supabase/media-storage.js");
+        return send(res, 200, await deleteSupabaseVideo(body?.path));
+      } catch (err) {
+        return send(res, err.status || 500, { error: err.message });
+      }
+    }
+    return send(res, 405, { error: "Método não permitido" });
+  }
+
   if (url.pathname.startsWith("/api/media/") && req.method === "GET") {
     const relativePath = url.pathname.replace(/^\/api\/media\//, "");
     try {

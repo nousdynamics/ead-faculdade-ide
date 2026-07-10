@@ -3,7 +3,7 @@ import {
   uid, slugify, getCoursePublicPath, loadFromLocalStorage,
 } from "./store.js";
 import { generateCourseSeo, scoreSeo, renderSeoPreview, escapeHtml, SEO_LIMITS } from "./seo.js";
-import { login, logout, verifySession, isAuthenticated, getUser, getEmail, getAccessLevel, fetchAccountProfile, updateAccount } from "./auth.js";
+import { login, logout, verifySession, isAuthenticated, getUser, getEmail, getAccessLevel, fetchAccountProfile, updateAccount, authHeaders } from "./auth.js";
 import {
   fetchSiteUsers,
   updateSiteUserLevel,
@@ -45,6 +45,7 @@ const NAV = [
   { route: "coordination", label: "Coordenação", icon: "user-cog" },
   { route: "testimonials", label: "Depoimentos", icon: "message-square-quote" },
   { route: "testimonial-templates", label: "Modelos de depoimento", icon: "layout-grid" },
+  { route: "videos", label: "Vídeos", icon: "video" },
   { group: "Configurações" },
   { route: "areas", label: "Áreas", icon: "layout-grid" },
   { route: "formation-levels", label: "Níveis de formação", icon: "layers" },
@@ -219,6 +220,7 @@ async function navigate() {
       else if (route === "coordination") content.innerHTML = renderEntityList("coordination", "Coordenação pedagógica", renderCoordForm);
       else if (route === "testimonials") content.innerHTML = renderTestimonialsList();
       else if (route === "testimonial-templates") content.innerHTML = renderTestimonialTemplatesList();
+      else if (route === "videos") content.innerHTML = renderVideosPage();
       else if (route === "areas") content.innerHTML = renderTaxonomy("areas", "Áreas", true);
       else if (route === "formation-levels") content.innerHTML = renderTaxonomy("formation-levels", "Níveis de formação", true);
       else if (route === "statuses") content.innerHTML = renderTaxonomy("statuses", "Status do curso", false);
@@ -248,6 +250,9 @@ async function navigate() {
       applyReadOnlyMode();
       if (route === "users") {
         await loadSiteUsersTable();
+      }
+      if (route === "videos") {
+        await loadVideosList();
       }
     } catch (err) {
       content.innerHTML = `<div class="panel"><div class="panel__body empty"><p>Erro ao carregar: ${escapeHtml(err.message)}</p></div></div>`;
@@ -435,6 +440,170 @@ function bindSiteUsersEvents() {
         }
       }
     });
+  });
+}
+
+/* ---- Aba Vídeos: gerencia vídeos do Supabase Storage e gera links ---- */
+
+function formatBytes(bytes) {
+  const n = Number(bytes);
+  if (!Number.isFinite(n) || n <= 0) return "—";
+  if (n >= 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+  if (n >= 1024) return `${Math.round(n / 1024)} KB`;
+  return `${n} B`;
+}
+
+function renderVideosPage() {
+  setPage("Vídeos", "Vídeos armazenados no Supabase — copie o link e cole no curso ou no depoimento");
+
+  return `
+    <div class="panel">
+      <div class="panel__head">
+        <h2>${icon("video", { size: 18 })} Vídeos armazenados</h2>
+        <div class="panel__head-actions">
+          ${listSearchInput("video-search", "Buscar vídeo…")}
+          <span class="video-upload" data-video-upload data-folder="videos">
+            <label class="btn btn--primary btn--sm video-upload__btn">
+              ${icon("video", { size: 14 })} Enviar vídeo
+              <input type="file" accept="video/mp4,video/webm,video/quicktime" class="video-upload__input" hidden>
+            </label>
+          </span>
+        </div>
+      </div>
+      <div class="panel__body">
+        <p class="form-hint">
+          Envie MP4, WebM ou MOV (até 100 MB). Depois clique em <strong>Copiar link</strong> e cole no campo
+          "Link do vídeo" do curso (ex.: vídeo institucional) ou na URL de vídeo do depoimento.
+        </p>
+        <p class="video-upload__status image-upload__status" data-videos-upload-status hidden></p>
+      </div>
+      <div class="panel__body panel__body--flush table-wrap" id="videos-table-wrap">
+        <p class="empty">Carregando vídeos…</p>
+      </div>
+    </div>`;
+}
+
+function renderVideosTable(videos) {
+  if (!videos.length) {
+    return `<div class="empty">${icon("inbox", { size: 40, className: "icon empty__icon" })}<p>Nenhum vídeo enviado ainda. Use "Enviar vídeo" acima.</p></div>`;
+  }
+
+  return `<table class="data-table data-table--entities">
+    <thead><tr>
+      <th class="col-name">Arquivo</th>
+      <th class="col-course">Pasta</th>
+      <th class="col-meta">Tamanho</th>
+      <th class="col-meta">Enviado em</th>
+      <th class="col-actions">Ações</th>
+    </tr></thead>
+    <tbody>
+      ${videos.map((v) => `<tr data-search="${escapeHtml(`${v.name} ${v.folder}`)}">
+        <td class="col-name">
+          <span class="cell-name__title">${escapeHtml(v.name)}</span>
+          <span class="cell-name__meta">${escapeHtml(v.publicUrl)}</span>
+        </td>
+        <td class="col-course">${escapeHtml(v.folder)}</td>
+        <td class="col-meta">${formatBytes(v.size)}</td>
+        <td class="col-meta">${v.updatedAt ? new Date(v.updatedAt).toLocaleDateString("pt-BR") : "—"}</td>
+        <td class="col-actions">
+          <div class="table-actions">
+            <button type="button" class="btn btn--primary btn--sm" data-copy-video-url="${escapeHtml(v.publicUrl)}">${icon("copy", { size: 14 })} Copiar link</button>
+            <a href="${escapeHtml(v.publicUrl)}" target="_blank" rel="noopener" class="btn btn--ghost btn--sm">${icon("external-link", { size: 14 })} Abrir</a>
+            <button type="button" class="btn btn--ghost btn--sm btn--danger-outline" data-delete-video="${escapeHtml(v.path)}">${icon("trash", { size: 14 })} Excluir</button>
+          </div>
+        </td>
+      </tr>`).join("")}
+    </tbody>
+  </table>`;
+}
+
+async function fetchVideosList() {
+  const res = await fetch("/api/media/videos", { headers: authHeaders() });
+  const payload = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(payload.error || "Não foi possível listar os vídeos");
+  return payload.videos || [];
+}
+
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const tmp = document.createElement("textarea");
+    tmp.value = text;
+    document.body.appendChild(tmp);
+    tmp.select();
+    const ok = document.execCommand("copy");
+    tmp.remove();
+    return ok;
+  }
+}
+
+async function loadVideosList() {
+  const wrap = $("#videos-table-wrap");
+  if (!wrap) return;
+
+  try {
+    const videos = await fetchVideosList();
+    wrap.innerHTML = renderVideosTable(videos);
+    bindVideosTableEvents();
+    bindListSearch("#video-search", "#videos-table-wrap tbody tr");
+    applyReadOnlyMode();
+  } catch (err) {
+    wrap.innerHTML = `<div class="empty"><p>${escapeHtml(err.message)}</p></div>`;
+  }
+}
+
+function bindVideosTableEvents() {
+  $$("[data-copy-video-url]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const ok = await copyToClipboard(btn.dataset.copyVideoUrl);
+      toast(ok ? "Link copiado! Cole no campo de vídeo do curso ou depoimento." : "Não foi possível copiar o link.", ok ? "success" : "error");
+    });
+  });
+
+  $$("[data-delete-video]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("Excluir este vídeo do armazenamento? Páginas que usam o link ficarão sem o vídeo.")) return;
+      try {
+        await saveWithFeedback(async () => {
+          const res = await fetch("/api/media/videos", {
+            method: "DELETE",
+            headers: authHeaders({ "Content-Type": "application/json" }),
+            body: JSON.stringify({ path: btn.dataset.deleteVideo }),
+          });
+          const payload = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(payload.error || "Falha ao excluir o vídeo");
+          await loadVideosList();
+        }, { loading: "Excluindo vídeo...", success: "Vídeo excluído." });
+      } catch {
+        /* toast já exibido */
+      }
+    });
+  });
+}
+
+function bindVideosPageEvents() {
+  if (currentRoute !== "videos") return;
+
+  const uploadWrap = $("[data-video-upload]");
+  if (!uploadWrap) return;
+
+  // status do upload fica no corpo do painel (fora do botão)
+  const status = $("[data-videos-upload-status]");
+  const localStatus = uploadWrap.querySelector(".video-upload__status");
+  if (!localStatus && status) {
+    status.classList.add("video-upload__status");
+    uploadWrap.appendChild(status);
+  }
+
+  bindVideoUpload(uploadWrap, {
+    folder: "videos",
+    onChange: async (url) => {
+      const ok = await copyToClipboard(url);
+      toast(ok ? "Vídeo enviado — link já copiado!" : "Vídeo enviado. Use o botão Copiar link.");
+      await loadVideosList();
+    },
   });
 }
 
@@ -852,9 +1021,9 @@ function renderCourseForm(course) {
           ${coursePanel("cf-conheca", "Conheça o curso", "Vídeo exibido ao lado da coordenação pedagógica na página do curso.", `
             <div class="form-grid">
               <div class="form-group form-group--full">
-                <label for="info_video">Link do vídeo no YouTube</label>
-                <input id="info_video" name="info_video" type="url" value="${escapeHtml(i.video || "")}" placeholder="https://www.youtube.com/watch?v=... ou https://youtu.be/...">
-                <small>Cole a URL completa do YouTube. Deixe em branco para ocultar o player nesta seção.</small>
+                <label for="info_video">Link do vídeo (YouTube ou aba Vídeos)</label>
+                <input id="info_video" name="info_video" type="url" value="${escapeHtml(i.video || "")}" placeholder="https://www.youtube.com/watch?v=... ou link copiado da aba Vídeos">
+                <small>Cole a URL do YouTube ou o link de um vídeo enviado na aba <a href="#/videos">Vídeos</a> (ex.: vídeo institucional). Em branco = seção sem player.</small>
               </div>
             </div>
           `)}
@@ -1918,6 +2087,7 @@ function bindEvents() {
   bindTestimonialTemplateEvents();
   bindTaxonomyEvents();
   bindAccountEvents();
+  bindVideosPageEvents();
 }
 
 function bindAccountEvents() {
