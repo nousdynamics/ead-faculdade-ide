@@ -87,7 +87,8 @@
   object-fit: contain;
 }
 
-/* Formulário exposto na seção (sem popup) — card branco com contraste sobre o gradiente teal */
+/* Formulário exposto na seção (sem popup) — card branco com contraste sobre o gradiente teal.
+   Só os campos: títulos, textos e fundos internos do RD Station são removidos. */
 .course-guide__inner--form {
   align-items: start;
 }
@@ -97,33 +98,61 @@
   color: var(--color-primary, #2b325c);
   border-radius: var(--radius-md, 12px);
   box-shadow: 0 12px 32px rgb(16 20 41 / 0.22);
-  padding: 1.5rem 1.5rem 1rem;
+  padding: 1.5rem;
   max-width: 460px;
 }
 
-.course-guide__form-title {
-  margin: 0 0 0.35rem;
-  font-size: 1.15rem;
-  color: var(--color-primary, #2b325c);
+/* Remove títulos, textos e disclaimers injetados pelo RD Station */
+.course-guide__form [id^="rd-heading-"],
+.course-guide__form [id^="rd-text-"],
+.course-guide__form [id^="rd-image-"] {
+  display: none !important;
 }
 
-.course-guide__form-subtitle {
-  margin: 0 0 1rem;
-  font-size: 0.9rem;
-  color: var(--color-text-body, #444);
+/* Zera fundos/bordas internos do embed (caixa cinza do RD) */
+.course-guide__form [id^="rd-section-"],
+.course-guide__form [id^="rd-column-"],
+.course-guide__form [id^="rd-row-"],
+.course-guide__form .bricks-form,
+.course-guide__form .bricks--component,
+.course-guide__form section {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
-/* Campos do RD Station dentro do card — reforço de contraste */
 .course-guide__form .bricks-form__label {
   color: var(--color-primary, #2b325c) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
 }
 
+/* Campos: sem caixa — só uma linha na parte de baixo */
 .course-guide__form input,
 .course-guide__form select,
 .course-guide__form textarea {
-  background: #fff !important;
+  background: transparent !important;
   color: var(--color-primary, #2b325c) !important;
-  border: 1px solid var(--color-border, #e3e8ee) !important;
+  border: 0 !important;
+  border-bottom: 2px solid var(--color-border, #e3e8ee) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  outline: none !important;
+  transition: border-color 0.2s ease;
+}
+
+.course-guide__form input:focus,
+.course-guide__form select:focus,
+.course-guide__form textarea:focus {
+  border-bottom-color: var(--color-accent, #13a6b4) !important;
+}
+
+/* Telefone com bandeira (intl-tel-input do RD): mantém a linha única */
+.course-guide__form .intl-tel-input,
+.course-guide__form .phone-country {
+  background: transparent !important;
+  border: 0 !important;
 }
 
 .course-guide__form .bricks-form__submit button,
