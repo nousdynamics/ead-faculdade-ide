@@ -1025,6 +1025,15 @@ function renderCourseForm(course) {
                 <input id="info_video" name="info_video" type="url" value="${escapeHtml(i.video || "")}" placeholder="https://www.youtube.com/watch?v=... ou link copiado da aba Vídeos">
                 <small>Cole a URL do YouTube ou o link de um vídeo enviado na aba <a href="#/videos">Vídeos</a> (ex.: vídeo institucional). Em branco = seção sem player.</small>
               </div>
+              <div class="form-group form-group--full video-upload" data-video-upload data-folder="videos">
+                <label>Ou envie o vídeo agora (upload nativo)</label>
+                <p class="course-section__desc">MP4, WebM ou MOV até 100 MB. Ao terminar, o link é gerado e preenche o campo acima automaticamente — o vídeo também fica disponível na aba <a href="#/videos">Vídeos</a>.</p>
+                <label class="btn btn--ghost btn--sm video-upload__btn">
+                  ${icon("video", { size: 14 })} Enviar vídeo
+                  <input type="file" accept="video/mp4,video/webm,video/quicktime" class="video-upload__input" hidden>
+                </label>
+                <p class="video-upload__status image-upload__status" hidden></p>
+              </div>
             </div>
           `)}
 
@@ -1200,6 +1209,16 @@ function bindCourseFormEvents(form) {
 
   $$("[data-pdf-upload]", form).forEach((wrap) => {
     bindPdfUpload(wrap, { folder: wrap.dataset.folder || "courses" });
+  });
+
+  $$("[data-video-upload]", form).forEach((wrap) => {
+    bindVideoUpload(wrap, {
+      folder: wrap.dataset.folder || "videos",
+      onChange: (url) => {
+        if (form.info_video) form.info_video.value = url;
+        toast("Vídeo enviado — link preenchido no campo do vídeo.");
+      },
+    });
   });
 
   bindEntityPickers(form);
