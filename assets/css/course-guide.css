@@ -105,7 +105,14 @@
   display: none !important;
 }
 
-/* Zera QUALQUER fundo/borda/sombra interna do embed (caixas cinza/branca do RD) */
+/* Fonte do projeto em todo o embed (RD injeta a própria) */
+.course-guide__form,
+.course-guide__form * {
+  font-family: var(--font-body, "Gotham", -apple-system, sans-serif) !important;
+}
+
+/* Zera QUALQUER fundo/borda/sombra interna do embed (caixas cinza/branca do RD)
+   e o recuo lateral — alinha o formulário com o título da seção */
 .course-guide__form div,
 .course-guide__form section,
 .course-guide__form form,
@@ -117,6 +124,25 @@
   background-image: none !important;
   border-color: transparent;
   box-shadow: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Respiro entre os campos */
+.course-guide__form [id^="rd-row-"],
+.course-guide__form .bricks-form__field {
+  margin-bottom: 1.5rem !important;
+}
+
+.course-guide__form .bricks-form__label {
+  display: inline-block;
+  margin-bottom: 0.4rem !important;
+}
+
+.course-guide__form .bricks-form__submit {
+  margin-top: 0.5rem !important;
 }
 
 .course-guide__form .bricks-form__label {
