@@ -196,7 +196,8 @@
 .course-investment__price {
   margin: 0.5rem 0 0;
   font-family: var(--font-heading);
-  font-size: clamp(0.875rem, 1.6vw, 1rem);
+  /* "24x de" — 45% maior que o tamanho original (1rem → 1.45rem) */
+  font-size: clamp(1.27rem, 2.3vw, 1.45rem);
   font-weight: 600;
   line-height: 1.25;
   color: #fff;
@@ -209,7 +210,8 @@
 .elementor-kit-5 .course-investment__price-highlight {
   display: block;
   margin-top: 0.15rem;
-  font-size: clamp(4.75rem, 3.5vw, 2.25rem);
+  /* "R$ 400" — 45% menor que o efetivo original (4.75rem → 2.61rem) */
+  font-size: clamp(2rem, 5vw, 2.61rem);
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.01em;
