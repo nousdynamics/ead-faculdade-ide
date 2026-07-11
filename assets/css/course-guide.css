@@ -105,6 +105,17 @@
   display: none !important;
 }
 
+/* Linhas do RD sem nenhum campo (título, spacer) não ocupam espaço */
+.course-guide__form [id^="rd-row-"]:not(:has(input, select, textarea, button)),
+.course-guide__form [id^="rd-column-"]:not(:has(input, select, textarea, button)),
+.course-guide__form div:empty {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  height: 0 !important;
+}
+
 /* Fonte do projeto em todo o embed (RD injeta a própria) */
 .course-guide__form,
 .course-guide__form * {
