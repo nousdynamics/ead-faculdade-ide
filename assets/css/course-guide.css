@@ -130,6 +130,25 @@
   margin-right: 0 !important;
 }
 
+/* Título a exatamente 24px do formulário */
+.course-guide__inner--form .course-guide__text h2 {
+  margin-bottom: 24px;
+}
+
+.course-guide__form,
+.course-guide__form [id^="rd-section-"],
+.course-guide__form [id^="rd-column-"],
+.course-guide__form form,
+.course-guide__form .bricks-form {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.course-guide__form [id^="rd-row-"]:first-child {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
 /* Respiro entre os campos */
 .course-guide__form [id^="rd-row-"],
 .course-guide__form .bricks-form__field {
