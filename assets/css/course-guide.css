@@ -87,19 +87,15 @@
   object-fit: contain;
 }
 
-/* Formulário exposto na seção (sem popup) — card branco com contraste sobre o gradiente teal.
-   Só os campos: títulos, textos e fundos internos do RD Station são removidos. */
+/* Formulário exposto na seção (sem popup) — sem card: os campos flutuam
+   direto sobre o gradiente teal, em branco. Só os campos, nada mais. */
 .course-guide__inner--form {
   align-items: start;
 }
 
 .course-guide__form {
-  background: var(--color-white, #fff);
-  color: var(--color-primary, #2b325c);
-  border-radius: var(--radius-md, 12px);
-  box-shadow: 0 12px 32px rgb(16 20 41 / 0.22);
-  padding: 1.5rem;
-  max-width: 460px;
+  max-width: 440px;
+  color: #fff;
 }
 
 /* Remove títulos, textos e disclaimers injetados pelo RD Station */
@@ -109,32 +105,35 @@
   display: none !important;
 }
 
-/* Zera fundos/bordas internos do embed (caixa cinza do RD) */
-.course-guide__form [id^="rd-section-"],
-.course-guide__form [id^="rd-column-"],
-.course-guide__form [id^="rd-row-"],
+/* Zera QUALQUER fundo/borda/sombra interna do embed (caixas cinza/branca do RD) */
+.course-guide__form div,
+.course-guide__form section,
+.course-guide__form form,
+.course-guide__form fieldset,
 .course-guide__form .bricks-form,
-.course-guide__form .bricks--component,
-.course-guide__form section {
+.course-guide__form .bricks--component {
   background: transparent !important;
-  border: 0 !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent;
   box-shadow: none !important;
 }
 
 .course-guide__form .bricks-form__label {
-  color: var(--color-primary, #2b325c) !important;
+  color: #fff !important;
   font-size: 0.8125rem !important;
   font-weight: 600 !important;
+  letter-spacing: 0.02em;
 }
 
-/* Campos: sem caixa — só uma linha na parte de baixo */
+/* Campos: sem caixa — só uma linha branca na parte de baixo */
 .course-guide__form input,
 .course-guide__form select,
 .course-guide__form textarea {
   background: transparent !important;
-  color: var(--color-primary, #2b325c) !important;
+  color: #fff !important;
   border: 0 !important;
-  border-bottom: 2px solid var(--color-border, #e3e8ee) !important;
+  border-bottom: 1.5px solid rgb(255 255 255 / 0.55) !important;
   border-radius: 0 !important;
   box-shadow: none !important;
   padding-left: 0 !important;
@@ -142,27 +141,86 @@
   transition: border-color 0.2s ease;
 }
 
+.course-guide__form input::placeholder,
+.course-guide__form textarea::placeholder {
+  color: rgb(255 255 255 / 0.65) !important;
+}
+
 .course-guide__form input:focus,
 .course-guide__form select:focus,
 .course-guide__form textarea:focus {
-  border-bottom-color: var(--color-accent, #13a6b4) !important;
+  border-bottom-color: #fff !important;
 }
 
-/* Telefone com bandeira (intl-tel-input do RD): mantém a linha única */
+/* Select nativo: texto branco, seta clara; opções abrem no popup nativo */
+.course-guide__form select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.25rem center !important;
+  background-size: 12px 8px !important;
+  padding-right: 1.5rem !important;
+  cursor: pointer;
+}
+
+.course-guide__form select option {
+  color: var(--color-primary, #2b325c);
+  background: #fff;
+}
+
+/* Campo do DDI (bandeira/país do telefone): mesma linha única, sem caixa */
 .course-guide__form .intl-tel-input,
-.course-guide__form .phone-country {
+.course-guide__form .iti,
+.course-guide__form .phone-country,
+.course-guide__form select.phone-country {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1.5px solid rgb(255 255 255 / 0.55) !important;
+  border-radius: 0 !important;
+  color: #fff !important;
+}
+
+.course-guide__form .iti__selected-flag,
+.course-guide__form .iti__flag-container,
+.course-guide__form .intl-tel-input .selected-flag,
+.course-guide__form .intl-tel-input .flag-container {
   background: transparent !important;
   border: 0 !important;
 }
 
+.course-guide__form .iti__arrow,
+.course-guide__form .intl-tel-input .arrow {
+  border-top-color: #fff !important;
+}
+
+/* Lista de países aberta precisa continuar legível */
+.course-guide__form .iti__country-list,
+.course-guide__form .intl-tel-input .country-list {
+  background: #fff !important;
+  color: var(--color-primary, #2b325c) !important;
+}
+
+/* Botão minimalista: contorno branco fino, preenche no hover */
 .course-guide__form .bricks-form__submit button,
 .course-guide__form button[type="submit"] {
-  background: var(--color-orange, #f2791b) !important;
+  background: transparent !important;
   color: #fff !important;
-  border: 0 !important;
+  border: 1.5px solid #fff !important;
   border-radius: var(--radius-pill, 999px) !important;
+  padding: 0.6rem 1.75rem !important;
   font-weight: 600;
+  font-size: 0.9375rem !important;
+  letter-spacing: 0.02em;
+  width: auto !important;
   cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.course-guide__form .bricks-form__submit button:hover,
+.course-guide__form button[type="submit"]:hover {
+  background: #fff !important;
+  color: var(--color-primary, #2b325c) !important;
 }
 
 @media (max-width: 767px) {
