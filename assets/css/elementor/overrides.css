@@ -280,6 +280,32 @@
   object-fit: cover;
 }
 
+/* "Esse curso é para quem": sem círculo decorativo atrás do ícone
+   e gap de 16px entre imagem, título e texto */
+.elementor-13 .elementor-element-3c74301 .elementor-image-box-img::before {
+  content: none !important;
+  display: none !important;
+}
+
+.elementor-13 .elementor-element-3c74301 .elementor-image-box-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.elementor-13 .elementor-element-3c74301 .elementor-image-box-img {
+  margin: 0 0 16px !important;
+}
+
+.elementor-13 .elementor-element-3c74301 .elementor-image-box-title {
+  margin: 0 0 16px !important;
+}
+
+.elementor-13 .elementor-element-3c74301 .elementor-image-box-description {
+  margin: 0 !important;
+}
+
 /* Formato "contido": banner dentro do container, com cantos arredondados */
 .course-complement-banner--contido {
   max-width: var(--container-max, 1230px);
