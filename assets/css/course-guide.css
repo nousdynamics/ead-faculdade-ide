@@ -1,30 +1,85 @@
-/* Seção — guia do curso */
+/* Seção — guia do curso (referência: fundo claro, 3 colunas, campos em caixa) */
 .course-guide {
   position: relative;
   z-index: 2;
   width: 100%;
   box-sizing: border-box;
-  background: linear-gradient(90deg, #01e3f8 0%, #13a6b4 100%);
-  color: #fff;
+  background: #f2f4f7;
+  color: var(--color-primary, #2b325c);
   overflow: visible;
 }
 
 .course-guide__inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 488px);
-  gap: 2rem;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.1fr) minmax(0, 420px);
+  gap: 3rem;
   align-items: center;
-  padding-block: 2rem;
+  padding-block: 4rem;
+}
+
+/* Coluna de texto */
+.course-guide__eyebrow {
+  margin: 0 0 0.75rem;
+  color: var(--color-accent, #13a6b4);
+  font-family: var(--font-heading, "Gotham", sans-serif);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .course-guide__text h2 {
-  color: #fff;
+  color: var(--color-primary, #2b325c);
   max-width: 18ch;
-  margin: 0 0 1.25rem;
-  font-size: clamp(1.5rem, 2.5vw, 1.85rem);
-  line-height: 1.15;
+  margin: 0;
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  line-height: 1.2;
 }
 
+.course-guide__text h2::after {
+  content: "";
+  display: block;
+  width: 120px;
+  height: 2px;
+  margin-top: 1.5rem;
+  background: var(--color-accent, #13a6b4);
+}
+
+.course-guide__features {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.course-guide__features li {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  font-size: 1rem;
+  color: var(--color-primary, #2b325c);
+}
+
+.course-guide__features svg {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  color: var(--color-accent, #13a6b4);
+}
+
+/* Coluna do formulário — divisória vertical à esquerda */
+.course-guide__panel {
+  min-width: 0;
+}
+
+.course-guide__inner--form .course-guide__panel {
+  border-left: 1px solid rgb(43 50 92 / 0.12);
+  padding-left: 3rem;
+}
+
+/* CTA legado (sem embed configurado) */
 .course-guide__cta {
   display: inline-flex;
   align-items: center;
@@ -32,8 +87,8 @@
   padding: 0.35rem 1.25rem 0.35rem 0.35rem;
   border: 0;
   border-radius: 999px;
-  background: #fff;
-  color: #101429;
+  background: var(--color-primary, #2b325c);
+  color: #fff;
   font-family: var(--font-heading, "Gotham", sans-serif);
   font-size: 0.9375rem;
   font-weight: 600;
@@ -53,7 +108,7 @@
 }
 
 .course-guide__cta:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--color-primary, #2b325c);
   outline-offset: 3px;
 }
 
@@ -68,34 +123,37 @@
   height: 44px;
 }
 
+/* Celular à direita */
 .course-guide__media {
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   flex-shrink: 0;
 }
 
 .course-guide__media img {
   display: block;
-  width: min(100%, 488px);
+  width: min(100%, 420px);
   height: auto;
   aspect-ratio: 488 / 638;
-  margin: -7.0625rem 0 -3.875rem;
+  margin: 0;
   position: relative;
   z-index: 3;
   pointer-events: none;
   object-fit: contain;
 }
 
-/* Formulário exposto na seção (sem popup) — sem card: os campos flutuam
-   direto sobre o gradiente teal, em branco. Só os campos, nada mais. */
+/* ------------------------------------------------------------------ */
+/* Formulário RD exposto na seção — campos em caixa branca com label
+   flutuante sobre a borda, como na referência.                        */
 .course-guide__inner--form {
-  align-items: start;
+  align-items: center;
 }
 
 .course-guide__form {
-  max-width: 440px;
-  color: #fff;
+  max-width: 520px;
+  color: var(--color-primary, #2b325c);
+  padding-top: 0.5rem; /* respiro p/ o primeiro label flutuante */
 }
 
 /* Remove títulos, textos e disclaimers injetados pelo RD Station */
@@ -122,13 +180,16 @@
   font-family: var(--font-body, "Gotham", -apple-system, sans-serif) !important;
 }
 
-/* Zera QUALQUER fundo/borda/sombra interna do embed (caixas cinza/branca do RD)
-   e o recuo lateral — alinha o formulário com o título da seção */
-.course-guide__form div,
+/* Zera fundo/borda/sombra dos wrappers estruturais do RD (caixas cinza)
+   e o recuo lateral — alinha o formulário com a divisória */
+.course-guide__form [id^="rd-section-"],
+.course-guide__form [id^="rd-row-"],
+.course-guide__form [id^="rd-column-"],
 .course-guide__form section,
 .course-guide__form form,
 .course-guide__form fieldset,
 .course-guide__form .bricks-form,
+.course-guide__form .bricks-form__fields,
 .course-guide__form .bricks--component {
   background: transparent !important;
   background-color: transparent !important;
@@ -141,17 +202,11 @@
   margin-right: 0 !important;
 }
 
-/* Título a exatamente 24px do formulário */
-.course-guide__inner--form .course-guide__text h2 {
-  margin-bottom: 24px;
-}
-
 .course-guide__form,
 .course-guide__form [id^="rd-section-"],
 .course-guide__form [id^="rd-column-"],
 .course-guide__form form,
 .course-guide__form .bricks-form {
-  padding-top: 0 !important;
   margin-top: 0 !important;
 }
 
@@ -160,63 +215,89 @@
   margin-top: 0 !important;
 }
 
+/* Nome + Email lado a lado (demais campos em linha inteira) */
+.course-guide__form [id^="rd-section-"],
+.course-guide__form .bricks-form__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1rem;
+}
+
+.course-guide__form [id^="rd-row-"],
+.course-guide__form .bricks-form__field {
+  grid-column: 1 / -1;
+}
+
+.course-guide__form [id^="rd-row-"]:has(input[name="name"]),
+.course-guide__form [id^="rd-row-"]:has(input[name="email"]),
+.course-guide__form .bricks-form__field:has(input[name="name"]),
+.course-guide__form .bricks-form__field:has(input[name="email"]) {
+  grid-column: auto / span 1;
+}
+
 /* Respiro entre os campos */
 .course-guide__form [id^="rd-row-"],
 .course-guide__form .bricks-form__field {
-  margin-bottom: 1.5rem !important;
+  margin-bottom: 1.375rem !important;
+}
+
+/* Label flutuante sobre a borda da caixa */
+.course-guide__form .bricks-form__field {
+  position: relative;
 }
 
 .course-guide__form .bricks-form__label {
-  display: inline-block;
-  margin-bottom: 0.4rem !important;
-}
-
-.course-guide__form .bricks-form__submit {
-  margin-top: 0.5rem !important;
-}
-
-.course-guide__form .bricks-form__label {
-  color: #fff !important;
-  font-size: 0.8125rem !important;
+  position: absolute;
+  top: -0.5rem;
+  left: 0.875rem;
+  z-index: 1;
+  margin: 0 !important;
+  padding: 0 0.375rem !important;
+  background: linear-gradient(to bottom, #f2f4f7 50%, #fff 50%);
+  color: var(--color-primary, #2b325c) !important;
+  font-size: 0.75rem !important;
   font-weight: 600 !important;
   letter-spacing: 0.02em;
+  line-height: 1;
 }
 
-/* Campos: sem caixa — só uma linha branca na parte de baixo */
+/* Campos: caixa branca com borda suave e cantos arredondados */
 .course-guide__form input,
 .course-guide__form select,
 .course-guide__form textarea {
-  background: transparent !important;
-  color: #fff !important;
-  border: 0 !important;
-  border-bottom: 1.5px solid rgb(255 255 255 / 0.55) !important;
-  border-radius: 0 !important;
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff !important;
+  color: var(--color-primary, #2b325c) !important;
+  border: 1px solid rgb(43 50 92 / 0.18) !important;
+  border-radius: 10px !important;
   box-shadow: none !important;
-  padding-left: 0 !important;
+  min-height: 52px;
+  padding: 0.75rem 1rem !important;
   outline: none !important;
   transition: border-color 0.2s ease;
 }
 
 .course-guide__form input::placeholder,
 .course-guide__form textarea::placeholder {
-  color: rgb(255 255 255 / 0.65) !important;
+  color: rgb(43 50 92 / 0.45) !important;
 }
 
 .course-guide__form input:focus,
 .course-guide__form select:focus,
 .course-guide__form textarea:focus {
-  border-bottom-color: #fff !important;
+  border-color: var(--color-accent, #13a6b4) !important;
 }
 
-/* Select nativo: texto branco, seta clara; opções abrem no popup nativo */
+/* Select nativo: seta navy; opções abrem no popup nativo */
 .course-guide__form select {
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%232b325c' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") !important;
   background-repeat: no-repeat !important;
-  background-position: right 0.25rem center !important;
+  background-position: right 1rem center !important;
   background-size: 12px 8px !important;
-  padding-right: 1.5rem !important;
+  padding-right: 2.25rem !important;
   cursor: pointer;
 }
 
@@ -225,16 +306,27 @@
   background: #fff;
 }
 
-/* Campo do DDI (bandeira/país do telefone): mesma linha única, sem caixa */
-.course-guide__form .intl-tel-input,
-.course-guide__form .iti,
-.course-guide__form .phone-country,
+/* Telefone (DDI + número): os dois controles dividem a mesma "caixa" —
+   select do país estreito à esquerda, número ocupa o resto */
+.course-guide__form .bricks-form__field:has(select.phone-country) {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
 .course-guide__form select.phone-country {
-  background: transparent !important;
-  border: 0 !important;
-  border-bottom: 1.5px solid rgb(255 255 255 / 0.55) !important;
-  border-radius: 0 !important;
-  color: #fff !important;
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.course-guide__form .bricks-form__field:has(select.phone-country) input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.course-guide__form .intl-tel-input,
+.course-guide__form .iti {
+  width: 100%;
 }
 
 .course-guide__form .iti__selected-flag,
@@ -247,7 +339,7 @@
 
 .course-guide__form .iti__arrow,
 .course-guide__form .intl-tel-input .arrow {
-  border-top-color: #fff !important;
+  border-top-color: var(--color-primary, #2b325c) !important;
 }
 
 /* Lista de países aberta precisa continuar legível */
@@ -257,62 +349,117 @@
   color: var(--color-primary, #2b325c) !important;
 }
 
-/* Botão minimalista: contorno branco fino, preenche no hover */
+/* Botão: navy, largura total, ícone de download */
+.course-guide__form .bricks-form__submit {
+  margin-top: 0.25rem !important;
+}
+
 .course-guide__form .bricks-form__submit button,
 .course-guide__form button[type="submit"] {
-  background: transparent !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: 100% !important;
+  background: var(--color-primary, #2b325c) !important;
   color: #fff !important;
-  border: 1.5px solid #fff !important;
-  border-radius: var(--radius-pill, 999px) !important;
-  padding: 0.6rem 1.75rem !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  padding: 1rem 1.5rem !important;
   font-weight: 600;
-  font-size: 0.9375rem !important;
-  letter-spacing: 0.02em;
-  width: auto !important;
+  font-size: 1rem !important;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.course-guide__form .bricks-form__submit button::before,
+.course-guide__form button[type="submit"]::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/%3E%3Cpolyline points='7 10 12 15 17 10'/%3E%3Cline x1='12' y1='15' x2='12' y2='3'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/%3E%3Cpolyline points='7 10 12 15 17 10'/%3E%3Cline x1='12' y1='15' x2='12' y2='3'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 .course-guide__form .bricks-form__submit button:hover,
 .course-guide__form button[type="submit"]:hover {
-  background: #fff !important;
-  color: var(--color-primary, #2b325c) !important;
+  background: var(--color-primary-dark, #20264a) !important;
 }
 
-@media (max-width: 767px) {
-  .course-guide__form {
-    max-width: 100%;
-    text-align: left;
-  }
+/* Nota de privacidade abaixo do formulário */
+.course-guide__privacy {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  color: rgb(43 50 92 / 0.6);
+  font-size: 0.8125rem;
+}
+
+.course-guide__privacy svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
 }
 
 /* Modal — legado (substituído por .course-rd-modal em rd-form-course.css) */
+
+@media (max-width: 1023px) {
+  .course-guide__inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  }
+
+  .course-guide__media {
+    display: none;
+  }
+}
 
 @media (max-width: 767px) {
   .course-guide {
     margin-block: 0;
   }
 
-  .course-guide__inner {
+  .course-guide__inner,
+  .course-guide__inner--form {
     grid-template-columns: 1fr;
-    text-align: center;
-    justify-items: center;
-    padding-block: 1.5rem;
-    gap: 1rem;
+    padding-block: 2.5rem;
+    gap: 2rem;
   }
 
   .course-guide__text h2 {
     max-width: none;
   }
 
+  .course-guide__inner--form .course-guide__panel {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .course-guide__form {
+    max-width: 100%;
+    text-align: left;
+  }
+
+  /* Campos empilhados no mobile */
+  .course-guide__form [id^="rd-row-"]:has(input[name="name"]),
+  .course-guide__form [id^="rd-row-"]:has(input[name="email"]),
+  .course-guide__form .bricks-form__field:has(input[name="name"]),
+  .course-guide__form .bricks-form__field:has(input[name="email"]) {
+    grid-column: 1 / -1;
+  }
+
   .course-guide__media {
+    display: flex;
     order: -1;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
   }
 
   .course-guide__media img {
-    width: min(72vw, 240px);
-    margin: -1.5rem 0 -1rem;
+    width: min(72vw, 260px);
+    margin: 0;
   }
 }
 
