@@ -1653,6 +1653,8 @@ function renderTestimonialForm(item) {
     profissao: "",
     texto: "",
     video_url: "",
+    video_formato: "",
+    video_thumb: "",
     foto: "",
     imagem: "",
     legenda: "",
@@ -1677,6 +1679,15 @@ function renderTestimonialForm(item) {
         </label>
         <p class="video-upload__status image-upload__status" hidden></p>
       </div>
+      <div class="form-group">
+        <label for="video_formato">Formato de exibição do vídeo</label>
+        <select id="video_formato" name="video_formato">
+          <option value="" ${!p.video_formato || p.video_formato === "wide" ? "selected" : ""}>Horizontal / YouTube (16:9)</option>
+          <option value="story" ${p.video_formato === "story" ? "selected" : ""}>Story / vertical (9:16)</option>
+        </select>
+        <small>Story evita corte em vídeos gravados na vertical (celular).</small>
+      </div>
+      ${renderImageUploadField({ name: "video_thumb", value: p.video_thumb || "", label: "Thumbnail do vídeo (capa antes do play — só p/ upload nativo)", folder: "testimonials" })}
       ${renderImageUploadField({ name: "imagem", value: p.imagem || "", label: "Imagem do depoimento", folder: "testimonials" })}
       <div class="form-group form-group--full"><label>Texto do depoimento</label><textarea name="texto" rows="4">${escapeHtml(p.texto || "")}</textarea></div>
       <div class="form-group form-group--full"><label>Legenda</label><input name="legenda" value="${escapeHtml(p.legenda || "")}" placeholder="Opcional — aparece se preenchida"></div>

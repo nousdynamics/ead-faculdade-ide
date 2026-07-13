@@ -128,12 +128,31 @@
   background: #000;
 }
 
-.testimonial-card__video iframe {
+.testimonial-card__video iframe,
+.testimonial-card__video video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+/* Formato story (9:16 vertical) — selecionado no cadastro do depoimento.
+   Seletor com a seção p/ vencer o <style> do modelo salvo no banco. */
+.testimonials-section .testimonial-card__video--story {
+  aspect-ratio: 9 / 16;
+  width: 100%;
+  max-width: 240px;
+  margin-inline: auto;
+}
+
+/* Foto da pessoa sempre centralizada com os textos, mesmo que o modelo
+   antigo do banco não defina width/text-align no avatar */
+.testimonials-section .testimonial-card__avatar {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .testimonial-card__figure {

@@ -170,12 +170,19 @@ export const STARTER_CSS = `.testimonial-card {
   background: #000;
 }
 
-.testimonial-card__video iframe {
+.testimonial-card__video iframe,
+.testimonial-card__video video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+.testimonial-card__video--story {
+  aspect-ratio: 9 / 16;
+  max-width: 240px;
+  margin-inline: auto;
 }
 
 .testimonial-card__figure {
@@ -209,6 +216,16 @@ function youtubeEmbed(url) {
   if (!url) return "";
   const match = String(url).trim().match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
   return match ? `https://www.youtube.com/embed/${match[1]}` : "";
+}
+
+/** Vídeo hospedado (upload nativo Supabase ou arquivo direto), não YouTube. */
+function directVideoUrl(url) {
+  const value = String(url || "").trim();
+  if (!value) return "";
+  if (/youtube\.com|youtu\.be/i.test(value)) return "";
+  if (/\.(mp4|webm|mov)(\?|#|$)/i.test(value)) return value;
+  if (/\/storage\/v1\/object\/public\//i.test(value)) return value;
+  return "";
 }
 
 export function applyTemplate(html, vars) {
@@ -253,14 +270,23 @@ function buildAdaptiveBlocks(dep, base, wrap, classeRaiz = DEFAULT_CLASS_ROOT) {
   const nome = wrap(dep.nome);
   const fotoSrc = dep.foto || dep.thumbnail || "";
   const embed = youtubeEmbed(dep.video_url);
+  const fileVideo = directVideoUrl(dep.video_url);
 
   const bloco_foto = fotoSrc
     ? `<figure class="${bemClass(classeRaiz, "avatar")}"><img src="${assetUrl(fotoSrc, base)}" alt="${nome}" width="72" height="72" loading="lazy"></figure>`
     : "";
 
+  // Formato de exibição do vídeo: "story" (9:16 vertical) ou padrão 16:9
+  const videoBase = bemClass(classeRaiz, "video");
+  const videoClass = dep.video_formato === "story" ? `${videoBase} ${videoBase}--story` : videoBase;
+  const posterSrc = dep.video_thumb ? assetUrl(dep.video_thumb, base) : "";
+  const posterAttr = posterSrc ? ` poster="${posterSrc}"` : "";
+
   const bloco_video = embed
-    ? `<div class="${bemClass(classeRaiz, "video")}"><iframe src="${embed}" title="Depoimento — ${nome}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>`
-    : "";
+    ? `<div class="${videoClass}"><iframe src="${embed}" title="Depoimento — ${nome}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>`
+    : fileVideo
+      ? `<div class="${videoClass}"><video src="${fileVideo}"${posterAttr} title="Depoimento — ${nome}" controls preload="metadata" playsinline style="width:100%;height:100%;display:block;border:0;border-radius:inherit;object-fit:cover;background:#000"></video></div>`
+      : "";
 
   const bloco_imagem = dep.imagem
     ? `<figure class="${bemClass(classeRaiz, "figure")}"><img src="${assetUrl(dep.imagem, base)}" alt="${nome}" loading="lazy"></figure>`
