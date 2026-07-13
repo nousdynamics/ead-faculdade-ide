@@ -990,7 +990,7 @@ function renderCourseForm(course) {
                 <input id="slug" name="slug" value="${escapeHtml(c.slug || "")}" placeholder="gerado-automaticamente">
                 <small>URL: /pos-graduacao/<strong id="slug-preview">${escapeHtml(c.slug || "slug-do-curso")}</strong></small>
               </div>
-              ${renderImageUploadField({ name: "imagem_capa", value: c.imagem_capa || "", label: "Imagem de capa", folder: "courses", dimensions: "1200×630 px recomendado" })}
+              ${renderImageUploadField({ name: "imagem_capa", value: c.imagem_capa || "", label: "Imagem de capa", folder: "courses", dimensions: "1200×630 px", exact: true })}
               ${selectField("nivel_formacao_id", "formation-levels", c.nivel_formacao_id, "Nível de formação", true)}
               ${selectField("area_id", "areas", c.area_id, "Área", true)}
               ${selectField("status_curso_id", "statuses", c.status_curso_id, "Status do curso", true)}
@@ -1430,7 +1430,7 @@ function renderPdfUploadField({ value = "" }) {
     </div>`;
 }
 
-function renderImageUploadField({ name = "foto", value = "", label = "Foto", folder = "uploads", dimensions = "" }) {
+function renderImageUploadField({ name = "foto", value = "", label = "Foto", folder = "uploads", dimensions = "", exact = false }) {
   const preview = renderImagePreview(value);
   const ar = (dimensions.match(/(\d+)\s*[×x]\s*(\d+)/) || []).slice(1).map(Number);
   let previewStyle = "";
@@ -1439,9 +1439,13 @@ function renderImageUploadField({ name = "foto", value = "", label = "Foto", fol
     const width = ratio >= 3 ? "100%" : ratio > 1.2 ? "280px" : "160px";
     previewStyle = ` style="width:${width};height:auto;aspect-ratio:${ar[0]} / ${ar[1]}"`;
   }
+  const exactAttr = exact && ar.length === 2 ? ` data-exact-dimensions="${ar[0]}x${ar[1]}"` : "";
+  const sizeHint = dimensions
+    ? ` Tamanho ${exact ? "obrigatório" : "recomendado"}: <strong>${dimensions}</strong>.`
+    : "";
 
   return `
-    <div class="form-group form-group--full image-upload" data-image-upload data-folder="${folder}">
+    <div class="form-group form-group--full image-upload" data-image-upload data-folder="${folder}"${exactAttr}>
       <label>${label}</label>
       <input type="hidden" name="${name}" value="${escapeHtml(value)}">
       <div class="image-upload__preview"${previewStyle}>${preview}</div>
@@ -1449,7 +1453,7 @@ function renderImageUploadField({ name = "foto", value = "", label = "Foto", fol
         ${icon("image", { size: 16 })} Escolher imagem
         <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="image-upload__input" hidden>
       </label>
-      <small>JPG, PNG ou WebP. Máximo de 2 MB. Arraste e solte ou clique em Escolher imagem.${dimensions ? ` Tamanho recomendado: <strong>${dimensions}</strong>.` : ""}</small>
+      <small>JPG, PNG ou WebP. Máximo de 2 MB. Arraste e solte ou clique em Escolher imagem.${sizeHint}</small>
       <p class="image-upload__status" hidden></p>
     </div>`;
 }

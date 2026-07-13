@@ -109,6 +109,15 @@ function clearImagePreview(wrap, hidden, preview, fileInput, status, onChange) {
   onChange?.("");
 }
 
+function readImageDimensions(objectUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+    img.onerror = () => reject(new Error("Não foi possível ler a imagem."));
+    img.src = objectUrl;
+  });
+}
+
 async function processImageFile(file, { wrap, hidden, preview, fileInput, status, uploadFolder, onChange }) {
   if (!file) return;
 
@@ -122,6 +131,18 @@ async function processImageFile(file, { wrap, hidden, preview, fileInput, status
   }
 
   try {
+    // Campos com data-exact-dimensions só aceitam a medida exata
+    const exact = (wrap?.dataset?.exactDimensions || "").match(/(\d+)\s*[×x]\s*(\d+)/);
+    if (exact) {
+      const want = { width: Number(exact[1]), height: Number(exact[2]) };
+      const dim = await readImageDimensions(objectUrl);
+      if (dim.width !== want.width || dim.height !== want.height) {
+        throw new Error(
+          `A imagem precisa ter exatamente ${want.width}×${want.height}px — a enviada tem ${dim.width}×${dim.height}px.`,
+        );
+      }
+    }
+
     const path = await uploadImage(file, uploadFolder);
     hidden.value = path;
     setImagePreview(preview, wrap, mediaUrl(path));
