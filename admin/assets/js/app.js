@@ -1564,10 +1564,6 @@ function renderProfessorForm(item) {
       <div class="form-group form-group--full"><label>Nome *</label><input name="nome" value="${escapeHtml(p.nome)}" required></div>
       <div class="form-group"><label>Título / Cargo</label><input name="titulo" value="${escapeHtml(p.titulo || "")}"></div>
       <div class="form-group"><label>Estado (UF)</label><input name="estado" value="${escapeHtml(p.estado || "")}"></div>
-      <div class="form-group form-group--full">
-        <label for="nome_curso">Nome do curso</label>
-        <input id="nome_curso" name="nome_curso" value="${escapeHtml(p.nome_curso || "")}" placeholder="Ex: Aleitamento Materno e Banco de Leite Humano">
-      </div>
       ${renderImageUploadField({ value: p.foto || "", label: "Foto", folder: "professors", dimensions: "300×469 px" })}
       <div class="form-group form-group--full">
         <label for="descricao">Breve descrição</label>
