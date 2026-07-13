@@ -68,29 +68,24 @@ document.querySelectorAll(".professores .jet-listing-grid").forEach((viewport) =
     track.style.transform = `translateX(-${index * stepSize()}px)`;
   };
 
+  // Reancora sem animação quando está na zona dos clones (mesmo visual,
+  // índice normalizado) — nada de transitionend: os flip-cards disparam
+  // transitionend de opacity que borbulha até o track e resetava no meio
+  // do slide, quebrando a volta infinita.
+  const rebase = (to) => {
+    index = to;
+    apply(false);
+    void track.offsetWidth; /* força reflow p/ a transição seguinte valer */
+  };
+
   const next = () => {
+    if (index >= originals.length) rebase(index - originals.length);
     index += 1;
     apply(true);
-    if (index >= originals.length) {
-      // terminou a volta: reancora no início sem animação
-      track.addEventListener(
-        "transitionend",
-        () => {
-          index = 0;
-          apply(false);
-        },
-        { once: true },
-      );
-    }
   };
 
   const prev = () => {
-    if (index <= 0) {
-      // reancora no fim (zona dos clones) sem animação e volta 1
-      index = originals.length;
-      apply(false);
-      void track.offsetWidth; /* força reflow p/ transição seguinte valer */
-    }
+    if (index <= 0) rebase(index + originals.length);
     index -= 1;
     apply(true);
   };
