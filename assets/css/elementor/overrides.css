@@ -84,6 +84,16 @@
 
 /* Professores — carrossel infinito (autoplay no course-page.js).
    Sem JS ou com poucos cards: fila centrada com scroll manual. */
+
+/* O widget é item flex do e-con: sem min-width 0 ele cresce até o
+   max-content da fila (todos os cards) e estoura a página — aí o
+   scrollWidth nunca excede o viewport e o carrossel não ativa. */
+.professores.elementor-widget,
+.professores .elementor-widget-container {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .professores .jet-listing-grid {
   width: 100%;
   overflow-x: auto;
