@@ -62,15 +62,7 @@ document.querySelectorAll(".professores .jet-listing-grid").forEach((viewport) =
     track.style.transform = `translateX(-${index * stepSize()}px)`;
   };
 
-  viewport.addEventListener("mouseenter", () => { paused = true; });
-  viewport.addEventListener("mouseleave", () => { paused = false; });
-  viewport.addEventListener("focusin", () => { paused = true; });
-  viewport.addEventListener("focusout", () => { paused = false; });
-
-  window.addEventListener("resize", () => apply(false));
-
-  setInterval(() => {
-    if (paused || document.hidden) return;
+  const next = () => {
     index += 1;
     apply(true);
     if (index >= originals.length) {
@@ -84,6 +76,44 @@ document.querySelectorAll(".professores .jet-listing-grid").forEach((viewport) =
         { once: true },
       );
     }
+  };
+
+  const prev = () => {
+    if (index <= 0) {
+      // reancora no fim (zona dos clones) sem animação e volta 1
+      index = originals.length;
+      apply(false);
+      void track.offsetWidth; /* força reflow p/ transição seguinte valer */
+    }
+    index -= 1;
+    apply(true);
+  };
+
+  const arrow = (dir, onClick) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `professores-carousel__arrow professores-carousel__arrow--${dir}`;
+    btn.setAttribute("aria-label", dir === "prev" ? "Professores anteriores" : "Próximos professores");
+    btn.innerHTML = dir === "prev"
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>';
+    btn.addEventListener("click", onClick);
+    viewport.appendChild(btn);
+  };
+
+  arrow("prev", prev);
+  arrow("next", next);
+
+  viewport.addEventListener("mouseenter", () => { paused = true; });
+  viewport.addEventListener("mouseleave", () => { paused = false; });
+  viewport.addEventListener("focusin", () => { paused = true; });
+  viewport.addEventListener("focusout", () => { paused = false; });
+
+  window.addEventListener("resize", () => apply(false));
+
+  setInterval(() => {
+    if (paused || document.hidden) return;
+    next();
   }, 2000);
 });
 

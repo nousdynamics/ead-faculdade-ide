@@ -96,6 +96,53 @@
 
 .professores .jet-listing-grid.is-carousel {
   overflow: hidden;
+  position: relative;
+}
+
+/* Setas de navegação (injetadas pelo course-page.js quando o carrossel ativa) */
+.professores-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-primary, #2b325c);
+  box-shadow: 0 4px 16px rgb(16 20 41 / 0.18);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.professores-carousel__arrow:hover {
+  background: var(--color-primary, #2b325c);
+  color: #fff;
+}
+
+.professores-carousel__arrow:focus-visible {
+  outline: 2px solid var(--color-accent, #13a6b4);
+  outline-offset: 2px;
+}
+
+.professores-carousel__arrow svg {
+  width: 22px;
+  height: 22px;
+}
+
+.professores-carousel__arrow--prev { left: 12px; }
+.professores-carousel__arrow--next { right: 12px; }
+
+@media (max-width: 767px) {
+  .professores-carousel__arrow {
+    width: 38px;
+    height: 38px;
+  }
 }
 
 .professores .jet-listing-grid__items {
