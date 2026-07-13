@@ -1458,9 +1458,15 @@ function renderImageUploadField({ name = "foto", value = "", label = "Foto", fol
  * Picker de cursos no cadastro de professor/coordenador — vincula sem
  * precisar abrir a edição de cada curso.
  */
+function courseEntityIds(course, field) {
+  // depoimento_ids tem campos legados divididos por tipo — mescla tudo
+  if (field === "depoimento_ids") return getCourseDepoimentoIds(course);
+  return course[field] || [];
+}
+
 function entityCoursePicker(entityId, field) {
   const courses = getAll("courses");
-  const selected = courses.filter((c) => (c[field] || []).includes(entityId)).map((c) => c.id);
+  const selected = courses.filter((c) => courseEntityIds(c, field).includes(entityId)).map((c) => c.id);
 
   return `
     <div class="form-group form-group--full entity-course-picker" data-course-link-field="${field}">
@@ -1485,14 +1491,22 @@ async function syncEntityCourses(form, entityId, field) {
   const selected = new Set($$('input[name="curso_vinculado"]:checked', picker).map((el) => el.value));
   let changed = false;
   const updated = getAll("courses").map((course) => {
-    const has = (course[field] || []).includes(entityId);
+    const has = courseEntityIds(course, field).includes(entityId);
     const want = selected.has(course.id);
     if (has === want) return course;
     changed = true;
-    const ids = new Set(course[field] || []);
+    const ids = new Set(courseEntityIds(course, field));
     if (want) ids.add(entityId);
     else ids.delete(entityId);
-    return { ...course, [field]: [...ids], atualizado_em: new Date().toISOString() };
+    const next = { ...course, [field]: [...ids], atualizado_em: new Date().toISOString() };
+    if (field === "depoimento_ids") {
+      // já mesclados acima — sem eles, curso com depoimento_ids vazio
+      // voltaria a exibir os legados (fallback de getCourseDepoimentoIds)
+      delete next.depoimento_texto_ids;
+      delete next.depoimento_video_ids;
+      delete next.depoimento_imagem_ids;
+    }
+    return next;
   });
 
   if (changed) await saveCollection("courses", updated);
@@ -1502,6 +1516,7 @@ async function syncEntityCourses(form, entityId, field) {
 const ENTITY_COURSE_FIELD = {
   professors: "professor_ids",
   coordination: "coordenacao_ids",
+  testimonials: "depoimento_ids",
 };
 
 function renderEntityList(collection, title, formRenderer) {
@@ -1665,6 +1680,7 @@ function renderTestimonialForm(item) {
       ${renderImageUploadField({ name: "imagem", value: p.imagem || "", label: "Imagem do depoimento", folder: "testimonials" })}
       <div class="form-group form-group--full"><label>Texto do depoimento</label><textarea name="texto" rows="4">${escapeHtml(p.texto || "")}</textarea></div>
       <div class="form-group form-group--full"><label>Legenda</label><input name="legenda" value="${escapeHtml(p.legenda || "")}" placeholder="Opcional — aparece se preenchida"></div>
+      ${entityCoursePicker(p.id, "depoimento_ids")}
     </div>`);
 }
 
