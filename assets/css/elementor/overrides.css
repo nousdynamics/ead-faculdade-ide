@@ -24,10 +24,16 @@
 .elementor-flip-box__layer__overlay {
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   height: 100%;
   padding: 1rem;
   background: linear-gradient(transparent, rgba(43, 50, 92, 0.92));
   color: #fff;
+  text-align: center;
+}
+.elementor-flip-box__layer__inner {
+  width: 100%;
+  text-align: center;
 }
 .professores .elementor-flip-box__back .elementor-flip-box__layer__overlay {
   align-items: center;
