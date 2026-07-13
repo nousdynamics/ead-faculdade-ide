@@ -22,12 +22,70 @@ document.querySelectorAll(".course-faq__list").forEach((list) => {
   );
 });
 
-/** Flip-box dos professores — clique só em dispositivos sem hover (touch) */
+/** Flip-box dos professores — clique só em dispositivos sem hover (touch).
+ * Delegado no document p/ funcionar também nos clones do carrossel. */
 if (window.matchMedia("(hover: none)").matches) {
-  document.querySelectorAll(".professores .elementor-flip-box").forEach((box) => {
-    box.addEventListener("click", () => box.classList.toggle("elementor-flip-box--flipped"));
+  document.addEventListener("click", (event) => {
+    const box = event.target instanceof Element && event.target.closest(".professores .elementor-flip-box");
+    if (box) box.classList.toggle("elementor-flip-box--flipped");
   });
 }
+
+/** Professores — carrossel infinito com autoplay (1 card a cada 2s).
+ * Clona os itens p/ dar a volta sem "pulo"; pausa no hover/foco. */
+document.querySelectorAll(".professores .jet-listing-grid").forEach((viewport) => {
+  const track = viewport.querySelector(".jet-listing-grid__items");
+  if (!track) return;
+
+  const originals = Array.from(track.children);
+  const overflows = () => track.scrollWidth > viewport.clientWidth + 1;
+  if (originals.length < 2 || !overflows()) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  viewport.classList.add("is-carousel");
+  originals.forEach((item) => {
+    const clone = item.cloneNode(true);
+    clone.setAttribute("aria-hidden", "true");
+    track.appendChild(clone);
+  });
+
+  let index = 0;
+  let paused = false;
+
+  const stepSize = () => {
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 12;
+    return originals[0].getBoundingClientRect().width + gap;
+  };
+
+  const apply = (animate) => {
+    track.style.transition = animate ? "transform 0.6s ease" : "none";
+    track.style.transform = `translateX(-${index * stepSize()}px)`;
+  };
+
+  viewport.addEventListener("mouseenter", () => { paused = true; });
+  viewport.addEventListener("mouseleave", () => { paused = false; });
+  viewport.addEventListener("focusin", () => { paused = true; });
+  viewport.addEventListener("focusout", () => { paused = false; });
+
+  window.addEventListener("resize", () => apply(false));
+
+  setInterval(() => {
+    if (paused || document.hidden) return;
+    index += 1;
+    apply(true);
+    if (index >= originals.length) {
+      // terminou a volta: reancora no início sem animação
+      track.addEventListener(
+        "transitionend",
+        () => {
+          index = 0;
+          apply(false);
+        },
+        { once: true },
+      );
+    }
+  }, 2000);
+});
 
 /** Mini-currículo — sincroniza aria-expanded no summary */
 document.querySelectorAll(".coord-mini-cv").forEach((details) => {

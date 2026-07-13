@@ -162,30 +162,10 @@
     padding-block: 2.5rem !important;
   }
 
-  /* Professores — cards centralizados */
-  .professores .jet-listing-grid__items {
-    grid-template-columns: minmax(0, 1fr) !important;
-    justify-items: center;
-  }
-
+  /* Professores — carrossel (autoplay) definido em elementor/overrides.css;
+     aqui só o tamanho do card no mobile */
   .professores .elementor-flip-box {
     max-width: min(100%, 280px);
-  }
-
-  /* Cursos relacionados / carrossel */
-  .elementor-13 .elementor-element.elementor-element-c600f96 .jet-listing-grid__items {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    scroll-snap-type: x mandatory;
-    gap: 0.75rem !important;
-    padding-bottom: 0.5rem;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .elementor-13 .elementor-element.elementor-element-c600f96 .jet-listing-grid__item {
-    flex: 0 0 min(82vw, 280px);
-    scroll-snap-align: start;
   }
 
   /* Banner complementar */

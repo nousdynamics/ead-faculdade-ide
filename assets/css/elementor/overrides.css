@@ -82,17 +82,38 @@
   text-align: left;
 }
 
+/* Professores — carrossel infinito (autoplay no course-page.js).
+   Sem JS ou com poucos cards: fila centrada com scroll manual. */
+.professores .jet-listing-grid {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.professores .jet-listing-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.professores .jet-listing-grid.is-carousel {
+  overflow: hidden;
+}
+
 .professores .jet-listing-grid__items {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 300px));
+  display: flex;
+  flex-wrap: nowrap;
   justify-content: center;
   gap: 12px;
+  will-change: transform;
+}
+
+.is-carousel .jet-listing-grid__items {
+  justify-content: flex-start;
 }
 
 .professores .jet-listing-grid__item {
-  width: 100%;
+  flex: 0 0 300px;
+  width: 300px;
   max-width: 300px;
-  justify-self: center;
 }
 
 .professores .elementor-1141,
@@ -167,8 +188,8 @@
 }
 
 @media (max-width: 767px) {
-  .professores .jet-listing-grid__items {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 300px));
+  .professores .jet-listing-grid__item {
+    flex-basis: min(80vw, 300px);
   }
 }
 
