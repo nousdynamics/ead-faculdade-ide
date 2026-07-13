@@ -38,7 +38,13 @@ document.querySelectorAll(".professores .jet-listing-grid").forEach((viewport) =
   if (!track) return;
 
   const originals = Array.from(track.children);
-  const overflows = () => track.scrollWidth > viewport.clientWidth + 1;
+  // Não usa scrollWidth: com justify-content:center o Chrome ignora o
+  // overflow do lado esquerdo e reporta scrollWidth == clientWidth.
+  const overflows = () => {
+    const first = originals[0].getBoundingClientRect();
+    const last = originals[originals.length - 1].getBoundingClientRect();
+    return last.right - first.left > viewport.clientWidth + 1;
+  };
   if (originals.length < 2 || !overflows()) return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
