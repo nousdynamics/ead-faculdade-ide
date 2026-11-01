@@ -9,6 +9,11 @@
       "source": "/cadastro",
       "destination": "/admin/cadastro",
       "permanent": false
+    },
+    {
+      "source": "/pos-graduacao/ensino-do-bale-classico",
+      "destination": "/pos-graduacao/ensino-do-bale-classico-turma-4",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -41,7 +46,7 @@
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=300, must-revalidate"
+          "value": "public, max-age=300, s-maxage=86400, stale-while-revalidate=604800"
         }
       ]
     },
@@ -60,6 +65,15 @@
         {
           "key": "Cache-Control",
           "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/api/media/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=86400, stale-while-revalidate=604800"
         }
       ]
     },
@@ -86,7 +100,7 @@
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "no-store"
+          "value": "public, s-maxage=60, stale-while-revalidate=300"
         }
       ]
     },
