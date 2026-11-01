@@ -40,17 +40,21 @@ export function slugify(text) {
 export function getCoursePublicPath(course) {
   if (!course) return "";
 
-  const canonical = course.seo?.canonical?.trim();
-  if (canonical) {
-    return canonical.startsWith("/") ? canonical : `/${canonical}`;
-  }
-
   const slug = course.slug?.trim() || course.id?.trim() || "";
   if (!slug) return "";
 
   const nivel = getById("formation-levels", course.nivel_formacao_id);
   const prefix = nivel?.slug || "pos-graduacao";
-  return `/${prefix}/${slug}`;
+  const fromSlug = `/${prefix}/${slug}`;
+
+  const canonical = course.seo?.canonical?.trim();
+  if (canonical) {
+    const path = canonical.startsWith("/") ? canonical : `/${canonical}`;
+    // Canonical só é usada se apontar para o mesmo slug; evita 404 por URL antiga.
+    if (path === fromSlug || path.endsWith(`/${slug}`)) return path;
+  }
+
+  return fromSlug;
 }
 
 import { authHeaders, clearSession } from "./auth.js";
@@ -119,11 +123,10 @@ export function lookup(name, id, field = "nome") {
 
 export async function saveCollection(name, data) {
   cache[name] = data;
-  if (apiAvailable) {
-    return fetchJson(`/api/cms/${name}`, { method: "PUT", body: JSON.stringify(data) });
+  if (!apiAvailable) {
+    throw new Error("API do CMS indisponível. As alterações não foram salvas no servidor. Recarregue a página e entre novamente.");
   }
-  localStorage.setItem(`cms-${name}`, JSON.stringify(data));
-  return { ok: true };
+  return fetchJson(`/api/cms/${name}`, { method: "PUT", body: JSON.stringify(data) });
 }
 
 export async function upsertItem(name, item) {

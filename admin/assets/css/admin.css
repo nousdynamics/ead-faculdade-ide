@@ -2646,6 +2646,128 @@ body.admin-readonly [data-delete-tax] {
   outline-offset: 1px;
 }
 
+.panel__head-actions--wrap {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.panel__count {
+  margin: 0.2rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-muted, #6b7280);
+}
+
+.course-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--color-border, #e3e8ee);
+  background: rgba(250, 251, 252, 0.9);
+}
+
+.course-filters__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.course-filters__row--actions {
+  justify-content: space-between;
+}
+
+.course-filters__quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.course-filters__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--color-border, #d7dde5);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-text, #243044);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.filter-chip:hover {
+  border-color: var(--color-accent, #13a6b4);
+}
+
+.filter-chip.is-active,
+.filter-chip--toggle.is-active {
+  background: rgba(19, 166, 180, 0.12);
+  border-color: var(--color-accent, #13a6b4);
+  color: #0f6f79;
+}
+
+.empty--filtered {
+  padding: 1.5rem 1rem;
+  text-align: center;
+}
+
+.list-filter,
+.list-page-size select {
+  min-width: 150px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border, #e3e8ee);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.875rem;
+  background: var(--color-surface, #fafbfc);
+  color: inherit;
+}
+
+.list-page-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8125rem;
+  color: var(--color-muted, #6b7280);
+}
+
+.list-page-size select {
+  min-width: 72px;
+}
+
+.list-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-top: 1px solid var(--color-border, #e3e8ee);
+}
+
+.list-pager__meta,
+.list-pager__page {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-muted, #6b7280);
+}
+
+.list-pager__controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .entity-picker__search {
   width: 100%;
   min-width: 0;

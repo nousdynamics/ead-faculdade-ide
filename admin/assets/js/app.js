@@ -1,6 +1,6 @@
 import {
   initStore, getAll, getById, lookup, upsertItem, deleteItem, saveCollection,
-  uid, slugify, getCoursePublicPath, loadFromLocalStorage,
+  uid, slugify, getCoursePublicPath, loadFromLocalStorage, isApiAvailable,
 } from "./store.js";
 import { generateCourseSeo, scoreSeo, renderSeoPreview, escapeHtml, SEO_LIMITS } from "./seo.js";
 import { login, logout, verifySession, isAuthenticated, getUser, getEmail, getAccessLevel, fetchAccountProfile, updateAccount, authHeaders } from "./auth.js";
@@ -609,9 +609,12 @@ function bindVideosPageEvents() {
 
 function renderDashboard() {
   setPage("Dashboard", "Visão geral do conteúdo");
-  const courses = getAll("courses");
+  const courses = sortCoursesBy("recent", getAll("courses"));
   const published = courses.filter((c) => c.publicado);
   const open = courses.filter((c) => c.status_curso_id === "inscricoes-abertas");
+  const statuses = getAll("statuses");
+  const levels = getAll("formation-levels");
+  const areas = getAll("areas");
 
   return `
     <div class="stats">
@@ -632,21 +635,305 @@ function renderDashboard() {
         <div><div class="stat-card__value">${getAll("professors").length}</div><div class="stat-card__label">Professores</div></div>
       </div>
     </div>
-    <div class="panel">
-      <div class="panel__head"><h2>${icon("book-open", { size: 18 })} Últimos cursos</h2><a href="#/courses/novo" class="btn btn--primary btn--sm">${icon("plus", { size: 16 })} Novo curso</a></div>
+    <div class="panel" data-dashboard-courses>
+      <div class="panel__head">
+        <div>
+          <h2>${icon("book-open", { size: 18 })} Cursos</h2>
+          <p class="panel__count" data-filter-count>${courses.length} de ${courses.length} cursos</p>
+        </div>
+        <a href="#/courses/novo" class="btn btn--primary btn--sm">${icon("plus", { size: 16 })} Novo curso</a>
+      </div>
+
+      <div class="course-filters" data-course-filters>
+        <div class="course-filters__row">
+          ${listSearchInput("dashboard-course-search", "Buscar por título, slug, área…")}
+          <select id="dashboard-course-nivel" class="list-filter" aria-label="Filtrar por nível">
+            <option value="">Todos os níveis</option>
+            ${levels.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.nome)}</option>`).join("")}
+          </select>
+          <select id="dashboard-course-area" class="list-filter" aria-label="Filtrar por área">
+            <option value="">Todas as áreas</option>
+            ${areas.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.nome)}</option>`).join("")}
+          </select>
+          <select id="dashboard-course-status" class="list-filter" aria-label="Filtrar por status">
+            <option value="">Todos os status</option>
+            ${statuses.map((s) => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.nome)}</option>`).join("")}
+          </select>
+          <select id="dashboard-course-published" class="list-filter" aria-label="Filtrar por publicação">
+            <option value="">Publicados e rascunhos</option>
+            <option value="published">Somente publicados</option>
+            <option value="draft">Somente rascunhos</option>
+          </select>
+          <select id="dashboard-course-sort" class="list-filter" aria-label="Ordenar cursos">
+            <option value="recent">Mais recentes</option>
+            <option value="oldest">Mais antigos</option>
+            <option value="az">Título A–Z</option>
+            <option value="za">Título Z–A</option>
+          </select>
+          <label class="list-page-size">
+            <span>Por página</span>
+            <select id="dashboard-course-page-size" aria-label="Itens por página">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </select>
+          </label>
+        </div>
+        <div class="course-filters__row course-filters__row--actions">
+          <div class="course-filters__quick">
+            <button type="button" class="filter-chip filter-chip--toggle" data-quick-filter="turma-confirmada" aria-pressed="false">Turma confirmada</button>
+            <button type="button" class="filter-chip filter-chip--toggle" data-quick-filter="inscricoes-abertas" aria-pressed="false">Inscrições abertas</button>
+            <button type="button" class="filter-chip filter-chip--toggle" data-quick-filter="published" aria-pressed="false">Publicados</button>
+          </div>
+          <button type="button" class="btn btn--ghost btn--sm" data-clear-filters hidden>Limpar filtros</button>
+        </div>
+        <div class="course-filters__chips" data-active-chips hidden></div>
+      </div>
+
       <div class="panel__body panel__body--flush table-wrap">
         ${courses.length ? `<table class="data-table data-table--courses">
-          <thead><tr><th class="col-title">Curso</th><th class="col-meta">Nível</th><th class="col-meta">Área</th><th class="col-status">Status</th><th class="col-actions"></th></tr></thead>
-          <tbody>${courses.slice(0, 8).map((c) => `<tr>
-            <td class="col-title"><span class="cell-name__title">${escapeHtml(c.titulo)}</span></td>
-            <td class="col-meta">${escapeHtml(lookup("formation-levels", c.nivel_formacao_id))}</td>
-            <td class="col-meta">${escapeHtml(lookup("areas", c.area_id))}</td>
-            <td class="col-status">${statusBadge(c.status_curso_id)}</td>
-            <td class="col-actions"><div class="table-actions">${renderCoursePageLink(c, { compact: true })}<a href="#/courses/${c.id}" class="btn btn--ghost btn--sm">${icon("pencil", { size: 14 })} Editar</a></div></td>
-          </tr>`).join("")}</tbody>
-        </table>` : `<div class="empty">${icon("inbox", { size: 40, className: "icon empty__icon" })}<p>Nenhum curso cadastrado.</p><a href="#/courses/novo" class="btn btn--primary">${icon("plus", { size: 16 })} Criar primeiro curso</a></div>`}
+          <thead><tr><th class="col-title">Curso</th><th class="col-meta">Nível</th><th class="col-meta">Área</th><th class="col-status">Status</th><th class="col-published">Pub.</th><th class="col-actions"></th></tr></thead>
+          <tbody>
+            ${courses.map((c) => {
+              const nivelNome = lookup("formation-levels", c.nivel_formacao_id);
+              const areaNome = lookup("areas", c.area_id);
+              const statusNome = lookup("statuses", c.status_curso_id);
+              const ts = Date.parse(c.atualizado_em || c.criado_em || 0) || 0;
+              return `<tr
+                data-course-row
+                data-status="${escapeHtml(c.status_curso_id || "")}"
+                data-nivel="${escapeHtml(c.nivel_formacao_id || "")}"
+                data-area="${escapeHtml(c.area_id || "")}"
+                data-published="${c.publicado ? "1" : "0"}"
+                data-title="${escapeHtml(c.titulo || "")}"
+                data-updated="${ts}"
+                data-search="${escapeHtml([c.titulo, c.subtitulo, c.slug, nivelNome, areaNome, statusNome].filter(Boolean).join(" "))}"
+              >
+              <td class="col-title"><span class="cell-name__title">${escapeHtml(c.titulo)}</span></td>
+              <td class="col-meta">${escapeHtml(nivelNome)}</td>
+              <td class="col-meta">${escapeHtml(areaNome)}</td>
+              <td class="col-status">${statusBadge(c.status_curso_id)}</td>
+              <td class="col-published">${c.publicado ? '<span class="badge badge--open">Sim</span>' : '<span class="badge badge--draft">Não</span>'}</td>
+              <td class="col-actions"><div class="table-actions">${renderCoursePageLink(c, { compact: true })}<a href="#/courses/${c.id}" class="btn btn--ghost btn--sm">${icon("pencil", { size: 14 })} Editar</a></div></td>
+            </tr>`;
+            }).join("")}
+          </tbody>
+        </table>
+        <div class="empty empty--filtered" data-filter-empty hidden>
+          <p>Nenhum curso encontrado com esses filtros.</p>
+          <button type="button" class="btn btn--ghost btn--sm" data-clear-filters>Limpar filtros</button>
+        </div>` : `<div class="empty">${icon("inbox", { size: 40, className: "icon empty__icon" })}<p>Nenhum curso cadastrado.</p><a href="#/courses/novo" class="btn btn--primary">${icon("plus", { size: 16 })} Criar primeiro curso</a></div>`}
+      </div>
+      <div class="list-pager" data-dashboard-pager hidden>
+        <p class="list-pager__meta" data-pager-meta></p>
+        <div class="list-pager__controls">
+          <button type="button" class="btn btn--ghost btn--sm" data-pager-prev>Anterior</button>
+          <span class="list-pager__page" data-pager-page></span>
+          <button type="button" class="btn btn--ghost btn--sm" data-pager-next>Próxima</button>
+        </div>
       </div>
     </div>`;
+}
+
+function sortCoursesBy(mode, courses) {
+  const list = [...courses];
+  const byTitle = (a, b) => String(a.titulo || "").localeCompare(String(b.titulo || ""), "pt-BR");
+  const byDate = (a, b) => {
+    const da = Date.parse(a.atualizado_em || a.criado_em || 0) || 0;
+    const db = Date.parse(b.atualizado_em || b.criado_em || 0) || 0;
+    return da - db;
+  };
+
+  if (mode === "az") return list.sort(byTitle);
+  if (mode === "za") return list.sort((a, b) => byTitle(b, a));
+  if (mode === "oldest") return list.sort((a, b) => byDate(a, b) || byTitle(a, b));
+  return list.sort((a, b) => byDate(b, a) || byTitle(a, b));
+}
+
+function sortCoursesNewestFirst(courses) {
+  return sortCoursesBy("recent", courses);
+}
+
+function bindDashboardCourses() {
+  const root = $("[data-dashboard-courses]");
+  if (!root) return;
+
+  const search = $("#dashboard-course-search", root);
+  const nivelFilter = $("#dashboard-course-nivel", root);
+  const areaFilter = $("#dashboard-course-area", root);
+  const statusFilter = $("#dashboard-course-status", root);
+  const publishedFilter = $("#dashboard-course-published", root);
+  const sortSelect = $("#dashboard-course-sort", root);
+  const pageSizeSelect = $("#dashboard-course-page-size", root);
+  const chipsWrap = $("[data-active-chips]", root);
+  const countEl = $("[data-filter-count]", root);
+  const emptyEl = $("[data-filter-empty]", root);
+  const clearBtns = $$("[data-clear-filters]", root);
+  const quickBtns = $$("[data-quick-filter]", root);
+  const pager = $("[data-dashboard-pager]", root);
+  const meta = $("[data-pager-meta]", root);
+  const pageLabel = $("[data-pager-page]", root);
+  const prevBtn = $("[data-pager-prev]", root);
+  const nextBtn = $("[data-pager-next]", root);
+  const tbody = $("tbody", root);
+  const rows = $$("[data-course-row]", root);
+
+  let page = 1;
+
+  const optionLabel = (select, value) => {
+    if (!select || !value) return "";
+    const opt = Array.from(select.options).find((o) => o.value === value);
+    return opt?.textContent || value;
+  };
+
+  const getState = () => ({
+    q: search?.value.trim() || "",
+    nivel: nivelFilter?.value || "",
+    area: areaFilter?.value || "",
+    status: statusFilter?.value || "",
+    published: publishedFilter?.value || "",
+    sort: sortSelect?.value || "recent",
+    pageSize: Math.max(1, Number(pageSizeSelect?.value) || 10),
+  });
+
+  const renderChips = (state) => {
+    if (!chipsWrap) return;
+    const chips = [];
+    if (state.q) chips.push({ key: "q", label: `Busca: “${state.q}”` });
+    if (state.nivel) chips.push({ key: "nivel", label: `Nível: ${optionLabel(nivelFilter, state.nivel)}` });
+    if (state.area) chips.push({ key: "area", label: `Área: ${optionLabel(areaFilter, state.area)}` });
+    if (state.status) chips.push({ key: "status", label: `Status: ${optionLabel(statusFilter, state.status)}` });
+    if (state.published === "published") chips.push({ key: "published", label: "Somente publicados" });
+    if (state.published === "draft") chips.push({ key: "published", label: "Somente rascunhos" });
+    if (state.sort && state.sort !== "recent") chips.push({ key: "sort", label: `Ordem: ${optionLabel(sortSelect, state.sort)}` });
+
+    chipsWrap.hidden = chips.length === 0;
+    chipsWrap.innerHTML = chips.map((chip) => `
+      <button type="button" class="filter-chip" data-remove-chip="${chip.key}">
+        ${escapeHtml(chip.label)} <span aria-hidden="true">×</span>
+      </button>
+    `).join("");
+
+    clearBtns.forEach((btn) => { btn.hidden = chips.length === 0; });
+  };
+
+  const syncQuickButtons = (state) => {
+    quickBtns.forEach((btn) => {
+      const key = btn.dataset.quickFilter;
+      let active = false;
+      if (key === "turma-confirmada") active = state.status === "turma-confirmada";
+      if (key === "inscricoes-abertas") active = state.status === "inscricoes-abertas";
+      if (key === "published") active = state.published === "published";
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+  };
+
+  const sortRows = (list, mode) => {
+    const arr = [...list];
+    const title = (row) => row.dataset.title || "";
+    const updated = (row) => Number(row.dataset.updated || 0);
+    if (mode === "az") return arr.sort((a, b) => title(a).localeCompare(title(b), "pt-BR"));
+    if (mode === "za") return arr.sort((a, b) => title(b).localeCompare(title(a), "pt-BR"));
+    if (mode === "oldest") {
+      return arr.sort((a, b) => updated(a) - updated(b) || title(a).localeCompare(title(b), "pt-BR"));
+    }
+    return arr.sort((a, b) => updated(b) - updated(a) || title(a).localeCompare(title(b), "pt-BR"));
+  };
+
+  const apply = () => {
+    const state = getState();
+    const matched = sortRows(rows.filter((row) => {
+      const okQ = !state.q || normalizeName(row.dataset.search || "").includes(normalizeName(state.q));
+      const okNivel = !state.nivel || row.dataset.nivel === state.nivel;
+      const okArea = !state.area || row.dataset.area === state.area;
+      const okStatus = !state.status || row.dataset.status === state.status;
+      const okPub = !state.published
+        || (state.published === "published" && row.dataset.published === "1")
+        || (state.published === "draft" && row.dataset.published === "0");
+      return okQ && okNivel && okArea && okStatus && okPub;
+    }), state.sort);
+
+    rows.forEach((row) => { row.hidden = true; });
+    if (tbody) {
+      matched.forEach((row) => tbody.appendChild(row));
+    }
+
+    const totalAll = rows.length;
+    const total = matched.length;
+    const totalPages = Math.max(1, Math.ceil(total / state.pageSize) || 1);
+    page = Math.min(Math.max(1, page), totalPages);
+    const start = (page - 1) * state.pageSize;
+    matched.slice(start, start + state.pageSize).forEach((row) => { row.hidden = false; });
+
+    if (countEl) countEl.textContent = `${total} de ${totalAll} curso${totalAll === 1 ? "" : "s"}`;
+    if (emptyEl) emptyEl.hidden = !(total === 0 && totalAll > 0);
+
+    if (pager) {
+      pager.hidden = total === 0;
+      const from = total === 0 ? 0 : start + 1;
+      const to = Math.min(start + state.pageSize, total);
+      if (meta) meta.textContent = total ? `Mostrando ${from}–${to} de ${total}` : "Nenhum curso encontrado";
+      if (pageLabel) pageLabel.textContent = `Página ${page} de ${totalPages}`;
+      if (prevBtn) prevBtn.disabled = page <= 1;
+      if (nextBtn) nextBtn.disabled = page >= totalPages;
+    }
+
+    renderChips(state);
+    syncQuickButtons(state);
+  };
+
+  const resetFilters = () => {
+    if (search) search.value = "";
+    if (nivelFilter) nivelFilter.value = "";
+    if (areaFilter) areaFilter.value = "";
+    if (statusFilter) statusFilter.value = "";
+    if (publishedFilter) publishedFilter.value = "";
+    if (sortSelect) sortSelect.value = "recent";
+    page = 1;
+    apply();
+  };
+
+  search?.addEventListener("input", () => { page = 1; apply(); });
+  [nivelFilter, areaFilter, statusFilter, publishedFilter, sortSelect, pageSizeSelect].forEach((el) => {
+    el?.addEventListener("change", () => { page = 1; apply(); });
+  });
+  prevBtn?.addEventListener("click", () => { page -= 1; apply(); });
+  nextBtn?.addEventListener("click", () => { page += 1; apply(); });
+  clearBtns.forEach((btn) => btn.addEventListener("click", resetFilters));
+
+  quickBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.quickFilter;
+      if (key === "turma-confirmada" || key === "inscricoes-abertas") {
+        if (statusFilter) {
+          statusFilter.value = statusFilter.value === key ? "" : key;
+        }
+      }
+      if (key === "published" && publishedFilter) {
+        publishedFilter.value = publishedFilter.value === "published" ? "" : "published";
+      }
+      page = 1;
+      apply();
+    });
+  });
+
+  chipsWrap?.addEventListener("click", (event) => {
+    const btn = event.target.closest("[data-remove-chip]");
+    if (!btn) return;
+    const key = btn.dataset.removeChip;
+    if (key === "q" && search) search.value = "";
+    if (key === "nivel" && nivelFilter) nivelFilter.value = "";
+    if (key === "area" && areaFilter) areaFilter.value = "";
+    if (key === "status" && statusFilter) statusFilter.value = "";
+    if (key === "published" && publishedFilter) publishedFilter.value = "";
+    if (key === "sort" && sortSelect) sortSelect.value = "recent";
+    page = 1;
+    apply();
+  });
+
+  apply();
 }
 
 function renderCoursesList() {
@@ -1001,13 +1288,13 @@ function renderCourseForm(course) {
             <div class="form-grid form-grid--3">
               <div class="form-group"><label>Carga horária</label><input name="info_carga_horaria" value="${escapeHtml(i.carga_horaria || "")}" placeholder="Ex: 360 horas"></div>
               <div class="form-group"><label>Duração</label><input name="info_duracao" value="${escapeHtml(i.duracao || "")}" placeholder="Ex: 12 meses"></div>
-              <div class="form-group"><label>Início previsto</label><input name="info_inicio_previsto" value="${escapeHtml(i.inicio_previsto || "")}" placeholder="Ex: 11 e 12 de Julho de 2026"></div>
+              <div class="form-group"><label id="inicio-label">${(i.confirmado || c.status_curso_id === "turma-confirmada") ? "Início confirmado" : "Início previsto"}</label><input name="info_inicio_previsto" value="${escapeHtml(i.inicio_previsto || "")}" placeholder="Ex: 11 e 12 de Julho de 2026"></div>
               <div class="form-group"><label>Modalidade</label><input name="info_modalidade" value="${escapeHtml(i.modalidade || "")}" placeholder="Ex: 100% EAD — Aula ao vivo"></div>
               <div class="form-group"><label>Vagas</label><input name="info_vagas" value="${escapeHtml(i.vagas || "")}" placeholder="Opcional"></div>
               <div class="form-group"><label>Formato das aulas</label><input name="info_aulas" value="${escapeHtml(i.aulas || "")}" placeholder="Ex: Aula ao vivo"></div>
               <div class="form-group form-group--full course-form__flags">
                 <label class="form-check form-check--switch"><input type="checkbox" name="info_ultimas_vagas" ${i.ultimas_vagas ? "checked" : ""}> Destacar “Últimas vagas”</label>
-                <label class="form-check form-check--switch"><input type="checkbox" name="info_confirmado" ${i.confirmado ? "checked" : ""}> Turma confirmada</label>
+                <label class="form-check form-check--switch"><input type="checkbox" name="info_confirmado" ${(i.confirmado || c.status_curso_id === "turma-confirmada") ? "checked" : ""}> Turma confirmada</label>
                 <label class="form-check form-check--switch"><input type="checkbox" name="info_pre_inscricao" ${i.pre_inscricao ? "checked" : ""}> Modo pré-inscrição</label>
               </div>
             </div>
@@ -1222,6 +1509,34 @@ function bindCourseFormEvents(form) {
   });
 
   bindEntityPickers(form);
+
+  const statusSelect = form.status_curso_id;
+  const confirmadoToggle = form.info_confirmado;
+  const inicioLabel = $("#inicio-label", form);
+
+  function syncTurmaConfirmada({ fromToggle = false, fromStatus = false } = {}) {
+    if (!statusSelect || !confirmadoToggle) return;
+
+    if (fromToggle) {
+      if (confirmadoToggle.checked) {
+        statusSelect.value = "turma-confirmada";
+      } else if (statusSelect.value === "turma-confirmada") {
+        statusSelect.value = "inscricoes-abertas";
+      }
+    } else if (fromStatus) {
+      confirmadoToggle.checked = statusSelect.value === "turma-confirmada";
+    }
+
+    if (inicioLabel) {
+      inicioLabel.textContent = confirmadoToggle.checked || statusSelect.value === "turma-confirmada"
+        ? "Início confirmado"
+        : "Início previsto";
+    }
+  }
+
+  confirmadoToggle?.addEventListener("change", () => syncTurmaConfirmada({ fromToggle: true }));
+  statusSelect?.addEventListener("change", () => syncTurmaConfirmada({ fromStatus: true }));
+  syncTurmaConfirmada({ fromStatus: true });
 
   const navLinks = $$(".course-form__nav-link", form);
   navLinks.forEach((btn, index) => {
@@ -1688,8 +2003,10 @@ function renderTestimonialForm(item) {
         <select id="video_formato" name="video_formato">
           <option value="" ${!p.video_formato || p.video_formato === "wide" ? "selected" : ""}>Horizontal / YouTube (16:9)</option>
           <option value="story" ${p.video_formato === "story" ? "selected" : ""}>Story / vertical (9:16)</option>
+          <option value="feed" ${p.video_formato === "feed" ? "selected" : ""}>Feed / vertical (4:5)</option>
+          <option value="square" ${p.video_formato === "square" ? "selected" : ""}>Quadrado (1:1)</option>
         </select>
-        <small>Story evita corte em vídeos gravados na vertical (celular).</small>
+        <small>Escolha o formato em que o vídeo foi gravado — a moldura se ajusta e nada é cortado.</small>
       </div>
       ${renderImageUploadField({ name: "video_thumb", value: p.video_thumb || "", label: "Thumbnail do vídeo (capa antes do play — só p/ upload nativo)", folder: "testimonials" })}
       ${renderImageUploadField({ name: "imagem", value: p.imagem || "", label: "Imagem do depoimento", folder: "testimonials" })}
@@ -1940,6 +2257,14 @@ function collectCourseForm(form) {
     texto: form[`publico_texto_${i}`]?.value.trim() || "",
   }));
 
+  const confirmado = form.info_confirmado?.checked || false;
+  let statusCursoId = form.status_curso_id?.value || "inscricoes-abertas";
+  if (confirmado) {
+    statusCursoId = "turma-confirmada";
+  } else if (statusCursoId === "turma-confirmada") {
+    statusCursoId = "inscricoes-abertas";
+  }
+
   const course = {
     ...(existing || emptyCourse()),
     id: existing?.id || slug || uid("course"),
@@ -1950,7 +2275,7 @@ function collectCourseForm(form) {
     imagem_capa: form.imagem_capa.value.trim(),
     nivel_formacao_id: form.nivel_formacao_id.value,
     area_id: form.area_id.value,
-    status_curso_id: form.status_curso_id.value,
+    status_curso_id: statusCursoId,
     coordenacao_ids: getCheckedIds(form, "coordenacao_ids"),
     professor_ids: getCheckedIds(form, "professor_ids"),
     depoimento_ids: getCheckedIds(form, "depoimento_ids"),
@@ -1968,7 +2293,7 @@ function collectCourseForm(form) {
       aulas: form.info_aulas?.value.trim(),
       video: form.info_video?.value.trim(),
       ultimas_vagas: form.info_ultimas_vagas?.checked || false,
-      confirmado: form.info_confirmado?.checked || false,
+      confirmado,
       pre_inscricao: form.info_pre_inscricao?.checked || false,
     },
     sobre: existing?.sobre || { paragrafos: [] },
@@ -2015,7 +2340,14 @@ function collectCourseForm(form) {
       og_description: form.seo_description?.value.trim(),
       focus_keyword: form.seo_focus?.value.trim(),
       keywords: (form.seo_keywords?.value || "").split(",").map((s) => s.trim()).filter(Boolean),
-      canonical: form.seo_canonical?.value.trim() || `/pos-graduacao/${slug}`,
+      canonical: (() => {
+        const raw = form.seo_canonical?.value.trim() || "";
+        const expected = `/pos-graduacao/${slug}`;
+        if (!raw) return expected;
+        // Evita salvar canonical antiga que não bate com o slug atual (ex.: Balé sem -turma-4).
+        if (raw === expected || raw.endsWith(`/${slug}`)) return raw.startsWith("/") ? raw : `/${raw}`;
+        return expected;
+      })(),
       schema_type: "Course",
     },
     atualizado_em: new Date().toISOString(),
@@ -2091,6 +2423,7 @@ function bindEvents() {
 
   bindListSearch("#course-search", ".data-table--courses tbody tr");
   bindListSearch("#entity-search", ".data-table tbody tr");
+  bindDashboardCourses();
 
   $$("[data-toggle-published]").forEach((input) => {
     input.addEventListener("change", async () => {
@@ -2713,9 +3046,12 @@ async function startApp() {
   }
 
   loadFromLocalStorage();
-  await initStore();
+  const storeStatus = await initStore();
   await refreshSessionAccess();
   renderNav();
+  if (storeStatus?.readonly || !isApiAvailable()) {
+    toast("API do CMS indisponível — alterações não serão salvas no servidor. Recarregue a página.", "error");
+  }
   navigate();
 }
 
