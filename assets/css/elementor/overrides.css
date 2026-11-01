@@ -253,7 +253,9 @@
 /* Mini-currículo — ícone chevron + animação suave */
 .elementor-1076 .coord-mini-cv {
   width: 100%;
+  max-width: 100%;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .elementor-1076 .coord-mini-cv > .e-n-accordion-item-title {
@@ -305,6 +307,7 @@
   display: grid;
   grid-template-rows: 0fr;
   width: 100%;
+  max-width: 100%;
   transition: grid-template-rows 400ms ease;
 }
 
@@ -315,6 +318,7 @@
 .elementor-1076 .coord-mini-cv__panel-inner {
   overflow: hidden;
   min-height: 0;
+  max-width: 100%;
   opacity: 0;
   transition: opacity 400ms ease;
 }
@@ -323,11 +327,218 @@
   opacity: 1;
 }
 
+/* Grid / carrossel de coordenadores
+   Mobile: empilha. Desktop (2+): carrossel com 1 card + setas. */
+.course-coords {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.course-coords-viewport {
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+}
+
+.course-coords-track {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  width: 100%;
+  align-items: start;
+}
+
+.course-coord-card {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  overflow: hidden;
+  align-self: start;
+}
+
+.course-coord-card .elementor-1076,
+.course-coord-card .elementor-element-c5d4c98,
+.course-coord-card .elementor-element-0d094fc,
+.course-coord-card .elementor-element-4b71303,
+.course-coord-card .elementor-element-7b25652 {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  --width: 100% !important;
+  box-sizing: border-box;
+}
+
+.course-coord-card .elementor-element-0d094fc.e-con {
+  --flex-grow: 1 !important;
+  --flex-shrink: 1 !important;
+}
+
+.course-coord-card .elementor-heading-title,
+.course-coord-card .coord-mini-cv__panel-inner ul,
+.course-coord-card .coord-mini-cv__panel-inner li {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.course-coords-carousel__arrow {
+  display: none;
+  position: absolute;
+  top: 72px;
+  z-index: 4;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-primary, #2b325c);
+  box-shadow: 0 4px 16px rgb(16 20 41 / 0.18);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+
+.course-coords-carousel__arrow:hover:not(:disabled) {
+  background: var(--color-primary, #2b325c);
+  color: #fff;
+}
+
+.course-coords-carousel__arrow:focus-visible {
+  outline: 2px solid var(--color-accent, #13a6b4);
+  outline-offset: 2px;
+}
+
+.course-coords-carousel__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.course-coords-carousel__arrow svg {
+  width: 22px;
+  height: 22px;
+}
+
+.course-coords-carousel__arrow--prev { left: 8px; }
+.course-coords-carousel__arrow--next { right: 8px; }
+
+@media (min-width: 768px) {
+  .course-coords--multi .course-coords-viewport.is-carousel {
+    overflow: hidden;
+    max-width: 460px;
+    margin-inline: auto;
+    padding-inline: 52px;
+  }
+
+  .course-coords--multi .course-coords-viewport.is-carousel .course-coords-track {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 24px;
+    align-items: flex-start;
+    will-change: transform;
+  }
+
+  .course-coords--multi .course-coords-viewport.is-carousel .course-coord-card {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .course-coords--multi .course-coords-carousel__arrow {
+    display: flex;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .elementor-1076 .coord-mini-cv .coord-mini-cv__chevron,
   .elementor-1076 .coord-mini-cv__panel,
   .elementor-1076 .coord-mini-cv__panel-inner {
     transition-duration: 0.01ms;
+  }
+}
+
+/* "Veja mais opções" — link minimalista (texto + linha) */
+.elementor-13 .elementor-element.elementor-element-4eb00de.course-related-more {
+  text-align: center;
+}
+
+.elementor-13 .elementor-element.elementor-element-4eb00de .course-related-more__link.elementor-button,
+.elementor-13 .course-related-more__link.elementor-button {
+  display: inline-flex;
+  width: auto !important;
+  max-width: max-content;
+  margin-inline: auto;
+  padding: 0 0 6px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #13a6b4 !important;
+  font-family: var(--font-heading, "Gotham", sans-serif);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  border-bottom: 1px solid currentColor !important;
+  transition: color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.elementor-13 .course-related-more__link.elementor-button:hover,
+.elementor-13 .course-related-more__link.elementor-button:focus-visible {
+  background: transparent !important;
+  color: #2b325c !important;
+  border-bottom-color: #2b325c !important;
+}
+
+.elementor-13 .course-related-more__link .elementor-button-content-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.elementor-13 .course-related-more__link .elementor-button-icon {
+  display: none !important;
+}
+
+.elementor-13 .course-related-more__link .elementor-button-text {
+  flex-grow: 0;
+  color: inherit;
+}
+
+/* Conheça o curso — vídeo 720px no desktop */
+@media (min-width: 768px) {
+  .elementor-13 .elementor-element.elementor-element-fb22a49 {
+    --width: 720px !important;
+    width: 720px !important;
+    max-width: 720px !important;
+    flex: 0 0 720px !important;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-0f00e66,
+  .elementor-13 .elementor-element.elementor-element-0f00e66 .elementor-widget-container,
+  .elementor-13 .elementor-element.elementor-element-0f00e66 .elementor-wrapper {
+    width: 100% !important;
+    max-width: 720px;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-0f00e66 .elementor-video,
+  .elementor-13 .elementor-element.elementor-element-0f00e66 iframe.elementor-video,
+  .elementor-13 .elementor-element.elementor-element-0f00e66 video.elementor-video {
+    width: 100% !important;
+    max-width: 720px;
+    aspect-ratio: 16 / 9;
+    height: auto !important;
+  }
+
+  .elementor-13 .elementor-element.elementor-element-92d888b {
+    --width: auto !important;
+    flex: 1 1 0 !important;
+    min-width: 0;
   }
 }
 

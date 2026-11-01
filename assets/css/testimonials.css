@@ -151,12 +151,28 @@
   border: 0;
 }
 
-/* Formato story (9:16 vertical) — selecionado no cadastro do depoimento.
-   Seletor com a seção p/ vencer o <style> do modelo salvo no banco. */
+/* Formatos de exibição — selecionados no cadastro do depoimento.
+   Seletor com a seção p/ vencer o <style> do modelo salvo no banco.
+   O <video> usa object-fit: contain, então nada é cortado: o container
+   define a moldura e o vídeo se encaixa dentro dela. */
 .testimonials-section .testimonial-card__video--story {
   aspect-ratio: 9 / 16;
   width: 100%;
   max-width: 240px;
+  margin-inline: auto;
+}
+
+.testimonials-section .testimonial-card__video--feed {
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  max-width: 300px;
+  margin-inline: auto;
+}
+
+.testimonials-section .testimonial-card__video--square {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  max-width: 320px;
   margin-inline: auto;
 }
 

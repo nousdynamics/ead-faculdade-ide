@@ -128,6 +128,97 @@ document.querySelectorAll(".coord-mini-cv").forEach((details) => {
   details.addEventListener("toggle", sync);
 });
 
+/** Coordenadores — carrossel só no desktop (2+), setas sem autoplay */
+document.querySelectorAll('[data-coords-carousel="true"]').forEach((viewport) => {
+  const track = viewport.querySelector(".course-coords-track");
+  if (!track) return;
+
+  const cards = Array.from(track.querySelectorAll(".course-coord-card"));
+  if (cards.length < 2) return;
+
+  const desktopMq = window.matchMedia("(min-width: 768px)");
+  let index = 0;
+  let prevBtn = null;
+  let nextBtn = null;
+
+  const stepSize = () => {
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 24;
+    return cards[0].getBoundingClientRect().width + gap;
+  };
+
+  const syncButtons = () => {
+    if (prevBtn) prevBtn.disabled = index <= 0;
+    if (nextBtn) nextBtn.disabled = index >= cards.length - 1;
+  };
+
+  const apply = (animate) => {
+    if (!desktopMq.matches) {
+      track.style.transition = "none";
+      track.style.transform = "";
+      return;
+    }
+    track.style.transition = animate ? "transform 0.45s ease" : "none";
+    track.style.transform = `translateX(-${index * stepSize()}px)`;
+    syncButtons();
+  };
+
+  const enable = () => {
+    viewport.classList.add("is-carousel");
+    if (!prevBtn) {
+      const makeArrow = (dir) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `course-coords-carousel__arrow course-coords-carousel__arrow--${dir}`;
+        btn.setAttribute("aria-label", dir === "prev" ? "Coordenador anterior" : "Próximo coordenador");
+        btn.innerHTML = dir === "prev"
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>';
+        btn.addEventListener("click", () => {
+          if (dir === "prev" && index > 0) {
+            index -= 1;
+            apply(true);
+          }
+          if (dir === "next" && index < cards.length - 1) {
+            index += 1;
+            apply(true);
+          }
+        });
+        viewport.appendChild(btn);
+        return btn;
+      };
+      prevBtn = makeArrow("prev");
+      nextBtn = makeArrow("next");
+    }
+    index = Math.min(index, cards.length - 1);
+    apply(false);
+  };
+
+  const disable = () => {
+    viewport.classList.remove("is-carousel");
+    track.style.transition = "none";
+    track.style.transform = "";
+    if (prevBtn) {
+      prevBtn.remove();
+      prevBtn = null;
+    }
+    if (nextBtn) {
+      nextBtn.remove();
+      nextBtn = null;
+    }
+  };
+
+  const syncMode = () => {
+    if (desktopMq.matches) enable();
+    else disable();
+  };
+
+  syncMode();
+  desktopMq.addEventListener("change", syncMode);
+  window.addEventListener("resize", () => {
+    if (desktopMq.matches) apply(false);
+  });
+});
+
 /** Popup — opções de parcelamento */
 const installmentsModal = document.getElementById("course-installments-modal");
 if (installmentsModal instanceof HTMLDialogElement) {
