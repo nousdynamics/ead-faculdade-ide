@@ -150,5 +150,6 @@ Dados pessoais no D1: `guide_leads` (nome, e-mail, telefone; vazio em 5/11/2026)
 
 - `backups/`, `cloudflare/.wrangler/` e `cloudflare/.dev.vars` têm hashes de senha ou segredos. Estão no `.gitignore`; nunca commite nem compartilhe.
 - O deploy do `cf` não lista secrets entre os bindings. Para conferir o `CMS_SECRET`, consulte `GET /accounts/{id}/workers/scripts/ead-faculdade-ide/secrets`.
-- `.vercelignore` exclui `cloudflare/` e `backups/`; o deploy da Vercel não muda com a pasta do Worker.
+- `.vercelignore` exclui `/cloudflare/` e `/backups/`, sempre com a barra inicial. Sem ela, `cloudflare/` excluiria também `lib/cloudflare/`, e a API da Vercel inteira quebra (`FUNCTION_INVOCATION_FAILED`). Aconteceu em 5/11/2026.
+- Todo push em `main` ou `clone-fiel` gera deploy de **produção** na Vercel. Depois de um push, confira `https://ead-faculdade-ide.vercel.app/api/catalog`.
 - Os cursos ficam no banco, não em arquivos: as pastas em `pos-graduacao/` são cópias antigas e não são publicadas.
