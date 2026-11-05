@@ -2,6 +2,10 @@
 
 Site estático (HTML/CSS/JS puro) recriado a partir do original em [ead.faculdadeide.edu.br](https://ead.faculdadeide.edu.br/).
 
+> **Infraestrutura (nov/2026):** produção ainda na Vercel + Supabase; a nova infraestrutura na Cloudflare (Worker + D1 + R2) está pronta e aguarda a virada do domínio. Operação, máquina nova, backup, importação e passos da virada: [docs/cloudflare.md](docs/cloudflare.md).
+>
+> As seções abaixo descrevem a versão inicial do clone e estão parcialmente desatualizadas: os cursos hoje vêm do CMS (`/admin`), não de arquivos em `pos-graduacao/`.
+
 ## Páginas
 
 | Arquivo | Descrição |
