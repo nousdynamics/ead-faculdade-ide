@@ -21,7 +21,8 @@
     "env:vercel-supabase": "node scripts/push-supabase-env-vercel.mjs",
     "migrate:blob-media": "node scripts/migrate-blob-media.mjs",
     "deploy:preview": "npx vercel",
-    "deploy:prod": "npx vercel --prod"
+    "deploy:prod": "npx vercel --prod",
+    "backup:supabase": "node scripts/backup-supabase.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.8",

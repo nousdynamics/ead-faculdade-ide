@@ -15,3 +15,13 @@ node_modules/
 .env*
 !.env.example
 .env
+
+# Backups do banco (contém hashes de senha)
+backups/
+
+# Build do Cloudflare Worker
+dist/
+.cloudflare/
+build/
+.wrangler/
+.dev.vars
