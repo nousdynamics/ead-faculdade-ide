@@ -94,12 +94,16 @@ Rode dentro de `cloudflare/`, com as credenciais exportadas.
 | Importar D1 e mídia | `node scripts/import-from-backup.mjs --media` |
 | Importar um backup específico | `node scripts/import-from-backup.mjs --media --backup ../backups/supabase-AAAA-MM-DD` |
 | Conferir o Worker | `node scripts/smoke-test.mjs https://ead-faculdade-ide.nathalia-25e.workers.dev https://ead-faculdade-ide.vercel.app --media` |
+| Backup do D1 e do R2 | `npm run backup` (gera `backups/cloudflare-AAAA-MM-DD/`) |
+| Restaurar um backup da Cloudflare | `node scripts/import-from-backup.mjs --media --backup ../backups/cloudflare-AAAA-MM-DD` |
 | Logs ao vivo | `npx wrangler tail ead-faculdade-ide` |
 | Trocar o `CMS_SECRET` | `npx wrangler secret put CMS_SECRET --name ead-faculdade-ide` (derruba as sessões abertas) |
 
 Backup do Supabase, na raiz: `npm run backup:supabase`. Gera `backups/supabase-AAAA-MM-DD/` com tabelas, arquivos e um `manifest.json` com o SHA-256 de cada arquivo. Rodar duas vezes no mesmo dia sobrescreve a pasta do dia.
 
 A importação usa `INSERT OR REPLACE` nas coleções e usuários: **o que estiver no D1 é substituído pelo backup**. Edições feitas no admin do Worker antes da virada se perdem na reimportação.
+
+Depois da virada, o backup do Supabase deixa de servir. Rode `npm run backup` em `cloudflare/` com regularidade (por exemplo, toda semana e antes de mudanças grandes). O formato é o mesmo do backup do Supabase, então o importador restaura qualquer um dos dois. Sem `--backup`, o importador usa o último backup **do Supabase**; para restaurar da Cloudflare, informe a pasta. A restauração não apaga o que foi criado depois do backup, só sobrescreve o que existe nele. Para um erro recente no banco, o D1 também tem Time Travel (volta o banco a um momento dos últimos 30 dias; 7 no plano gratuito): `npx wrangler d1 time-travel restore ead-faculdade-ide --timestamp <data ISO>`.
 
 O `smoke-test.mjs --media` segue redirects. Para provar que um arquivo saiu do R2 e não do Supabase, peça com `redirect: "manual"` e confira status 200.
 
@@ -133,10 +137,19 @@ Faça na ordem, num horário sem edições no admin.
 
 ### Domínio
 
-O Worker precisa de um Custom Domain `ead.faculdadeide.edu.br`. A zona `faculdadeide.edu.br` usa nameservers da Cloudflare, mas o token do projeto não a enxerga: provavelmente ela está em outra conta Cloudflare.
+O Worker precisa de um Custom Domain `ead.faculdadeide.edu.br`, e o Custom Domain só funciona com a zona na mesma conta do Worker.
 
-- **Se a zona estiver nesta mesma conta:** apague o registro DNS atual de `ead` (hoje aponta para `203.159.80.163`, servidor antigo) e, em Workers & Pages → `ead-faculdade-ide` → Settings → Domains & Routes → Add → Custom domain, informe `ead.faculdadeide.edu.br`. A Cloudflare cria o DNS e o certificado.
-- **Se a zona estiver em outra conta:** Custom Domain só funciona com a zona na mesma conta do Worker. Mova a zona para esta conta ou peça acesso à conta dona da zona e publique o Worker lá.
+**A zona `faculdadeide.edu.br` está em outra conta Cloudflare.** Conferido em 5/11/2026: ela usa os nameservers `karina`/`casey.ns.cloudflare.com`, enquanto a zona desta conta (`ide.edu.br`) usa `keira`/`neil`. A Cloudflare dá o mesmo par de nameservers às zonas de uma conta, e o token deste projeto não enxerga essa zona. Também não adianta criar um CNAME de `ead` para o endereço `workers.dev`: a Cloudflare bloqueia CNAME entre contas (erro 1014).
+
+Caminhos possíveis:
+
+- **Mover a zona para esta conta** (recomendado se você tem acesso às duas):
+  1. Na conta atual, exporte o DNS (DNS → Records → Import and Export → Export).
+  2. Nesta conta, adicione `faculdadeide.edu.br` e importe o arquivo. Confira, um por um, e-mail (MX, SPF, DKIM) e os demais subdomínios.
+  3. No Registro.br, troque os nameservers pelos que esta conta indicar e espere a zona ficar ativa.
+  4. Apague o registro de `ead` (hoje aponta para `203.159.80.163`, servidor antigo). Depois, em Workers & Pages → `ead-faculdade-ide` → Settings → Domains & Routes → Add → Custom domain, informe `ead.faculdadeide.edu.br`. A Cloudflare cria o DNS e o certificado.
+  5. Remova a zona da conta antiga.
+- **Publicar o Worker na conta dona da zona:** troque `accountId` em `cloudflare.config.ts`, crie lá o D1 e o R2 (os mesmos nomes servem), aplique a migration, importe o backup e publique. Precisa de um token daquela conta, e o id do D1 muda no config e nos scripts.
 
 Para voltar atrás, aponte o DNS de `ead` para a Vercel. Atenção: o que for editado no admin do Worker depois da virada não existe no Supabase.
 
@@ -153,3 +166,4 @@ Dados pessoais no D1: `guide_leads` (nome, e-mail, telefone; vazio em 5/11/2026)
 - `.vercelignore` exclui `/cloudflare/` e `/backups/`, sempre com a barra inicial. Sem ela, `cloudflare/` excluiria também `lib/cloudflare/`, e a API da Vercel inteira quebra (`FUNCTION_INVOCATION_FAILED`). Aconteceu em 5/11/2026.
 - Todo push em `main` ou `clone-fiel` gera deploy de **produção** na Vercel. Depois de um push, confira `https://ead-faculdade-ide.vercel.app/api/catalog`.
 - Os cursos ficam no banco, não em arquivos: as pastas em `pos-graduacao/` são cópias antigas e não são publicadas.
+- O `/sitemap.xml` é gerado pela API a partir do CMS (`lib/sitemap.js`), nos dois provedores: curso publicado ou despublicado no admin entra ou sai sozinho, com até 10 minutos de cache. O arquivo `sitemap.xml` que o servidor local gera fica fora do Git e dos deploys, porque na Vercel um arquivo estático teria prioridade sobre a rota.
