@@ -14,8 +14,7 @@ const INCLUDE = [
   "index.html",
   "404.html",
   "robots.txt",
-  "sitemap.xml",
-  "llms.txt",
+  "llms.txt", // sitemap.xml é gerado pela API a partir do CMS
   "admin",
   "assets",
   "politica-de-privacidade",

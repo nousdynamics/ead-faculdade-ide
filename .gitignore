@@ -25,3 +25,6 @@ dist/
 build/
 .wrangler/
 .dev.vars
+
+# Gerado localmente pelo cms-server; em produção vem da API (lib/sitemap.js)
+/sitemap.xml

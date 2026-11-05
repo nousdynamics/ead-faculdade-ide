@@ -17,7 +17,14 @@ export default defineConfig(({ mode }) => {
       assets: {
         htmlHandling: "drop-trailing-slash",
         notFoundHandling: "404-page",
-        runWorkerFirst: ["/api/*", "/pos-graduacao/*", "/paginas-de-cursos", "/paginas-de-cursos/*", "/cadastro"],
+        runWorkerFirst: [
+          "/api/*",
+          "/pos-graduacao/*",
+          "/paginas-de-cursos",
+          "/paginas-de-cursos/*",
+          "/cadastro",
+          "/sitemap.xml",
+        ],
       },
       // Honra o s-maxage que as páginas já enviam: o D1 fica fora do Brasil.
       cache: { enabled: true },

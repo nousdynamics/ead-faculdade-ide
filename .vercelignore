@@ -16,3 +16,6 @@ docs/
 # Só usado no Cloudflare Worker. Ancorado na raiz: sem a barra, o padrão
 # também excluiria lib/cloudflare/, que a Vercel precisa.
 /cloudflare/
+
+# Arquivo local antigo; em produção o sitemap vem da API (lib/sitemap.js)
+/sitemap.xml

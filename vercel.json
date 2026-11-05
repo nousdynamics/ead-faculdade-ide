@@ -18,6 +18,10 @@
   ],
   "rewrites": [
     {
+      "source": "/sitemap.xml",
+      "destination": "/api/handler?path=sitemap"
+    },
+    {
       "source": "/paginas-de-cursos",
       "destination": "/api/handler?path=catalog-page"
     },

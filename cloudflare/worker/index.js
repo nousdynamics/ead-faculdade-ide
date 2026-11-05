@@ -23,6 +23,7 @@ const SECURITY_HEADERS = {
 
 /** Traduz a URL pública para o caminho que o router espera, ou null se é asset estático. */
 function apiPathFor(pathname) {
+  if (pathname === "/sitemap.xml") return "sitemap";
   if (pathname === "/paginas-de-cursos") return "catalog-page";
 
   const catalog = pathname.match(/^\/paginas-de-cursos\/([^/]+)$/);
