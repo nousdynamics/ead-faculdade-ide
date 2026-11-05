@@ -11,7 +11,8 @@ docs/
 *.md
 
 # Backups do banco (contém hashes de senha)
-backups/
+/backups/
 
-# Só usado no Cloudflare Worker
-cloudflare/
+# Só usado no Cloudflare Worker. Ancorado na raiz: sem a barra, o padrão
+# também excluiria lib/cloudflare/, que a Vercel precisa.
+/cloudflare/
